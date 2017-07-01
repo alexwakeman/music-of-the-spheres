@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html">
+		<link rel="stylesheet" type="text/css" href="./css/main.css" />
+		<script src="./js/lib/three.js"></script>
+		<script src="./js/lib/Easing.js"></script>
+		
+		<script src="./js/lib/helvetiker_regular.typeface.js"></script>
+		<script src="./js/lib/helvetiker_bold.typeface.js"></script>
+		
+		<title>3D Music Explorer</title>
+		<meta name="description" content="Requires Google Chrome. Find new artists, explore more music, using sophisticated 3D interface." />
+		
+    </head>
+    <body oncontextmenu="return false"> <!-- remove double click -->
+		<div class="main">
+			
+			<div id="search-form-container">
+				<form id="artist-search">
+					<input type="text" size="30" id="search-input" placeholder="e.g. Jimi Hendrix">
+				</form>
+
+			</div>
+
+			<div id="three-scene"></div>
+			<div class="main-artist info-container"></div>
+			<div class="related-artist info-container"></div>
+			
+			<div class="artist-navigation"></div>
+			
+			<div id="spotify-player-container" style="display: none;">
+				<div id="spotify-player">
+					
+				</div>
+				<div class="album-nav">
+					<div class="prev">
+						<a href="#">Prev</a>
+					</div>
+					<div class="next">
+						<a href="#">Next</a>&nbsp;
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/app/Color.js"></script>
+		<script src="./js/app/Templates.js"></script>
+		<script src="./js/app/AnimationHandler.js"></script>
+		<script src="./js/app/view.js"></script>
+		<script src="./js/app/functionality.js"></script>
+		<script src="./js/app/services/music-data.service.js"></script>
+    </body>
+</html>

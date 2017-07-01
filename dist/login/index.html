@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Login to Spotify</title>
+	<script src="../app/js/lib/jquery.js"></script>
+</head>
+<body>
+	<button type="button" class="login">Login now</button>
+<script>
+	let loginBtn = document.querySelector('button.login');
+	loginBtn.addEventListener('click', () => {
+		self.location = '/auth';
+	});
+</script>
+</body>
+</html>

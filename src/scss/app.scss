@@ -1,0 +1,56 @@
+.bounding-box {
+    position: relative;
+    width: 100%;
+}
+
+.ball {
+    position: absolute;
+    border-radius: 50%;
+    background-image: radial-gradient(farthest-corner at 45px 45px , #FF0000 0%, #0000FF 100%);
+    animation-duration: 2s;
+    animation-fill-mode: both;
+}
+
+@keyframes bounceBall {
+
+    0% {
+        -webkit-transform: translateY(0);
+    }
+    10% {
+        -webkit-transform: translateY(-200px);
+    }
+    20% {
+        -webkit-transform: translateY(0);
+    }
+    25% {
+        -webkit-transform: translateY(-140px);
+    }
+    33% {
+        -webkit-transform: translateY(0);
+    }
+    35% {
+        -webkit-transform: translateY(-30px);
+    }
+    40% {
+        -webkit-transform: translateY(0);
+    }
+    45% {
+        -webkit-transform: translateY(-25px);
+    }
+    50% {
+        -webkit-transform: translateY(0);
+    }
+    51% {
+        -webkit-transform: translateY(-4px);
+    }
+    52% {
+        -webkit-transform: translateY(0);
+    }
+    100% {
+        -webkit-transform: translateY(0);
+    }
+}
+
+.bounce {
+    animation-name: bounceBall;
+}

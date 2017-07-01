@@ -1,0 +1,11 @@
+{
+  "files": [
+    "src/ts/bootstrap.ts"
+  ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "target": "es5",
+    "module": "commonjs",
+    "lib": [ "es2015", "dom" ]
+  }
+}
