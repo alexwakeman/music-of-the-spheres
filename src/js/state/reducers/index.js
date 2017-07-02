@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
-import musicData from './music-data';
+import musicSearch from './music-data';
 
 
 const musicSpheresApp = combineReducers({
-	musicData
+	musicSearch
 });
 
 export default musicSpheresApp;

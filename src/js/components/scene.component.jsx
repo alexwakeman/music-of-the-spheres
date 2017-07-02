@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-export function SceneComponent({renderDomElement}) {
+export function SceneComponent(artist) {
     return (
-		<div id="three-scene">{renderDomElement}</div>
+		<div id="three-scene"></div>
 	)
 }

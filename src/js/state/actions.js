@@ -2,10 +2,10 @@ export const ARTIST_SEARCH_START = 'ARTIST_SEARCH_START';
 export const ARTIST_SEARCH_DONE = 'ARTIST_SEARCH_DONE';
 
 
-export function startSearch(term) {
+export function startSearch(searchTerm) {
     return {
         type: ARTIST_SEARCH_START,
-        term: term
+		searchTerm: searchTerm
     }
 }
 

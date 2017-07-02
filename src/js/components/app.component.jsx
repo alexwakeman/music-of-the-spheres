@@ -4,6 +4,7 @@ import {SearchInputComponent} from "./search-input.component.jsx";
 import {SpotifyPlayerComponent} from "./spotify-player.component.jsx";
 import {ArtistListComponent} from "./artist-list.component";
 import {ArtistInfoComponent} from "./artist-info.component";
+import SearchContainer from "../containers/search-input.container";
 
 export class AppComponent extends React.Component {
 
@@ -14,7 +15,9 @@ export class AppComponent extends React.Component {
     render() {
         return (
             <div className="app-container">
-                <SearchInputComponent />
+				<SearchContainer>
+                	<SearchInputComponent  />
+				</SearchContainer>
                 <SceneComponent/>
                 <SpotifyPlayerComponent />
                 <ArtistListComponent />
