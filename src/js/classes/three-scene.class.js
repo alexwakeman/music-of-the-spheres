@@ -6,9 +6,9 @@ export default class ThreeScene {
     camera = new PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000);
     projector = new Projector();
     graphContainer = new Object3D();
-    container: HTMLElement;
+    container;
 
-    constructor(boundingBox: HTMLElement) {
+    constructor(boundingBox) {
         this.container = boundingBox;
     }
 }

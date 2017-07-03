@@ -21,6 +21,8 @@ module.exports = class SpotifyRequests {
 					const data = JSON.parse(body);
 					if (data.artists && data.artists.total) {
 						return resolve(data.artists.items[0]);
+					} else {
+						return resolve({}); // resolve with empty object if no matching artist was found on Spotify
 					}
 				}
 				reject();

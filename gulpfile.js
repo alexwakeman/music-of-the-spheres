@@ -1,17 +1,12 @@
 var gulp = require('gulp');
 var path = require('path');
 var sourcemaps = require('gulp-sourcemaps');
-var ts = require('gulp-typescript');
 var sass = require('gulp-sass');
-var connect = require('gulp-connect');
 var concat = require('gulp-concat');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
-var tsify = require('tsify');
 var karma = require('karma');
 var gutil = require('gutil');
-var babel = require('gulp-babel');
-var babelify = require('babelify');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -19,17 +14,13 @@ var dependencies = [
 	'react',
 	'react-dom',
 	'redux',
-	'prop-types'
+	'react-redux',
+	'prop-types',
+	'three'
 ];
 // keep a count of the times a task refires
 var scriptsCount = 0;
 
-gulp.task('connect', () => {
-	connect.server({
-		root: 'dist',
-		livereload: true
-	});
-});
 
 gulp.task('app:dev', () => {
 	return bundleApp(false);
@@ -45,11 +36,9 @@ gulp.task('sass', () => {
 		.pipe(gulp.dest('dist/css'));
 });
 
-gulp.task('build', ['app', 'sass']);
+gulp.task('build', ['app:dev', 'sass']);
 
-gulp.task('serve', ['build', 'connect']);
-
-gulp.task('watch', ['build', 'connect'], function() {
+gulp.task('watch', ['build'], function() {
 	gulp.watch('src/scss/*.scss', ['sass']);
 	gulp.watch('src/**/*.ts', ['app']);
 });
@@ -98,7 +87,7 @@ function bundleApp(isProduction) {
 
 	appBundler
 	// transform ES6 and JSX to ES5 with babelify
-		.transform("babelify", {presets: ["es2015", "react"]})
+		.transform('babelify', {presets: ['es2015', 'react']})
 		.bundle()
 		.on('error',gutil.log)
 		.pipe(source('app.js'))

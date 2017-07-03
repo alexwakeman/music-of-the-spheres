@@ -1,5 +1,5 @@
 export default class Statistics {
-    static getArtistRelatedness(primaryArtist, secondaryArtist): number {
+    static getArtistRelatedness(primaryArtist, secondaryArtist) {
         throw new Error('not implemented');
     }
  }
