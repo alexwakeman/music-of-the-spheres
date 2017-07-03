@@ -1,13 +1,21 @@
 import * as React from 'react';
-import {store} from '../state/store';
 
-export function SpotifyPlayerComponent() {
+export function SpotifyPlayerComponent({artist}) {
 	const embedUrl = 'https://open.spotify.com/embed/artist/';
-	let artistEmbedUrl = `${embedUrl}${store.getState().artist.id}`;
-	store.subscribe(() => {
-		artistEmbedUrl = `${embedUrl}${store.getState().artist.id}`;
-	});
-    return (
-        <iframe src={artistEmbedUrl} width="300" height="80" />
-    )
+	const artistEmbedUrl = `${embedUrl}${artist.id}`;
+	let iFrameMarkup = '';
+	if (artist.id) {
+		iFrameMarkup = <iframe src={artistEmbedUrl} width="300" height="80" />
+	}
+	return (
+		<div className="spotify-player-container">
+			<div id="spotify-player">
+				{iFrameMarkup}
+			</div>
+			<div className="album-nav">
+				<a href="#">Prev</a>
+				<a href="#">Next</a>
+			</div>
+		</div>
+	)
 }

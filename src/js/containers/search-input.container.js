@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { SearchInputComponent } from '../components/search-input.component.jsx';
-import {MusicDataService} from "../services/music-data.service";
-import {updateSearchTerm} from "../state/actions";
+import { MusicDataService } from '../services/music-data.service';
+import { updateSearchTerm } from '../state/actions';
 
 const mapStateToProps = (state) => {
 	return {
@@ -21,8 +21,6 @@ const mapDispatchToProps = (dispatch) => {
 	}
 };
 
-const SearchContainer = connect(
-	mapStateToProps,
-	mapDispatchToProps)(SearchInputComponent);
+const SearchContainer = connect(mapStateToProps, mapDispatchToProps)(SearchInputComponent);
 
 export default SearchContainer;

@@ -9,30 +9,42 @@ var karma = require('karma');
 var gutil = require('gutil');
 var babel = require('gulp-babel');
 var react = require('gulp-react');
+var watchify = require('watchify');
+var buffer = require('vinyl-buffer');
+var jshint = require('gulp-jshint');
+var uglify = require('gulp-uglify');
+var del = require('del');
 
-// External dependencies you do not want to rebundle while developing,
-// but include in your application deployment
-var dependencies = [
-	{'react': ''},
-	{'react-dom': ''},
-	{'redux': ''},
-	{'react-redux': ''},
-	{'prop-types': ''},
-	{'three': ''}
-];
+
+var libs = ['react', 'react-dom', 'redux', 'react-redux', 'prop-types', 'three'];
 
 gulp.task('app', function () {
-	return browserify({entries: './src/js/bootstrap.jsx', extensions: ['.jsx'], debug: true})
-		.transform('babelify', {presets: ['es2015', 'react']})
+	var bundler = browserify({entries: './src/js/bootstrap.jsx', extensions: ['.jsx'], debug: true});
+
+	libs.forEach(function(lib) {
+		bundler.external(require.resolve(lib, { expose: lib }));
+	});
+
+	return bundler.transform('babelify', {presets: ['es2015', 'react']})
 		.bundle()
 		.pipe(source('app.js'))
 		.pipe(gulp.dest('dist/js'));
 });
 
 gulp.task('libs', function () {
-	return gulp.src('output/*.js')
-		.pipe(babel())
-		.pipe(concat('app.js'))
+	var bundler = browserify({
+		debug: false
+	});
+
+	libs.forEach(function(lib) {
+		bundler.require(lib);
+	});
+
+	bundler.bundle()
+		.pipe(source('libs.js'))
+		// .pipe(buffer())
+		// .pipe(uglify())
+		.on('error', gutil.log)
 		.pipe(gulp.dest('dist/js'));
 });
 
@@ -42,11 +54,11 @@ gulp.task('sass', () => {
 		.pipe(gulp.dest('dist/css'));
 });
 
-gulp.task('build', ['app:dev', 'sass']);
+gulp.task('build', ['libs', 'app', 'sass']);
 
 gulp.task('watch', ['build'], function() {
 	gulp.watch('src/scss/*.scss', ['sass']);
-	gulp.watch('src/**/*.ts', ['app']);
+	gulp.watch(['src/**/*.js', 'src/**/*.jsx'], ['app']);
 });
 
 gulp.task('test', (done) => {

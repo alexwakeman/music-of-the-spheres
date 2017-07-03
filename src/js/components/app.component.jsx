@@ -1,9 +1,10 @@
 import * as React from 'react';
-import {SceneComponent} from "./scene.component.jsx";
-import {SpotifyPlayerComponent} from "./spotify-player.component.jsx";
-import {ArtistListComponent} from "./artist-list.component.jsx";
-import {ArtistInfoComponent} from "./artist-info.component.jsx";
+
 import SearchContainer from "../containers/search-input.container";
+import SpotifyPlayerContainer from "../containers/spotify-player.container";
+import SceneContainer from "../containers/scene.container";
+import ArtistListContainer from "../containers/artist-list.container";
+import ArtistInfoContainer from "../containers/artist-info.container";
 
 export class AppComponent extends React.Component {
 
@@ -15,10 +16,10 @@ export class AppComponent extends React.Component {
         return (
             <div className="app-container">
 				<SearchContainer />
-                <SceneComponent />
-                <SpotifyPlayerComponent />
-                <ArtistListComponent />
-                <ArtistInfoComponent />
+                <SceneContainer />
+                <SpotifyPlayerContainer />
+                <ArtistListContainer />
+                <ArtistInfoContainer />
             </div>
         )
     }

@@ -5,7 +5,8 @@ const initialState = {
 		id: '',
 		name: '',
 		imgUrl: '',
-		genres: []
+		genres: [],
+		popularity: 0
 	},
 	searchTerm: '',
 	visitedArtists: []
