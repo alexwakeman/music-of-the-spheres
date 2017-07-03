@@ -7,9 +7,10 @@ export function ArtistListComponent() {
 		visitedArtists = store.getState().visitedArtists;
 	});
 	let artists = visitedArtists.map((artist) => {
+		let href = '/?artist=' + artist.name;
 		return (
 			<div className="artist">
-				<a href='/?artist='{artist.name} id={artist.id} className="nav-artist-link">
+				<a href={href} id={artist.id} className="nav-artist-link">
 					<img className="picture" src={artist.imgUrl} />
 					<span className="name">{artist.name}</span>
 				</a>

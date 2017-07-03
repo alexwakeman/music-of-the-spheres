@@ -7,6 +7,7 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var karma = require('karma');
 var gutil = require('gutil');
+var babelify = require('babelify');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment

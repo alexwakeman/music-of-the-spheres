@@ -2,7 +2,9 @@ import {SEARCH_TERM_UPDATE, ARTIST_SEARCH_DONE} from '../actions'
 
 const initialState = {
 	artist: {
-		id: ''
+		id: '',
+		name: '',
+		imgUrl: ''
 	},
 	searchTerm: '',
 	visitedArtists: [],

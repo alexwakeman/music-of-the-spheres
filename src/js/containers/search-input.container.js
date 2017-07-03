@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { SearchInputComponent } from '../components/search-input.component';
+import { SearchInputComponent } from '../components/search-input.component.jsx';
 import {MusicDataService} from "../services/music-data.service";
 import {updateSearchTerm} from "../state/actions";
 
