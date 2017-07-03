@@ -6,7 +6,8 @@ const initialState = {
 		name: '',
 		imgUrl: '',
 		genres: [],
-		popularity: 0
+		popularity: 0,
+		images: []
 	},
 	searchTerm: '',
 	visitedArtists: []
@@ -25,7 +26,7 @@ const artistSearch = (state = initialState, action) => {
 				artist: action.data,
 				visitedArtists: [
 					...state.visitedArtists,
-					state.artist
+					action.data
 				]
 			};
 		default:

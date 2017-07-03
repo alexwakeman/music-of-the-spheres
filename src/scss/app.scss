@@ -33,7 +33,7 @@ body {
     text-shadow: rgb(0, 0, 0) 0px 1px 1px;
     font-size: 16px;
     font-weight: bold;
-    //background: url('../img/artist-nav-bg.png');
+    background: url('../img/artist-nav-bg.png');
 
     .search-input {
         top: 20px;
@@ -59,14 +59,17 @@ body {
     width: 300px;
     height: 100px;
 }
-.album-nav a {
-    color: rgb(240, 240, 240);
-    font-family: 'lucida grande', tahoma, Verdana, Arial;
-    text-shadow: rgb(0, 0, 0) 0px 1px 1px;
-    font-size: 12px;
-    font-weight: bold;
-    height: 13px;
-    letter-spacing: normal;
+.album-nav {
+    display: none;
+    a {
+        color: rgb(240, 240, 240);
+        font-family: 'lucida grande', tahoma, Verdana, Arial;
+        text-shadow: rgb(0, 0, 0) 0px 1px 1px;
+        font-size: 12px;
+        font-weight: bold;
+        height: 13px;
+        letter-spacing: normal;
+    }
 }
 .spotify-player-container .prev {
     width: 40px;
@@ -132,7 +135,6 @@ body {
     font-size: 16px;
     font-weight: bold;
     background: url('../img/artist-nav-bg.png');
-    display: none;
     position: absolute;
     top: 60px;
     left: 55px;
@@ -141,7 +143,6 @@ body {
 }
 
 .info-container.related-artist {
-    display: none;
     position: absolute;
     bottom: 150px;
     right: 0;
@@ -150,3 +151,12 @@ body {
     height: 140px;
 }
 
+.search-form-container {
+    button, input {
+        color: #000;
+    }
+}
+
+.artist-genre {
+    padding-right: 4px;
+}

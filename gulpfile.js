@@ -9,9 +9,7 @@ var karma = require('karma');
 var gutil = require('gutil');
 var babel = require('gulp-babel');
 var react = require('gulp-react');
-var watchify = require('watchify');
 var buffer = require('vinyl-buffer');
-var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var del = require('del');
 
@@ -27,6 +25,7 @@ gulp.task('app', function () {
 
 	return bundler.transform('babelify', {presets: ['es2015', 'react']})
 		.bundle()
+		.on('error', gutil.log)
 		.pipe(source('app.js'))
 		.pipe(gulp.dest('dist/js'));
 });

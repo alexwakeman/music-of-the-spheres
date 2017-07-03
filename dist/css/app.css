@@ -34,7 +34,8 @@ body {
   font-family: 'lucida grande', tahoma, Verdana, Arial;
   text-shadow: black 0px 1px 1px;
   font-size: 16px;
-  font-weight: bold; }
+  font-weight: bold;
+  background: url("../img/artist-nav-bg.png"); }
   .search-form-container .search-input {
     top: 20px;
     border: 1px solid black;
@@ -57,14 +58,16 @@ body {
   width: 300px;
   height: 100px; }
 
-.album-nav a {
-  color: #f0f0f0;
-  font-family: 'lucida grande', tahoma, Verdana, Arial;
-  text-shadow: black 0px 1px 1px;
-  font-size: 12px;
-  font-weight: bold;
-  height: 13px;
-  letter-spacing: normal; }
+.album-nav {
+  display: none; }
+  .album-nav a {
+    color: #f0f0f0;
+    font-family: 'lucida grande', tahoma, Verdana, Arial;
+    text-shadow: black 0px 1px 1px;
+    font-size: 12px;
+    font-weight: bold;
+    height: 13px;
+    letter-spacing: normal; }
 
 .spotify-player-container .prev {
   width: 40px;
@@ -124,7 +127,6 @@ body {
   font-size: 16px;
   font-weight: bold;
   background: url("../img/artist-nav-bg.png");
-  display: none;
   position: absolute;
   top: 60px;
   left: 55px;
@@ -132,10 +134,15 @@ body {
   width: 300px; }
 
 .info-container.related-artist {
-  display: none;
   position: absolute;
   bottom: 150px;
   right: 0;
   padding: 20px;
   width: 410px;
   height: 140px; }
+
+.search-form-container button, .search-form-container input {
+  color: #000; }
+
+.artist-genre {
+  padding-right: 4px; }
