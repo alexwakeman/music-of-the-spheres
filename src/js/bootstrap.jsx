@@ -1,5 +1,5 @@
 import * as React from 'react';
-import render from 'react-dom';
+import ReactDOM from 'react-dom';
 import {AppComponent} from './components/app.component.jsx';
 import {store} from './state/store';
 import { Provider } from 'react-redux';
@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 // cancel right click
 document.onmousedown = (event) => event.button !== 2;
 
-render(
+ReactDOM.render(
 	<Provider store={store}>
 		<AppComponent />
 	</Provider>,

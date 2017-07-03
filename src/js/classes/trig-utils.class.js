@@ -1,4 +1,4 @@
-import {Object3D, Quaternion} from 'THREE';
+import {Object3D, Quaternion} from 'three';
 
 export default class Utils {
     /**
@@ -8,7 +8,7 @@ export default class Utils {
      * @param c - value to clamp
      * @returns {number}
      */
-    static clamp(a, b, c): number {
+    static clamp(a, b, c) {
        return Math.max(b,Math.min(c,a));
     }
 
@@ -17,11 +17,11 @@ export default class Utils {
      * @param x
      * @returns {number}
      */
-    static sign(x: number): number {
+    static sign(x) {
         return x > 0 ? 1 : x < 0 ? -1 : 0;
     };
 
-    static renormalizeQuarternion(object: Object3D): Quaternion {
+    static renormalizeQuarternion(object) {
         let clone = object.clone();
 		let q = clone.quaternion;
 		let magnitude = Math.sqrt(Math.pow(q.w, 2) + Math.pow(q.x, 2) + Math.pow(q.y, 2) + Math.pow(q.z, 2));

@@ -4,10 +4,11 @@ const initialState = {
 	artist: {
 		id: '',
 		name: '',
-		imgUrl: ''
+		imgUrl: '',
+		genres: []
 	},
 	searchTerm: '',
-	visitedArtists: [],
+	visitedArtists: []
 };
 
 const artistSearch = (state = initialState, action) => {

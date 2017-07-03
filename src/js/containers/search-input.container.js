@@ -3,7 +3,7 @@ import { SearchInputComponent } from '../components/search-input.component.jsx';
 import {MusicDataService} from "../services/music-data.service";
 import {updateSearchTerm} from "../state/actions";
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	return {
 		searchTerm: state.searchTerm
 	}
@@ -14,15 +14,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		handleSearch: () => {
 			MusicDataService.getMainArtistData(ownProps.searchTerm);
 		},
-		handleSearchTermUpdate: (event) => {
-			dispatch(updateSearchTerm(event.target.value));
+		handleSearchTermUpdate: () => {
+			dispatch(updateSearchTerm(ownProps.searchTerm));
 		}
 	}
 };
 
-const SearchContainer = connect({
+const SearchContainer = connect(
 	mapStateToProps,
-	mapDispatchToProps
-})(SearchInputComponent);
+	mapDispatchToProps)(SearchInputComponent);
 
 export default SearchContainer;

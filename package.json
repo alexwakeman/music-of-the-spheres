@@ -30,6 +30,7 @@
     "gulp-babel": "^6.1.2",
     "gulp-concat": "^2.6.1",
     "gulp-connect": "^5.0.0",
+    "gulp-react": "^3.1.0",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-typescript": "^3.1.7",
@@ -40,6 +41,7 @@
     "karma-browserify": "^5.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.4",
+    "react-hot-loader": "^1.3.1",
     "ts-loader": "^2.1.0",
     "tsify": "^3.0.1",
     "typescript": "^2.3.4",
@@ -58,5 +60,5 @@
     "3D"
   ],
   "author": "Alex Wakeman",
-  "license": "MIT"
+  "license": "Copyright 2017 onwards Alex Wakeman"
 }
