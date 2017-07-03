@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { SearchInputComponent } from '../components/search-input.component';
-import { startSearch } from "../state/actions";
+import {MusicDataService} from "../services/music-data.service";
+import {updateSearchTerm} from "../state/actions";
 
 const mapStateToProps = state => {
 	return {
@@ -11,7 +12,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		handleSearch: () => {
-			dispatch(startSearch(ownProps.searchTerm))
+			MusicDataService.getMainArtistData(ownProps.searchTerm);
+		},
+		handleSearchTermUpdate: (event) => {
+			dispatch(updateSearchTerm(event.target.value));
 		}
 	}
 };

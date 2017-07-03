@@ -1,8 +1,12 @@
 import * as React from 'react';
+import {store} from '../state/store';
 
-export function ArtistListComponent({artistList}) {
-
-	let artists = artistList.map((artist) => {
+export function ArtistListComponent() {
+	let visitedArtists = store.getState().visitedArtists;
+	store.subscribe(() => {
+		visitedArtists = store.getState().visitedArtists;
+	});
+	let artists = visitedArtists.map((artist) => {
 		return (
 			<div className="artist">
 				<a href='/?artist='{artist.name} id={artist.id} className="nav-artist-link">

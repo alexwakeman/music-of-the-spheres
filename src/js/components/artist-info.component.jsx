@@ -1,6 +1,11 @@
 import * as React from 'react';
+import {store} from '../state/store';
 
-export function ArtistInfoComponent({artist}) {
+export function ArtistInfoComponent() {
+	let artist = store.getState().artist;
+	store.subscribe(() => {
+		artist = store.getState().artist;
+	});
 	const genres = artist.genres.map((genre) => {
 		return <span className="artist-genre">{genre}</span>
 	});

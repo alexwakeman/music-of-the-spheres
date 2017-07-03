@@ -1,17 +1,16 @@
-export const ARTIST_SEARCH_START = 'ARTIST_SEARCH_START';
 export const ARTIST_SEARCH_DONE = 'ARTIST_SEARCH_DONE';
-
-
-export function startSearch(searchTerm) {
-    return {
-        type: ARTIST_SEARCH_START,
-		searchTerm: searchTerm
-    }
-}
+export const SEARCH_TERM_UPDATE = 'SEARCH_TERM_UPDATE';
 
 export function searchDone(data) {
 	return {
-		type: ARTIST_SEARCH_START,
+		type: ARTIST_SEARCH_DONE,
 		data: data
+	}
+}
+
+export function updateSearchTerm(searchTerm) {
+	return {
+		type: SEARCH_TERM_UPDATE,
+		searchTerm: searchTerm
 	}
 }

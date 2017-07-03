@@ -1,26 +1,28 @@
-import {ARTIST_SEARCH_START, ARTIST_SEARCH_DONE} from '../actions'
+import {SEARCH_TERM_UPDATE, ARTIST_SEARCH_DONE} from '../actions'
 
 const initialState = {
-	artist: {},
+	artist: {
+		id: ''
+	},
 	searchTerm: '',
-	visitedArtists: []
+	visitedArtists: [],
 };
 
 const artistSearch = (state = initialState, action) => {
 	switch (action.type) {
-		case ARTIST_SEARCH_START:
+		case SEARCH_TERM_UPDATE:
 			return {
 				...state,
 				searchTerm: action.searchTerm,
-				visitedArtists: [
-					...state.visitedArtists,
-					state.artist
-				]
 			};
 		case ARTIST_SEARCH_DONE:
 			return {
 				...state,
-				artist: action.data
+				artist: action.data,
+				visitedArtists: [
+					...state.visitedArtists,
+					state.artist
+				]
 			};
 		default:
 			return state;

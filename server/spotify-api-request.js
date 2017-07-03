@@ -71,17 +71,4 @@ module.exports = class SpotifyRequests {
 			});
 		})
 	}
-	static getPlayer(artistId) {
-		return new Promise((resolve, reject) => {
-			let options = {
-				url: `https://open.spotify.com/embed?uri=spotify:artist:${artistId}`,
-			};
-			request(options, function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					return resolve(body);
-				}
-				reject();
-			});
-		})
-	}
 };

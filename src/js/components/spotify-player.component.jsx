@@ -1,12 +1,13 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import {store} from '../state/store';
 
-export function SpotifyPlayerComponent({embedUrl}) {
+export function SpotifyPlayerComponent() {
+	const embedUrl = 'https://open.spotify.com/embed/artist/';
+	let artistEmbedUrl = `${embedUrl}${store.getState().artist.id}`;
+	store.subscribe(() => {
+		artistEmbedUrl = `${embedUrl}${store.getState().artist.id}`;
+	});
     return (
-        <iframe src={embedUrl} width="300" height="80" />
+        <iframe src={artistEmbedUrl} width="300" height="80" />
     )
 }
-
-SpotifyPlayerComponent.propTypes = {
-	embedUrl: PropTypes.string
-};
