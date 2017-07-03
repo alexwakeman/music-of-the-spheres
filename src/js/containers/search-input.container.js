@@ -9,13 +9,14 @@ const mapStateToProps = (state) => {
 	}
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
 	return {
-		handleSearch: () => {
-			MusicDataService.getMainArtistData(ownProps.searchTerm);
+		handleSearch: (evt, searchTerm) => {
+			evt.preventDefault();
+			MusicDataService.getMainArtistData(searchTerm);
 		},
-		handleSearchTermUpdate: () => {
-			dispatch(updateSearchTerm(ownProps.searchTerm));
+		handleSearchTermUpdate: (evt) => {
+			dispatch(updateSearchTerm(evt.target.value));
 		}
 	}
 };
