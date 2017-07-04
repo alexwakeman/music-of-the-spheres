@@ -31,4 +31,16 @@ export default class Utils {
 		q.z /= magnitude;
 		return q;
     }
+
+    static getIntersectsFromMousePos(event, sceneGraph, threeScene) {
+		let intersects = [];
+		if (objects) {
+			let vector = new THREE.Vector3((event.clientX / window.innerWidth ) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1, 0.5);
+			threeScene.projector.unprojectVector(vector, PES.View.camera);
+			let raycaster = new THREE.Raycaster(PES.View.camera.position, vector.sub(PES.View.camera.position).normalize());
+			intersects = raycaster.intersectObjects(sceneGraph.children, true);
+		}
+
+		return intersects;
+	}
 }

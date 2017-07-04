@@ -104,18 +104,13 @@ PES.View = {
 	
 	startRelatedArtistSearch : function(selectedArtistSphere) {
 		var that = PES.View;
-		
+		var target = that.selectedArtistSphere.position.clone();
 		that.selectedArtistSphere = selectedArtistSphere;
 		that.clearGraph();
 		that.appendObjectsToScene(selectedArtistSphere);
+
 		that.setSingleQueryVariable(selectedArtistSphere.artistObj.name);
-		that.userInputElem.val(selectedArtistSphere.artistObj.name);
-		that.mainArtistInfoContainer.hide();
-		that.relatedArtistInfoContainer.hide();
-		that.playerContainer.hide();
-		
-		var target = that.selectedArtistSphere.position.clone();
-			
+
 		that.motionLab.addJob({
 			jobType: 'translate',
 			startPoint: target,
@@ -125,9 +120,7 @@ PES.View = {
 			duration: 2.0, // secs
 			callback: function() {
 				PES.View.clearGraph();
-				
 				PES.Functionality.runRelatedSearch(PES.View.selectedArtistSphere.artistObj);
-
 			}
 		});
 		
