@@ -9,19 +9,19 @@ import MotionLab from "./motion-lab.class";
 import {MusicDataService} from "../services/music-data.service";
 
 export default class ThreeScene {
-    renderer = new WebGLRenderer({antialias: true, alpha: true});
-    scene = new Scene();
-    camera = new PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000);
-    projector = new Projector();
-    graphContainer = new Object3D();
-    motionLab = new MotionLab();
-    container;
+	renderer = new WebGLRenderer({antialias: true, alpha: true});
+	scene = new Scene();
+	camera = new PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000);
+	projector = new Projector();
+	graphContainer = new Object3D();
+	motionLab = new MotionLab();
+	container;
 
 	cameraRotation = new Euler(0, 0, 0);
 	cameraLookAt = new Vector3(1, 1, 1);
-    cameraDistance = 3500;
+	cameraDistance = 3500;
 
-    colours = new Colours();
+	colours = new Colours();
 
 	t1 = 0.0; // old time
 	t2 = 0.0; // now time
@@ -41,7 +41,7 @@ export default class ThreeScene {
 	mainArtistSphere;
 	relatedArtistSpheres = [];
 
-    constructor(container) {
+	constructor(container) {
 		const artistQuery = decodeURIComponent(window.location.hash.replace('#', ''));
 
 		// attach to dom
@@ -63,7 +63,7 @@ export default class ThreeScene {
 		if (artistQuery) {
 			MusicDataService.getMainArtistData(artistQuery);
 		}
-    }
+	}
 
 	zoom(direction) {
 		switch (direction) {
@@ -94,7 +94,7 @@ export default class ThreeScene {
 			}
 		}
 	}
-	
+
 	onSceneMouseDrag(event) {
 		const dt = this.t2 - this.t1;
 		this.normalizedMousePos = new Vector2(
@@ -121,8 +121,8 @@ export default class ThreeScene {
 	}
 
 	composeScene(artist) {
-    	this.mainArtistSphere = this.createMainArtistSphere(artist);
-    	this.relatedArtistSpheres = this.createRelatedSpheres(artist);
+		this.mainArtistSphere = this.createMainArtistSphere(artist);
+		this.relatedArtistSpheres = this.createRelatedSpheres(artist);
 	}
 
 	createMainArtistSphere(artist) {
@@ -152,7 +152,7 @@ export default class ThreeScene {
 			let radius = relatedArtistObj.followers; // size of this sphere
 			let size = radius * 2;
 			let geometry = new SphereGeometry(size, 35, 35);
-			let sphere = new Mesh(geometry, new MeshLambertMaterial({ color: Colours.relatedArtist }));
+			let sphere = new Mesh(geometry, new MeshLambertMaterial({color: Colours.relatedArtist}));
 			relatedArtistObj.unitLength = 100;
 			relatedArtistObj.range = 50;
 			sphere.artistObj = relatedArtistObj;
