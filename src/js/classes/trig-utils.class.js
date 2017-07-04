@@ -1,4 +1,4 @@
-import {Object3D, Quaternion} from 'three';
+import {Line, LineBasicMaterial, MeshBasicMaterial, Geometry, TextGeometry, Vector3, MeshFaceMaterial} from 'three';
 
 export default class Utils {
     /**
@@ -42,5 +42,52 @@ export default class Utils {
 		}
 
 		return intersects;
+	}
+
+	static joinRelatedArtistSphereToMain(mainArtistSphere, relatedSphere, scenePosition) {
+		let material = new LineBasicMaterial({ color: Colours.relatedlineJoin });
+		let geometry = new Geometry();
+		let line;
+		geometry.vertices.push(scenePosition.clone());
+		geometry.vertices.push(relatedSphere.position.clone());
+		line = new Line(geometry, material);
+		mainArtistSphere.add(line);
+	}
+
+	static positionRelatedArtist(mainArtistSphere, relatedSphere, sphereFaceIndex) {
+		let mainArtistSphereFace = mainArtistSphere.geometry.faces[Math.round(sphereFaceIndex)].normal.clone();
+		relatedSphere.position = mainArtistSphereFace
+			.multiply(new Vector3(
+				relatedSphere.distance,
+				relatedSphere.distance,
+				relatedSphere.distance
+				)
+			);
+	}
+
+	static addText(label, size, sphere) {
+		let materialFront = new MeshBasicMaterial({color: PES.Colors.textOuter });
+		let materialSide = new MeshBasicMaterial({color: PES.Colors.textInner });
+		let materialArray = [materialFront, materialSide];
+		let textGeom = new TextGeometry(label,
+			{
+				size: size,
+				height: 4,
+				curveSegments: 5,
+				font: "helvetiker",
+				weight: "bold",
+				style: "normal",
+				bevelThickness: 0.5,
+				bevelSize: 1,
+				bevelEnabled: true,
+				material: 0,
+				extrudeMaterial: 1
+			});
+		let textMaterial = new MeshFaceMaterial(materialArray);
+		let textMesh = new Mesh(textGeom, textMaterial );
+		textMesh.geometry.computeBoundingBox();
+		textMesh.position.set(-size, sphere.radius * 2 + 20, 0); // underneath the sphere
+		textMesh.isText = true;
+		sphere.add(textMesh);
 	}
 }

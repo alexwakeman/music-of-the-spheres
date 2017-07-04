@@ -119,103 +119,6 @@ PES.Functionality = {
 		sphere.position = pos;
 	},
 
-	appendRelatedness: function() {
-
-		let that = PES.Functionality;
-		let relatedArtistObj = null;
-
-		for (let i = 0, len = that.relatedArtists.length; i < len; i++) {
-
-			relatedArtistObj = that.relatedArtists[i];
-
-			relatedArtistObj.yearsShared = that.calcRelatedness(that.artist, relatedArtistObj);
-		}
-
-		// equivalent to getting number of years shared
-		that.artist.yearsShared = that.calcRelatedness(that.artist, that.artist);
-	},
-
-	getRelatednessTotalsMinMax: function() {
-
-		let that = PES.Functionality;
-		let relatedArtistObj = null;
-		let totalYearsShared = 0;
-		let min = 0, max = 0;
-
-		for (let i = 0, len = that.relatedArtists.length; i < len; i++) {
-
-			relatedArtistObj = that.relatedArtists[i];
-
-			totalYearsShared += relatedArtistObj.yearsShared;
-
-			min = Math.min(min, relatedArtistObj.yearsShared);
-			max = Math.max(max, relatedArtistObj.yearsShared);
-		}
-
-		return {
-			totalYearsShared: totalYearsShared,
-			min: min,
-			max: max
-		}
-	},
-
-	calcRelatedness : function(mainArtist, comparisonArtistObj) {
-
-		let that = PES.Functionality;
-
-		// iterate over years_shared array
-		let totalYearsShared = 0,
-			yearsA = (mainArtist.hasOwnProperty('years_active') && mainArtist.years_active.length > 0) ? mainArtist.years_active : null,
-			yearsB = (comparisonArtistObj.hasOwnProperty('years_active') && comparisonArtistObj.years_active.length > 0) ? comparisonArtistObj.years_active : null,
-			startA, endA,
-			startB, endB,
-			rangeA, rangeB,
-			present = new Date().getFullYear();
-
-		if (yearsA && yearsB) {
-
-			for (let i = 0; i < yearsA.length; i++) {
-				rangeA = yearsA[i];
-				startA = rangeA.start;
-				endA = rangeA.hasOwnProperty('end') ? rangeA.end : present
-
-				for (let j = 0; j < yearsB.length; j++) {
-					rangeB = yearsB[j];
-					startB = rangeB.start;
-					endB = rangeB.hasOwnProperty('end') ? rangeB.end : present;
-					totalYearsShared += that.overlappingYears(startA, endA, startB, endB);
-				}
-			}
-		}
-		return totalYearsShared;
-	},
-
-	overlappingYears: function(startA, endA, startB, endB) {
-
-		let yearsShared = 0;
-		//debugger;
-		if (startA <= endB && startB <= endA) { // check if comparison dates are within bounds of main
-
-			if (startA >= startB && endA <= endB) { // A lies wholly within B
-				yearsShared = endA - startA;
-			}
-			else if (startA >= startB && endA > endB) { // A lies wholly within B
-				yearsShared = endB - startA;
-			}
-			else if (startB >= startA && endB <= endA) { // A starts after B
-				yearsShared = endB - startB;
-			}
-			else if (startB > startA && endB > endA) { // A starts after B
-				yearsShared = endA - startB;
-			}
-			else {
-				yearsShared = endA - startB;
-			}
-
-		}
-
-		return yearsShared;
-	},
 
 	joinRelatedArtistSphereToMain : function(sphere) {
 		let material = new THREE.LineBasicMaterial({
@@ -229,13 +132,14 @@ PES.Functionality = {
 		this.mainArtistSphere.add(line); // positioning is just easier if we attach to center sphere
 	},
 
-	renomralizeQuaternion: function(object3D) {
-		let q = object3D.quaternion;
+	renomralizeQuaternion: function(quaternion) {
+		let q = quaternion.clone();
 		let magnitude = Math.sqrt(Math.pow(q.w, 2) + Math.pow(q.x, 2) + Math.pow(q.y, 2) + Math.pow(q.z, 2));
 		q.w /= magnitude;
 		q.x /= magnitude;
 		q.y /= magnitude;
 		q.z /= magnitude;
+		return q;
 	},
 
 	addText : function(label, size, sphere) {

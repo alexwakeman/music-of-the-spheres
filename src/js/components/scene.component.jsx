@@ -6,16 +6,22 @@ import ThreeScene from "../classes/three-scene.class";
 export class SceneComponent extends React.Component {
 	artist;
 	sceneDom;
-	threeScene = new ThreeScene();
+	threeScene;
 
 	constructor() {
 		super();
-		this.assignMouseWheel();
 		this.artist = store.getState().artist;
 		store.subscribe(() => {
 			this.artist = store.getState().artist;
 			this.forceUpdate();
 		});
+		this.onClickHandler.bind(this);
+		this.onMouseHoverHandler.bind(this);
+		this.onMouseDragHandler.bind(this);
+		this.onMouseDownHandler.bind(this);
+		this.onMouseUpHandler.bind(this);
+		this.handleMouseWheel.bind(this);
+		this.onWindowResize.bind(this);
 	}
 
 	render() {
@@ -23,43 +29,55 @@ export class SceneComponent extends React.Component {
 			<div className="three-scene"
 				 ref={elem => this.sceneDom = elem}
 				 onClick={this.onClickHandler}
-				 onMouseMove={this.onMouseMoveHandler}
-				 onMouseDown={this.onMouseDownHandler}
-				 onMouseUp={this.onMouseUpHandler}
 			/>
 		)
 	}
 
 	componentDidMount() {
-		this.sceneDom.addEventListener('mousewheel', (event) => {
-			switch (TrigUtils.sign(event.wheelDeltaY)) {
-				case -1:
-					this.threeScene.zoom('out');
-					break;
-				case 1:
-					this.threeScene.zoom('in');
-					break;
-			}
-		}, true);
+		this.threeScene = new ThreeScene(this.sceneDom);
+		this.sceneDom.addEventListener('mousewheel', this.handleMouseWheel, true);
+		this.sceneDom.addEventListener('mousemove', this.onMouseHoverHandler, true);
+		this.sceneDom.addEventListener('mousedown', this.onMouseDownHandler, true);
+		this.sceneDom.addEventListener('mouseup', this.onMouseUpHandler, true);
+		window.addEventListener('resize', this.onWindowResize, false);
 	}
 
-	onClickHandler() {
-
+	onClickHandler(event) {
+		this.threeScene.onSceneMouseClick(event)
 	}
 
-	onMouseMoveHandler(event) {
-		this.threeScene.onSceneMouseMove(event);
+	onMouseHoverHandler(event) {
+		this.threeScene.onSceneMouseHover(event);
+	}
+
+	onMouseDragHandler(event) {
+		this.threeScene.onSceneMouseDrag(event);
 	}
 
 	onMouseDownHandler() {
-
+		this.sceneDom.removeEventListener('mousemove', this.onMouseHoverHandler);
+		this.sceneDom.addEventListener('mousemove', this.onMouseDragHandler, true);
 	}
 
 	onMouseUpHandler() {
-
+		this.sceneDom.removeEventListener('mousemove', this.onMouseDragHandler);
+		this.sceneDom.addEventListener('mousemove', this.onMouseHoverHandler, true);
 	}
 
-	assignMouseWheel() {
+	handleMouseWheel(event) {
+		switch (TrigUtils.sign(event.wheelDeltaY)) {
+			case -1:
+				this.threeScene.zoom('out');
+				break;
+			case 1:
+				this.threeScene.zoom('in');
+				break;
+		}
+	}
 
+	onWindowResize() {
+		this.threeScene.camera.aspect = window.innerWidth / window.innerHeight;
+		this.threeScene.updateProjectionMatrix();
+		this.threeScene.renderer.setSize(window.innerWidth, window.innerHeight);
 	}
 }

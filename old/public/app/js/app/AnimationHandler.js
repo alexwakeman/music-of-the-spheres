@@ -1,8 +1,8 @@
 // Planet Echo Spot global - should be changed to users app
+import {Spline} from "three";
 var PES = PES || {};
 
 // Designed to handle different common animation requirements (translation + transition/easing)
-// Uses separate easing library (JQuery easing)
 
 // pass an animation "job" to addJob(job) function, it will then
 PES.MotionLab = function() {
@@ -55,37 +55,22 @@ PES.MotionLab.prototype = {
 	},
 	
 	followPath: function() {
-		var that = this;
-		//that.tDiff = that.t2 - that.t1;
-		
-		//debugger;
-		
-		// t: current time, b: beginning value, c: change In value, d: duration
-		//var easedPoint = Easing.easeInQuad(that.job.currentTime, that.job.startPoint.x, that.job.endPoint.x, that.job.duration) / (that.job.endPoint.length() - that.job.startPoint.length());
-
-		
-		that.job.path = new THREE.Spline([
-			that.job.startPoint,
+		this.job.path = new Spline([
+			this.job.startPoint,
 			PES.View.camera.position.clone()
 		]);
 		
-		var p = that.job.path.getPoint(that.job.currentTime);
-		//var l = that.job.lookPath.getPoint(that.job.currentTime);
-		that.job.object3D.position.copy(p);
-		
-		that.job.currentTime += 0.01;
+		const p = this.job.path.getPoint(this.job.currentTime);
+		this.job.object3D.position.copy(p);
+		this.job.currentTime += 0.01;
 		PES.View.updateRotation();
-        //that.job.object3D.lookAt(l);
-		
 	},
 		
 	endAnimation: function() {
 		// TODO: if theres an animation in the stack, play it
-		var that = this;
-		that.job.jobTypeFunc = 'noop';
-		that.job.callback();
-		return;
-		
+		this.job.jobTypeFunc = 'noop';
+		this.job.callback();
+
 	},
 	
 	appendTranslateJob: function(job) {
