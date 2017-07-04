@@ -69,7 +69,6 @@ export class SceneComponent extends React.Component {
 
 	resize() {
 		this.scene.camera.aspect = window.innerWidth / window.innerHeight;
-		this.scene.updateProjectionMatrix();
 		this.scene.renderer.setSize(window.innerWidth, window.innerHeight);
 	}
 }

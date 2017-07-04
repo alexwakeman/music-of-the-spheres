@@ -46,8 +46,8 @@ class SceneUtils {
 	}
 
 	static createMainArtistSphere(artist) {
-		let radius = artist.popularity * 10;
-		let size = radius * 2;
+		let radius = 200;
+		let size = 200;
 		let geometry = new THREE.SphereGeometry(40, 35, 35);
 		let sphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.mainArtist}));
 		sphere.artistObj = artist;
@@ -65,11 +65,11 @@ class SceneUtils {
 		let relatedArtistObj;
 		let sphereFaceIndex = 0; // references a well spaced face of the main artist sphere
 		let facesCount = mainArtistSphere.geometry.faces.length - 1;
-		let step = facesCount / artist.related.length;
+		let step = Math.round(facesCount / 10 - 1);
 
-		for (let i = 0, len = artist.related.length; i < len; i++) {
+		for (let i = 0, len = 10; i < len; i++) {
 			relatedArtistObj = artist.related[i];
-			let radius = relatedArtistObj.followers; // size of this sphere
+			let radius = 200; //relatedArtistObj.followers.total; // size of this sphere
 			let size = radius * 2;
 			let geometry = new THREE.SphereGeometry(40, 35, 35);
 			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.relatedArtist}));
@@ -80,7 +80,7 @@ class SceneUtils {
 			relatedArtistSphere.isRelatedArtistSphere = true;
 			relatedArtistSphere.isSphere = true;
 			relatedArtistSphere.yearsShared = relatedArtistObj.yearsShared;
-			relatedArtistSphere.distance = 900; // will be union statistic
+			relatedArtistSphere.distance = 200; // will be union statistic
 			sphereFaceIndex += step;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
@@ -115,7 +115,7 @@ class SceneUtils {
 	static positionRelatedArtist(mainArtistSphere, relatedSphere, sphereFaceIndex) {
 		let mainArtistSphereFace = mainArtistSphere.geometry.faces[Math.round(sphereFaceIndex)].normal.clone();
 		relatedSphere.position
-			.set(mainArtistSphereFace.multiply(new THREE.Vector3(
+			.copy(mainArtistSphereFace.multiply(new THREE.Vector3(
 					relatedSphere.distance,
 					relatedSphere.distance,
 					relatedSphere.distance

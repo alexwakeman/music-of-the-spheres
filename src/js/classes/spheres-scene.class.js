@@ -49,7 +49,7 @@ export class SpheresScene {
 		this.camera.lookAt(this.scene.position);
 
 		SceneUtils.lighting(this.scene);
-		this.motionLab.init(this.renderer, this.scene, this.camera, this.updateRotation);
+		this.motionLab.init(this.renderer, this.scene, this.camera, this.updateRotation, this);
 
 		// check for query string
 		if (artistQuery) {
@@ -165,7 +165,7 @@ export class SpheresScene {
 		else if (!this.mousePosXIncreased && xMoreThanYMouse) {
 			this.cameraRotation.y -= this.speedY;
 		}
-		camQuaternionUpdate = SceneUtils.renomralizeQuaternion(this.camera.quaternion);
+		camQuaternionUpdate = SceneUtils.renormalizeQuaternion(this.camera);
 		camQuaternionUpdate.setFromEuler(this.cameraRotation);
 
 		this.camera.position.set(

@@ -2,19 +2,29 @@ import {Spline} from "three";
 export default class MotionLab {
     constructor() { }
 
-	init(renderer, scene, camera, defaultOp) {
+	init(renderer, scene, camera, defaultOp, spheresSceneInstance) {
 		this.renderer = renderer;
 		this.scene = scene;
 		this.camera = camera;
-		this.defaultOp = defaultOp;
+		this.spheresSceneInstance = spheresSceneInstance;
 		this.t1 = 0.0; // previous frame tick
 		this.t2 = 0.0; // current frame tick
+		this.job = {
+			jobType: 'default'
+		};
 		this.animate();
 	}
 
 	animate() {
 		this.t1 = this.t2;
 		this.t2 = performance.now();
+		switch (this.job.jobType) {
+			case 'translate':// requires a path and lookAt + object3D
+				this.appendTranslateJob(job);
+				break;
+			case 'default':
+				this.spheresSceneInstance.updateRotation();
+		}
 		this.renderer.render(this.scene, this.camera);
 		window.requestAnimationFrame(this.animate.bind(this));
 	}
@@ -25,8 +35,6 @@ export default class MotionLab {
 			case 'translate':// requires a path and lookAt + object3D
 				this.appendTranslateJob(job);
 				break;
-			case 'default':
-				this.defaultOp();
 		}
 	}
 
@@ -47,7 +55,7 @@ export default class MotionLab {
 	}
 
 	endAnimation() {
-		this.job.jobTypeFunc = 'default';
+		this.job.jobType = 'default';
 		this.job.callback && this.job.callback();
 	}
 
