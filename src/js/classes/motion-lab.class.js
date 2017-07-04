@@ -1,30 +1,46 @@
 import {Spline} from "three";
 export default class MotionLab {
-    constructor() {
-
-    }
-
-    animationTick() {
-        window.requestAnimationFrame(() => this.animationTick());
-    }
+    constructor() { }
 
 	t1 = 0.0; // previous frame tick
 	t2 = 0.0; // current frame tick
-	object = null;
-	startPoint = null; // vector of objects start position
-	job = {
-		jobTypeFunc: 'noop'
-	};
+	job;
+	renderer;
+	scene;
+	camera;
+	defaultOp;
+	init(renderer, scene, camera, defaultOp) {
+		this.renderer = renderer;
+		this.scene = scene;
+		this.camera = camera;
+		this.defaultOp = defaultOp;
+		this.animate();
+	}
 
-	processAnimation(t2) {
-		this.t2 = t2;
-		this[this.job.jobTypeFunc]();
+	animate() {
+		this.render();
+		window.requestAnimationFrame(this.animate);
+	}
+
+	render() {
 		this.t1 = this.t2;
+		this.t2 = performance.now();
+		this.renderer.render(this.scene, this.camera);
+	}
+
+	addJob(job) {
+		this.job = job;
+		switch (this.job.jobType) {
+			case 'translate':// requires a path and lookAt + object3D
+				this.appendTranslateJob(job);
+				break;
+			case 'default':
+				this.defaultOp();
+		}
 	}
 
 	translateTransitionObject() {
-		const isFinished = this.job.currentTime >= 1.0;
-
+		const isFinished = this.job.currentTime >= this.job.duration;
 		if (!isFinished) {
 			this.followPath();
 		}
@@ -34,22 +50,14 @@ export default class MotionLab {
 	}
 
 	followPath() {
-		// t: current time, b: beginning value, c: change In value, d: duration
-
-		this.job.path = new Spline([
-			this.job.startPoint,
-			this.job.endPoint
-		]);
-
 		const p = this.job.path.getPoint(this.job.currentTime);
 		this.job.object3D.position.copy(p);
 		this.job.currentTime += 0.01;
-		PES.View.updateRotation();
 	}
 
 	endAnimation() {
-		this.job.jobTypeFunc = 'noop';
-		this.job.callback();
+		this.job.jobTypeFunc = 'default';
+		this.job.callback && this.job.callback();
 	}
 
 	appendTranslateJob(job) {
@@ -61,17 +69,6 @@ export default class MotionLab {
 			job.endPoint
 		]);
         this.job = job;
-		this.job.jobTypeFunc = 'translateTransitionObject'; // triggers the start of the animation
-	}
-
-	addJob(job) {
-		this.job = job;
-		switch (this.job.jobType) {
-			case 'translate':// requires a path and lookAt + object3D
-				this.appendTranslateJob(job);
-				break;
-			default:
-				return false;
-		}
+		this.job['translateTransitionObject']();
 	}
 }

@@ -1,19 +1,19 @@
 import * as React from 'react';
 import {store} from '../state/store';
-import TrigUtils from "../classes/trig-utils.class";
-import ThreeScene from "../classes/three-scene.class";
+import {SceneUtils} from "../classes/scene-utils.class";
+import {SpheresScene} from "../classes/spheres-scene.class";
 
 export class SceneComponent extends React.Component {
 	artist;
 	sceneDom;
-	threeScene;
+	scene;
 
 	constructor() {
 		super();
 		this.artist = store.getState().artist;
 		store.subscribe(() => {
 			this.artist = store.getState().artist;
-			this.forceUpdate();
+			this.scene.composeScene(artist);
 		});
 		this.onClickHandler.bind(this);
 		this.onMouseHoverHandler.bind(this);
@@ -26,7 +26,7 @@ export class SceneComponent extends React.Component {
 
 	render() {
 		return (
-			<div className="three-scene"
+			<div className="spheres-scene"
 				 ref={elem => this.sceneDom = elem}
 				 onClick={this.onClickHandler}
 			/>
@@ -34,7 +34,7 @@ export class SceneComponent extends React.Component {
 	}
 
 	componentDidMount() {
-		this.threeScene = new ThreeScene(this.sceneDom);
+		this.scene = new SpheresScene(this.sceneDom);
 		this.sceneDom.addEventListener('mousewheel', this.handleMouseWheel, true);
 		this.sceneDom.addEventListener('mousemove', this.onMouseHoverHandler, true);
 		this.sceneDom.addEventListener('mousedown', this.onMouseDownHandler, true);
@@ -43,15 +43,15 @@ export class SceneComponent extends React.Component {
 	}
 
 	onClickHandler(event) {
-		this.threeScene.onSceneMouseClick(event)
+		this.scene.onSceneMouseClick(event)
 	}
 
 	onMouseHoverHandler(event) {
-		this.threeScene.onSceneMouseHover(event);
+		this.scene.onSceneMouseHover(event);
 	}
 
 	onMouseDragHandler(event) {
-		this.threeScene.onSceneMouseDrag(event);
+		this.scene.onSceneMouseDrag(event);
 	}
 
 	onMouseDownHandler() {
@@ -65,19 +65,19 @@ export class SceneComponent extends React.Component {
 	}
 
 	handleMouseWheel(event) {
-		switch (TrigUtils.sign(event.wheelDeltaY)) {
+		switch (SceneUtils.sign(event.wheelDeltaY)) {
 			case -1:
-				this.threeScene.zoom('out');
+				this.scene.zoom('out');
 				break;
 			case 1:
-				this.threeScene.zoom('in');
+				this.scene.zoom('in');
 				break;
 		}
 	}
 
 	onWindowResize() {
-		this.threeScene.camera.aspect = window.innerWidth / window.innerHeight;
-		this.threeScene.updateProjectionMatrix();
-		this.threeScene.renderer.setSize(window.innerWidth, window.innerHeight);
+		this.scene.camera.aspect = window.innerWidth / window.innerHeight;
+		this.scene.updateProjectionMatrix();
+		this.scene.renderer.setSize(window.innerWidth, window.innerHeight);
 	}
 }
