@@ -411,10 +411,10 @@ PES.View = {
 			}
 		}, true);
 		
-		window.addEventListener('resize', that.onWindowResize, false);
+		window.addEventListener('resize', this, false);
 	},
 	
-	onWindowResize: function() {
+	resize: function() {
 		var that = PES.View;
 		that.camera.aspect = window.innerWidth / window.innerHeight;
 		that.camera.updateProjectionMatrix();

@@ -2,30 +2,21 @@ import {Spline} from "three";
 export default class MotionLab {
     constructor() { }
 
-	t1 = 0.0; // previous frame tick
-	t2 = 0.0; // current frame tick
-	job;
-	renderer;
-	scene;
-	camera;
-	defaultOp;
 	init(renderer, scene, camera, defaultOp) {
 		this.renderer = renderer;
 		this.scene = scene;
 		this.camera = camera;
 		this.defaultOp = defaultOp;
+		this.t1 = 0.0; // previous frame tick
+		this.t2 = 0.0; // current frame tick
 		this.animate();
 	}
 
 	animate() {
-		this.render();
-		window.requestAnimationFrame(this.animate);
-	}
-
-	render() {
 		this.t1 = this.t2;
 		this.t2 = performance.now();
 		this.renderer.render(this.scene, this.camera);
+		window.requestAnimationFrame(this.animate.bind(this));
 	}
 
 	addJob(job) {

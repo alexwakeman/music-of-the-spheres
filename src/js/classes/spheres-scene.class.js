@@ -1,45 +1,40 @@
-import {
-	Euler, Object3D, PerspectiveCamera, Projector, Scene, Vector2,
-	Vector3,
-	WebGLRenderer
-} from "three";
+import * as THREE from "three";
 import {SceneUtils} from "./scene-utils.class";
-import Colours from "../config/colours.class";
+import {Colours} from "../config/colours";
 import MotionLab from "./motion-lab.class";
 import {MusicDataService} from "../services/music-data.service";
 
 export class SpheresScene {
-	renderer = new WebGLRenderer({antialias: true, alpha: true});
-	scene = new Scene();
-	camera = new PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000);
-	projector = new Projector();
-	graphContainer = new Object3D();
-	motionLab = new MotionLab();
-	container;
-
-	cameraRotation = new Euler(0, 0, 0);
-	cameraLookAt = new Vector3(1, 1, 1);
-	cameraDistance = 3500;
-
-	t1 = 0.0; // old time
-	t2 = 0.0; // now time
-
-	speedX = 0.005;
-	speedY = 0.005;
-	mousePosDiffX = 0.0;
-	mousePosDiffY = 0.0;
-	mousePosXIncreased = false;
-	mousePosYIncreased = false;
-	mouseIsOverRelated = false;
 	normalizedMousePos;
 	oldNormalizedMousePos;
 
 	artist;
 	mainArtistSphere;
-	relatedArtistSpheres = [];
 
 	constructor(container) {
 		const artistQuery = decodeURIComponent(window.location.hash.replace('#', ''));
+		SceneUtils.init();
+		this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+		this.scene = new THREE.Scene();
+		this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000);
+		this.graphContainer = new THREE.Object3D();
+		this.motionLab = new MotionLab();
+		this.cameraRotation = new THREE.Euler(0, 0, 0);
+		this.cameraLookAt = new THREE.Vector3(1, 1, 1);
+		this.cameraDistance = 3500;
+
+		this.t1 = 0.0; // old time
+		this.t2 = 0.0; // now time
+		this.speedX = 0.005;
+		this.speedY = 0.005;
+		this.mousePosDiffX = 0.0;
+		this.mousePosDiffY = 0.0;
+		this.mousePosXIncreased = false;
+		this.mousePosYIncreased = false;
+		this.raycaster = new THREE.Raycaster();
+		this.mouseVector = new THREE.Vector2();
+
+		this.relatedArtistSpheres = [];
 
 		// attach to dom
 		this.container = container;
@@ -47,14 +42,14 @@ export class SpheresScene {
 		this.renderer.domElement.id = 'renderer';
 		this.container.appendChild(this.renderer.domElement);
 
-		this.graphContainer.position = new Vector3(1, 5, 0);
+		this.graphContainer.position.set(1, 5, 0);
 		this.scene.add(this.graphContainer);
 		this.scene.add(this.camera);
-		this.camera.position = new Vector3(0, 250, this.cameraDistance);
+		this.camera.position.set(0, 250, this.cameraDistance);
 		this.camera.lookAt(this.scene.position);
 
 		SceneUtils.lighting(this.scene);
-		this.motionLab.init(this.renderer, this.updateRotation);
+		this.motionLab.init(this.renderer, this.scene, this.camera, this.updateRotation);
 
 		// check for query string
 		if (artistQuery) {
@@ -75,7 +70,8 @@ export class SpheresScene {
 
 	onSceneMouseHover(event) {
 		let selected;
-		const intersects = SceneUtils.getIntersectsFromMousePos(event, this.graphContainer, this.projector);
+		const intersects = SceneUtils.getIntersectsFromMousePos(event, this.graphContainer, this.raycaster,
+			this.mouseVector, this.camera, this.renderer);
 		this.mouseIsOverRelated = false;
 		this.graphContainer.traverse((obj) => {
 			if (obj.hasOwnProperty('isRelatedArtistSphere')) { // reset the related sphere to red
@@ -83,7 +79,7 @@ export class SpheresScene {
 			}
 		});
 
-		if (intersects.length > 0) { // mouse is over a Mesh
+		if (intersects.length) { // mouse is over a Mesh
 			this.mouseIsOverRelated = true;
 			selected = intersects[0].object;
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
@@ -94,7 +90,7 @@ export class SpheresScene {
 
 	onSceneMouseDrag(event) {
 		const dt = this.t2 - this.t1;
-		this.normalizedMousePos = new Vector2(
+		this.normalizedMousePos = new THREE.Vector2(
 			(event.clientX / window.innerWidth) * 2 - 1,
 			-(event.clientY / window.innerHeight) * 2 + 1);
 		this.mousePosXIncreased = (this.normalizedMousePos.x > this.oldNormalizedMousePos.x);
@@ -107,8 +103,8 @@ export class SpheresScene {
 	}
 
 	onSceneMouseClick(event) {
-		const intersects = SceneUtils.getIntersectsFromMousePos(event, this.graphContainer, this.projector);
-		this.mouseIsOverRelated = false;
+		const intersects = SceneUtils.getIntersectsFromMousePos(event, this.graphContainer, this.raycaster,
+			this.mouseVector, this.camera, this.renderer);
 		if (intersects.length) {
 			const selected = intersects[0].object;
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
@@ -172,10 +168,11 @@ export class SpheresScene {
 		camQuaternionUpdate = SceneUtils.renomralizeQuaternion(this.camera.quaternion);
 		camQuaternionUpdate.setFromEuler(this.cameraRotation);
 
-		this.camera.position = new Vector3(
+		this.camera.position.set(
 			camQuaternionUpdate.x * this.cameraDistance,
 			camQuaternionUpdate.y * this.cameraDistance,
-			camQuaternionUpdate.z * this.cameraDistance);
+			camQuaternionUpdate.z * this.cameraDistance
+		);
 		this.camera.lookAt(this.cameraLookAt);
 		// update rotation of text attached objects, to force them to look at camera
 		// this makes them readable

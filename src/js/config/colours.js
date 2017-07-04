@@ -1,12 +1,4 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
-var PES = PES || {};
-
-PES.Colors = {
+export const Colours = {
 	background: 0x003366,
 	relatedArtist: 0xcc3300,
 	relatedArtistHover: 0x99cc99,

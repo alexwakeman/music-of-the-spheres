@@ -1,9 +1,12 @@
-import {
-	Line, LineBasicMaterial, MeshBasicMaterial, Geometry, TextGeometry, Vector3, MeshFaceMaterial,
-	SphereGeometry, MeshLambertMaterial, Object3D, SpotLight
-} from 'three';
+import * as THREE from "three";
+import {Colours} from '../config/colours';
+let HELVETIKER;
 
-export class SceneUtils {
+class SceneUtils {
+	static init() {
+		const loader = new THREE.FontLoader();
+		loader.load('./js/fonts/helvetiker_regular.typeface.json', (font) => HELVETIKER = font);
+	}
 	/**
 	 *
 	 * @param a - min
@@ -24,7 +27,7 @@ export class SceneUtils {
 		return x > 0 ? 1 : x < 0 ? -1 : 0;
 	};
 
-	static renormalizeQuarternion(object) {
+	static renormalizeQuaternion(object) {
 		let clone = object.clone();
 		let q = clone.quaternion;
 		let magnitude = Math.sqrt(Math.pow(q.w, 2) + Math.pow(q.x, 2) + Math.pow(q.y, 2) + Math.pow(q.z, 2));
@@ -35,70 +38,18 @@ export class SceneUtils {
 		return q;
 	}
 
-	static getIntersectsFromMousePos(event, sceneGraph, threeScene) {
-		let intersects = [];
-		if (objects) {
-			let vector = new THREE.Vector3((event.clientX / window.innerWidth ) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-			threeScene.projector.unprojectVector(vector, PES.View.camera);
-			let raycaster = new THREE.Raycaster(PES.View.camera.position, vector.sub(PES.View.camera.position).normalize());
-			intersects = raycaster.intersectObjects(sceneGraph.children, true);
-		}
-
-		return intersects;
+	static getIntersectsFromMousePos(event, graph, raycaster, mouseVector, camera, renderer) {
+		mouseVector.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+		mouseVector.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+		raycaster.setFromCamera(mouseVector, camera);
+		return raycaster.intersectObjects(graph.children, true);
 	}
 
-	static joinRelatedArtistSphereToMain(mainArtistSphere, relatedSphere, scenePosition) {
-		let material = new LineBasicMaterial({color: Colours.relatedlineJoin});
-		let geometry = new Geometry();
-		let line;
-		geometry.vertices.push(scenePosition.clone());
-		geometry.vertices.push(relatedSphere.position.clone());
-		line = new Line(geometry, material);
-		mainArtistSphere.add(line);
-	}
-
-	static positionRelatedArtist(mainArtistSphere, relatedSphere, sphereFaceIndex) {
-		let mainArtistSphereFace = mainArtistSphere.geometry.faces[Math.round(sphereFaceIndex)].normal.clone();
-		relatedSphere.position = mainArtistSphereFace
-			.multiply(new Vector3(
-				relatedSphere.distance,
-				relatedSphere.distance,
-				relatedSphere.distance
-				)
-			);
-	}
-
-	static addText(label, size, sphere) {
-		let materialFront = new MeshBasicMaterial({color: PES.Colors.textOuter});
-		let materialSide = new MeshBasicMaterial({color: PES.Colors.textInner});
-		let materialArray = [materialFront, materialSide];
-		let textGeom = new TextGeometry(label,
-			{
-				size: size,
-				height: 4,
-				curveSegments: 5,
-				font: "helvetiker",
-				weight: "bold",
-				style: "normal",
-				bevelThickness: 0.5,
-				bevelSize: 1,
-				bevelEnabled: true,
-				material: 0,
-				extrudeMaterial: 1
-			});
-		let textMaterial = new MeshFaceMaterial(materialArray);
-		let textMesh = new Mesh(textGeom, textMaterial);
-		textMesh.geometry.computeBoundingBox();
-		textMesh.position.set(-size, sphere.radius * 2 + 20, 0); // underneath the sphere
-		textMesh.isText = true;
-		sphere.add(textMesh);
-	}
-
-	createMainArtistSphere(artist) {
+	static createMainArtistSphere(artist) {
 		let radius = artist.popularity * 10;
 		let size = radius * 2;
-		let geometry = new SphereGeometry(size, 35, 35);
-		let sphere = new Mesh(geometry, new MeshLambertMaterial({color: PES.Colors.mainArtist}));
+		let geometry = new THREE.SphereGeometry(40, 35, 35);
+		let sphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.mainArtist}));
 		sphere.artistObj = artist;
 		sphere.radius = radius;
 		sphere.isMainArtistSphere = true;
@@ -120,27 +71,27 @@ export class SceneUtils {
 			relatedArtistObj = artist.related[i];
 			let radius = relatedArtistObj.followers; // size of this sphere
 			let size = radius * 2;
-			let geometry = new SphereGeometry(size, 35, 35);
-			let sphere = new Mesh(geometry, new MeshLambertMaterial({color: Colours.relatedArtist}));
+			let geometry = new THREE.SphereGeometry(40, 35, 35);
+			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.relatedArtist}));
 			relatedArtistObj.unitLength = 100;
 			relatedArtistObj.range = 50;
-			sphere.artistObj = relatedArtistObj;
-			sphere.radius = radius;
-			sphere.isRelatedArtistSphere = true;
-			sphere.isSphere = true;
-			sphere.yearsShared = relatedArtistObj.yearsShared;
-			sphere.distance = 900; // will be union statistic
+			relatedArtistSphere.artistObj = relatedArtistObj;
+			relatedArtistSphere.radius = radius;
+			relatedArtistSphere.isRelatedArtistSphere = true;
+			relatedArtistSphere.isSphere = true;
+			relatedArtistSphere.yearsShared = relatedArtistObj.yearsShared;
+			relatedArtistSphere.distance = 900; // will be union statistic
 			sphereFaceIndex += step;
-			this.positionRelatedArtist(sphere, sphereFaceIndex);
-			this.joinRelatedArtistSphereToMain(sphere);
-			this.addText(relatedArtistObj.name, 20, sphere);
-			relatedArtistsSphereArray.push(sphere);
+			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
+			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
+			SceneUtils.addText(relatedArtistObj.name, 20, relatedArtistSphere);
+			relatedArtistsSphereArray.push(relatedArtistSphere);
 		}
 		return relatedArtistsSphereArray;
 	}
 
 	static appendObjectsToScene(graphContainer, sphere, sphereArray) {
-		const parent = new Object3D();
+		const parent = new THREE.Object3D();
 		parent.name = 'parent';
 		parent.add(sphere);
 		if (sphereArray) {
@@ -151,25 +102,60 @@ export class SceneUtils {
 		graphContainer.add(parent);
 	}
 
+	static joinRelatedArtistSphereToMain(mainArtistSphere, relatedSphere) {
+		let material = new THREE.LineBasicMaterial({color: Colours.relatedLineJoin});
+		let geometry = new THREE.Geometry();
+		let line;
+		geometry.vertices.push(new THREE.Vector3(0, 1, 0));
+		geometry.vertices.push(relatedSphere.position.clone());
+		line = new THREE.Line(geometry, material);
+		mainArtistSphere.add(line);
+	}
+
+	static positionRelatedArtist(mainArtistSphere, relatedSphere, sphereFaceIndex) {
+		let mainArtistSphereFace = mainArtistSphere.geometry.faces[Math.round(sphereFaceIndex)].normal.clone();
+		relatedSphere.position
+			.set(mainArtistSphereFace.multiply(new THREE.Vector3(
+					relatedSphere.distance,
+					relatedSphere.distance,
+					relatedSphere.distance
+				)
+			)
+		);
+	}
+
+	static addText(label, size, sphere) {
+		let textMesh;
+		let materialFront = new THREE.MeshBasicMaterial({color: Colours.textOuter});
+		let materialSide = new THREE.MeshBasicMaterial({color: Colours.textInner});
+		let materialArray = [materialFront, materialSide];
+		let textGeom = new THREE.TextGeometry(label, {
+			font: HELVETIKER,
+			size: 80,
+			height: 5,
+			curveSegments: 12,
+			bevelEnabled: true,
+			bevelThickness: 10,
+			bevelSize: 8,
+			bevelSegments: 5
+		});
+		textGeom.computeBoundingBox();
+		textGeom.computeVertexNormals();
+		textMesh = new THREE.Mesh(textGeom, materialArray);
+		textMesh.position.set(-size, sphere.radius * 2 + 20, 0); // underneath the sphere
+		textMesh.isText = true;
+		sphere.add(textMesh);
+	}
+
 	static lighting(scene) {
-		let liA = new SpotLight(0x777777);
-		liA.position.set(0, 0, 3000);
-		scene.add(liA);
-
-		liA = new SpotLight(0xEEEEEE);
-		liA.position.set(0, 0, -3000);
-		scene.add(liA);
-
-		liA = new SpotLight(0x777777);
-		liA.position.set(6000, 5000, -3000);
-		scene.add(liA);
-
-		liA = new SpotLight(0xEEEEEE);
-		liA.position.set(-6000, -6500, 3000);
-		scene.add(liA);
-
-		liA = new SpotLight(0x777777);
-		liA.position.set(0, 6500, 3000);
-		scene.add(liA);
+		let dirLight = new THREE.DirectionalLight(0xffffff, 0.125);
+		dirLight.position.set(0, 0, 1).normalize();
+		scene.add( dirLight );
+		let pointLight = new THREE.PointLight(0xffffff, 1.5);
+		pointLight.position.set(0, 100, 90);
+		pointLight.color.setHex(Colours.textOuter);
+		scene.add(pointLight);
 	}
 }
+
+export { SceneUtils }
