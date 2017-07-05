@@ -41,7 +41,7 @@ export class SceneComponent extends React.Component {
 	}
 
 	mousemove(event) {
-		if (this.mouseDown) {
+		if (this.mouseIsDown) {
 			this.scene.onSceneMouseDrag(event);
 		} else {
 			this.scene.onSceneMouseHover(event);

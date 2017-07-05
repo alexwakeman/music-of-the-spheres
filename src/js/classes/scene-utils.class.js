@@ -23,10 +23,10 @@ class SceneUtils {
 	 * @param x
 	 * @returns {number}
 	 */
-	static sign(x) {
-		return x > 0 ? 1 : x < 0 ? -1 : 0;
+	static sign(n) {
+		return n > 0 ? 1 : n < 0 ? -1 : 0;
 	};
-
+	
 	static renormalizeQuaternion(object) {
 		let clone = object.clone();
 		let q = clone.quaternion;
@@ -80,7 +80,7 @@ class SceneUtils {
 			relatedArtistSphere.isRelatedArtistSphere = true;
 			relatedArtistSphere.isSphere = true;
 			relatedArtistSphere.yearsShared = relatedArtistObj.yearsShared;
-			relatedArtistSphere.distance = 200; // will be union statistic
+			relatedArtistSphere.distance = 200; // will be genre union statistic
 			sphereFaceIndex += step;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
