@@ -104,6 +104,7 @@ export class SpheresScene {
 			Props.graphContainer.remove(parent);
 		}
 	}
+
 	zoom(direction) {
 		switch (direction) {
 			case 'in':
@@ -113,5 +114,11 @@ export class SpheresScene {
 				Props.cameraDistance += 35;
 				break;
 		}
+	}
+
+	updateCameraAspect() {
+		Props.camera.aspect = window.innerWidth / window.innerHeight;
+		Props.camera.updateProjectionMatrix();
+		Props.renderer.setSize(window.innerWidth, window.innerHeight);
 	}
 }
