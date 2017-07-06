@@ -45,12 +45,13 @@ body {
     }
 }
 
-.three-scene {
+.spheres-scene {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(100% - 150px);
+    height: calc(100% - 199px);
+    overflow: hidden;
 }
 .spotify-player-container {
     position: absolute;
@@ -116,10 +117,27 @@ body {
     font-weight: bold;
     background: url('../img/artist-nav-bg.png');
     position: absolute;
-    top: 60px;
-    left: 55px;
+    display: flex;
+    bottom: 155px;
+    left: 0;
     padding: 0;
-    width: 300px;
+    width: 100%;
+    overflow: hidden;
+
+    div {
+        padding: 0 20px;
+    }
+
+    .genres {
+        display: flex;
+        overflow: scroll;
+    }
+
+    .artist-genre {
+        background-color: #222222;
+        border-radius: 4px;
+        margin: 0 4px;
+    }
 }
 
 .info-container.related-artist {

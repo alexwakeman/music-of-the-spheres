@@ -9,10 +9,8 @@ export function ArtistInfoComponent({artist}) {
 	if (artist.id) {
 		artistInfoMarkup = (
 			<div className="info-container">
-				<ul>
-					<li>Popularity: {artist.popularity}</li>
-					<li>Genres: {genres}</li>
-				</ul>
+				<div>Popularity: {artist.popularity}</div>
+				<div className="genres">Genres: {genres}</div>
 			</div>
 		)
 	}

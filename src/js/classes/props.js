@@ -4,8 +4,8 @@ export const Props = {
 	scene: new THREE.Scene(),
 	camera: new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000),
 	graphContainer: new THREE.Object3D(),
-	cameraRotation: new THREE.Euler(0, 0, 0),
-	cameraLookAt: new THREE.Vector3(1, 1, 1),
+	cameraRotation: new THREE.Euler(0, -1, 0),
+	cameraLookAt: new THREE.Vector3(0, 0, 0),
 	cameraDistance: 3500,
 	
 	t1: 0.0, // old time
