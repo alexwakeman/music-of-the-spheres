@@ -1,9 +1,9 @@
-export const ARTIST_SEARCH_DONE = 'ARTIST_SEARCH_DONE';
+export const ARTIST_DATA_AVAILABLE = 'ARTIST_DATA_AVAILABLE';
 export const SEARCH_TERM_UPDATE = 'SEARCH_TERM_UPDATE';
 
-export function searchDone(data) {
+export function artistDataAvailable(data) {
 	return {
-		type: ARTIST_SEARCH_DONE,
+		type: ARTIST_DATA_AVAILABLE,
 		data: data
 	}
 }

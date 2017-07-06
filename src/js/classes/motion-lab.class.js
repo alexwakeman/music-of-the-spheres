@@ -1,41 +1,47 @@
-import {Spline} from "three";
-import {Props} from './props';
-import {SceneUtils} from "./scene-utils.class";
-
-const TRACK_CAM_TO_OBJ = 'TRACK_CAM_TO_OBJ';
-const DEFAULT = 'DEFAULT';
-
 /**
  * MotionLab deals with controlling each tick of the animation frame sequence
  * It's aim is to isolate code that happens over a number of frames (i.e. motion)
  */
-export default class MotionLab {
+import {Props} from './props';
+import {SceneUtils} from "./scene-utils.class";
+import * as THREE from "three";
+
+const TRACK_CAM_TO_OBJ = 'TRACK_CAM_TO_OBJ';
+const DEFAULT = 'DEFAULT';
+const defaultJob = {
+	type: DEFAULT
+};
+
+export class MotionLab {
     constructor() {
-		this.t1 = 0.0; // previous frame tick
-		this.t2 = 0.0; // current frame tick
-		this.job = {
-			type: DEFAULT
-		};
+		this.job = defaultJob;
 		this.animate();
 	}
 
 	animate() {
-		this.t1 = this.t2;
-		this.t2 = performance.now();
+		Props.t2 = Date.now();
+		this.processScene();
+		Props.renderer.render(Props.scene, Props.camera);
+		window.requestAnimationFrame(() => {
+			Props.t1 = Props.t2;
+			this.animate.call(this);
+		});
+	}
+
+	processScene() {
 		switch (this.job.type) {
 			case TRACK_CAM_TO_OBJ:
 				this.translateTransitionObject();
 				break;
 			case DEFAULT:
 				this.updateRotation();
+				break;
 		}
-		Props.renderer.render(Props.scene, Props.camera);
-		window.requestAnimationFrame(this.animate.bind(this));
 	}
 
 	translateTransitionObject() {
-		const isFinished = this.job.currentTime >= this.job.duration;
-		if (!isFinished) {
+		const shouldEnd = parseInt(this.job.currentTime) === 1;
+		if (!shouldEnd) {
 			this.followPath();
 		}
 		else {
@@ -50,29 +56,47 @@ export default class MotionLab {
 	}
 
 	endAnimation() {
-		this.job.jobType = DEFAULT;
 		this.job.callback && this.job.callback();
+		this.job = defaultJob;
 	}
 
 	trackObjectToCamera(object3D, callback) {
+    	this.job = {};
     	this.job.type = TRACK_CAM_TO_OBJ;
-		this.job.startTime = this.t2;
 		this.job.t = 0.0;
 		this.job.currentTime = 0.0;
 		this.job.callback = callback;
 		this.job.object3D = object3D;
-		this.job.path = new Spline([
+		this.job.ended = false;
+		this.job.path = new THREE.CatmullRomCurve3([
 			object3D.position.clone(),
-			this.spheresSceneInstance.camera.position.clone()
+			Props.camera.position.clone()
 		]);
 	}
-
 
 	/**
 	 * TODO: optimisation - only use updateRotation() if the mouse is dragging / speed is above default minimum
 	 * Rotation of camera is *inverse* of mouse movement direction
 	 */
 	updateRotation() {
+		const camQuaternionUpdate = this.getNewCameraDirection();
+		Props.camera.position.set(
+			camQuaternionUpdate.x * Props.cameraDistance,
+			camQuaternionUpdate.y * Props.cameraDistance,
+			camQuaternionUpdate.z * Props.cameraDistance
+		);
+		Props.camera.lookAt(Props.cameraLookAt);
+		// update rotation of text attached objects, to force them to look at camera
+		// this makes them readable
+		Props.graphContainer.traverse((obj) => {
+			if (obj.hasOwnProperty('isText')) {
+				obj.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
+			}
+		});
+		this.reduceSpeed(0.0005);
+	}
+
+	getNewCameraDirection() {
 		let camQuaternionUpdate;
 		const yMoreThanXMouse = Props.mousePosDiffY >= Props.mousePosDiffX;
 		const xMoreThanYMouse = !yMoreThanXMouse;
@@ -91,21 +115,7 @@ export default class MotionLab {
 		}
 		camQuaternionUpdate = SceneUtils.renormalizeQuaternion(Props.camera);
 		camQuaternionUpdate.setFromEuler(Props.cameraRotation);
-
-		Props.camera.position.set(
-			camQuaternionUpdate.x * Props.cameraDistance,
-			camQuaternionUpdate.y * Props.cameraDistance,
-			camQuaternionUpdate.z * Props.cameraDistance
-		);
-		Props.camera.lookAt(Props.cameraLookAt);
-		// update rotation of text attached objects, to force them to look at camera
-		// this makes them readable
-		Props.graphContainer.traverse((obj) => {
-			if (obj.hasOwnProperty('isText')) {
-				obj.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
-			}
-		});
-		this.reduceSpeed(0.0005);
+		return camQuaternionUpdate;
 	}
 
 	reduceSpeed(amount) {

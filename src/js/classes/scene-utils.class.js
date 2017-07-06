@@ -1,6 +1,12 @@
 import * as THREE from "three";
 import {Colours} from '../config/colours';
+import {Props} from "./props";
+import {Statistics} from "./statistics.class";
+
 let HELVETIKER;
+const MAIN_ARTIST_FONT_SIZE = 34;
+const RELATED_ARTIST_FONT_SIZE = 20;
+const TOTAL_RELATED = 10;
 
 class SceneUtils {
 	static init() {
@@ -38,53 +44,49 @@ class SceneUtils {
 		return q;
 	}
 
-	static getIntersectsFromMousePos(event, graph, raycaster, mouseVector, camera, renderer) {
-		mouseVector.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-		mouseVector.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-		raycaster.setFromCamera(mouseVector, camera);
+	static getIntersectsFromMousePos(graph, raycaster, camera) {
+		raycaster.setFromCamera(Props.mouseVector, camera);
 		return raycaster.intersectObjects(graph.children, true);
 	}
 
+	static getMouseVector(event) {
+		return new THREE.Vector2((event.clientX / Props.renderer.domElement.clientWidth) * 2 - 1,
+			-(event.clientY / Props.renderer.domElement.clientHeight) * 2 + 1);
+	}
+
 	static createMainArtistSphere(artist) {
-		let radius = 200;
-		let size = 200;
-		let geometry = new THREE.SphereGeometry(40, 35, 35);
+		let radius = Statistics.getArtistSphereSize(artist);
+		let geometry = new THREE.SphereGeometry(radius, 35, 35);
 		let sphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.mainArtist}));
 		sphere.artistObj = artist;
 		sphere.radius = radius;
 		sphere.isMainArtistSphere = true;
 		sphere.isSphere = true;
-		this.addText(artist.name, 34, sphere);
+		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere);
 		return sphere;
 	}
 
-	// TODO: get stats for relatedness (genres union measure) - distance from main artist
-	// TODO: clean up this code, remove the hard coded numbers
 	static createRelatedSpheres(artist, mainArtistSphere) {
 		let relatedArtistsSphereArray = [];
-		let relatedArtistObj;
-		let sphereFaceIndex = 0; // references a well spaced face of the main artist sphere
+		let relatedArtist;
+		let sphereFaceIndex = 0;
 		let facesCount = mainArtistSphere.geometry.faces.length - 1;
-		let step = Math.round(facesCount / 10 - 1);
+		let step = Math.round(facesCount / TOTAL_RELATED - 1);
 
-		for (let i = 0, len = 10; i < len; i++) {
-			relatedArtistObj = artist.related[i];
-			let radius = 200; //relatedArtistObj.followers.total; // size of this sphere
-			let size = radius * 2;
-			let geometry = new THREE.SphereGeometry(40, 35, 35);
+		for (let i = 0, len = Math.min(TOTAL_RELATED, artist.related.length); i < len; i++) {
+			relatedArtist = artist.related[i];
+			let radius = Statistics.getArtistSphereSize(relatedArtist);
+			let geometry = new THREE.SphereGeometry(radius, 35, 35);
 			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.relatedArtist}));
-			relatedArtistObj.unitLength = 100;
-			relatedArtistObj.range = 50;
-			relatedArtistSphere.artistObj = relatedArtistObj;
+			relatedArtistSphere.artistObj = relatedArtist;
 			relatedArtistSphere.radius = radius;
 			relatedArtistSphere.isRelatedArtistSphere = true;
 			relatedArtistSphere.isSphere = true;
-			relatedArtistSphere.yearsShared = relatedArtistObj.yearsShared;
-			relatedArtistSphere.distance = 200; // will be genre union statistic
+			relatedArtistSphere.distance = Statistics.getSharedGenreMetric(artist, relatedArtist);
 			sphereFaceIndex += step;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
-			SceneUtils.addText(relatedArtistObj.name, 20, relatedArtistSphere);
+			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere);
 			relatedArtistsSphereArray.push(relatedArtistSphere);
 		}
 		return relatedArtistsSphereArray;
@@ -106,14 +108,14 @@ class SceneUtils {
 		let material = new THREE.LineBasicMaterial({color: Colours.relatedLineJoin});
 		let geometry = new THREE.Geometry();
 		let line;
-		geometry.vertices.push(new THREE.Vector3(0, 1, 0));
+		geometry.vertices.push(new THREE.Vector3(0, 0, 0));
 		geometry.vertices.push(relatedSphere.position.clone());
 		line = new THREE.Line(geometry, material);
 		mainArtistSphere.add(line);
 	}
 
 	static positionRelatedArtist(mainArtistSphere, relatedSphere, sphereFaceIndex) {
-		let mainArtistSphereFace = mainArtistSphere.geometry.faces[Math.round(sphereFaceIndex)].normal.clone();
+		let mainArtistSphereFace = mainArtistSphere.geometry.faces[Math.floor(sphereFaceIndex)].normal.clone();
 		relatedSphere.position
 			.copy(mainArtistSphereFace.multiply(new THREE.Vector3(
 					relatedSphere.distance,
@@ -125,36 +127,32 @@ class SceneUtils {
 	}
 
 	static addText(label, size, sphere) {
-		let textMesh;
 		let materialFront = new THREE.MeshBasicMaterial({color: Colours.textOuter});
 		let materialSide = new THREE.MeshBasicMaterial({color: Colours.textInner});
 		let materialArray = [materialFront, materialSide];
 		let textGeom = new THREE.TextGeometry(label, {
 			font: HELVETIKER,
-			size: 80,
-			height: 5,
-			curveSegments: 12,
+			size: size,
+			curveSegments: 4,
 			bevelEnabled: true,
-			bevelThickness: 10,
-			bevelSize: 8,
-			bevelSegments: 5
+			bevelThickness: 2,
+			bevelSize: 1,
+			bevelSegments: 3
 		});
-		textGeom.computeBoundingBox();
-		textGeom.computeVertexNormals();
-		textMesh = new THREE.Mesh(textGeom, materialArray);
-		textMesh.position.set(-size, sphere.radius * 2 + 20, 0); // underneath the sphere
+		let textMesh = new THREE.Mesh(textGeom, materialArray);
 		textMesh.isText = true;
 		sphere.add(textMesh);
+		textMesh.position.set(-sphere.radius, -(sphere.radius + size * 2), -sphere.radius / 2);
 	}
 
-	static lighting(scene) {
-		let dirLight = new THREE.DirectionalLight(0xffffff, 0.125);
-		dirLight.position.set(0, 0, 1).normalize();
-		scene.add( dirLight );
-		let pointLight = new THREE.PointLight(0xffffff, 1.5);
-		pointLight.position.set(0, 100, 90);
-		pointLight.color.setHex(Colours.textOuter);
-		scene.add(pointLight);
+	static lighting() {
+		let lightA = new THREE.DirectionalLight(0xffffff, 1.725);
+		let lightB = new THREE.DirectionalLight(0xffffff, 1.5);
+		lightA.position.setX(500);
+		lightB.position.setY(-800);
+		lightB.position.setX(-500);
+		Props.scene.add(lightA);
+		Props.scene.add(lightB);
 	}
 }
 

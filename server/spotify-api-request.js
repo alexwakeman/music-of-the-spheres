@@ -8,6 +8,12 @@ module.exports = class SpotifyRequests {
 			.then((artistObj) => SpotifyRequests.getAlbums(apiToken, artistObj))
 			.then((artistObj) => SpotifyRequests.getReleated(apiToken, artistObj));
 	}
+	static fetchArtist(apiToken, artistId) {
+		return SpotifyRequests
+			.getArtist(apiToken, artistId)
+			.then((artistObj) => SpotifyRequests.getAlbums(apiToken, artistObj))
+			.then((artistObj) => SpotifyRequests.getReleated(apiToken, artistObj));
+	}
 	static search(apiToken, artistName) {
 		return new Promise((resolve, reject) => {
 			let options = {
@@ -24,6 +30,23 @@ module.exports = class SpotifyRequests {
 					} else {
 						return resolve({}); // resolve with empty object if no matching artist was found on Spotify
 					}
+				}
+				reject();
+			});
+		});
+	}
+	static getArtist(apiToken, artistId) {
+		return new Promise((resolve, reject) => {
+			let options = {
+				url: `${apiAddress}/artists/${artistId}`,
+				headers: {
+					'Authorization': 'Bearer ' + apiToken
+				}
+			};
+			request(options, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					const artist = JSON.parse(body);
+					return resolve(artist);
 				}
 				reject();
 			});

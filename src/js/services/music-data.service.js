@@ -1,15 +1,22 @@
 import {store} from '../state/store';
-import {searchDone} from "../state/actions";
+import {artistDataAvailable} from "../state/actions";
 
 export class MusicDataService {
-	static getMainArtistData(artistName) {
+	static search(artistName) {
 		let searchURL = '/api/search/' + encodeURIComponent(artistName);
 		return window.fetch(searchURL, {
 			credentials: "same-origin"
 		})
 		.then((data) => data.json())
-		.then((json) => {
-			return store.dispatch(searchDone(json));
-		});
+		.then((json) => store.dispatch(artistDataAvailable(json)));
+	}
+
+	static getArtist(artistId) {
+		let artistURL = '/api/artist/' + artistId;
+		return window.fetch(artistURL, {
+			credentials: "same-origin"
+		})
+		.then((data) => data.json())
+		.then((json) => store.dispatch(artistDataAvailable(json)));
 	}
 }

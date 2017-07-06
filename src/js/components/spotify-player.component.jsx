@@ -6,12 +6,8 @@ export function SpotifyPlayerComponent({artist}) {
 	let iFrameMarkup = '';
 	if (artist.id) {
 		iFrameMarkup = (
-			<div id="spotify-player">
+			<div className="spotify-player">
 				<iframe src={artistEmbedUrl} width="300" height="80" />
-				<div className="album-nav">
-					<a href="#">Prev</a>
-					<a href="#">Next</a>
-				</div>
 			</div>
 		)
 	}

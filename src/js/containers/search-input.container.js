@@ -11,9 +11,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		handleSearch: (evt, searchTerm) => {
+		handleSearch: (evt, artistName) => {
 			evt.preventDefault();
-			MusicDataService.getMainArtistData(searchTerm);
+			MusicDataService.search(artistName);
 		},
 		handleSearchTermUpdate: (evt) => {
 			dispatch(updateSearchTerm(evt.target.value));

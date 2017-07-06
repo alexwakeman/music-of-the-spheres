@@ -1,7 +1,6 @@
-import * as THREE from "three";
 import {SceneUtils} from "./scene-utils.class";
 import {Colours} from "../config/colours";
-import MotionLab from "./motion-lab.class";
+import {MotionLab} from "./motion-lab.class";
 import {MusicDataService} from "../services/music-data.service";
 import {Props} from './props';
 
@@ -31,16 +30,25 @@ export class SpheresScene {
 		SceneUtils.lighting(Props.scene);
 
 		// check for query string
-		const artistQuery = decodeURIComponent(window.location.hash.replace('#', ''));
-		if (artistQuery) {
-			MusicDataService.getMainArtistData(artistQuery);
+		const artistId = decodeURIComponent(window.location.hash.replace('#', ''));
+		if (artistId) {
+			MusicDataService.getArtist(artistId);
 		}
+	}
+
+	composeScene(artist) {
+		this.clearGraph();
+		window.location.hash = encodeURIComponent(artist.id);
+		Props.mainArtistSphere = SceneUtils.createMainArtistSphere(artist);
+		Props.relatedArtistSpheres = SceneUtils.createRelatedSpheres(artist, Props.mainArtistSphere);
+		SceneUtils.appendObjectsToScene(Props.graphContainer, Props.mainArtistSphere, Props.relatedArtistSpheres);
 	}
 
 	onSceneMouseHover(event) {
 		let selected;
-		const intersects = SceneUtils.getIntersectsFromMousePos(event, Props.graphContainer, Props.raycaster,
-			Props.mouseVector, Props.camera, Props.renderer);
+		let intersects;
+		Props.mouseVector = SceneUtils.getMouseVector(event);
+		intersects = SceneUtils.getIntersectsFromMousePos(Props.graphContainer, Props.raycaster, Props.camera);
 		Props.mouseIsOverRelated = false;
 		Props.graphContainer.traverse((obj) => {
 			if (obj.hasOwnProperty('isRelatedArtistSphere')) { // reset the related sphere to red
@@ -55,53 +63,45 @@ export class SpheresScene {
 				selected.material.color.setHex(Colours.relatedArtistHover);
 			}
 		}
+		Props.oldMouseVector = Props.mouseVector;
 	}
 
 	onSceneMouseDrag(event) {
 		const dt = Props.t2 - Props.t1;
-		Props.normalizedMousePos = new THREE.Vector2(
-			(event.clientX / window.innerWidth) * 2 - 1,
-			-(event.clientY / window.innerHeight) * 2 + 1);
-		Props.mousePosXIncreased = (Props.normalizedMousePos.x > Props.oldNormalizedMousePos.x);
-		Props.mousePosYIncreased = (Props.normalizedMousePos.y > Props.oldNormalizedMousePos.y);
-		Props.mousePosDiffX = Math.abs(Math.abs(Props.normalizedMousePos.x) - Math.abs(Props.oldNormalizedMousePos.x));
-		Props.mousePosDiffY = Math.abs(Math.abs(Props.normalizedMousePos.y) - Math.abs(Props.oldNormalizedMousePos.y));
+		Props.mouseVector = SceneUtils.getMouseVector(event);
+		Props.mousePosXIncreased = (Props.mouseVector.x > Props.oldMouseVector.x);
+		Props.mousePosYIncreased = (Props.mouseVector.y > Props.oldMouseVector.y);
+		Props.mousePosDiffX = Math.abs(Math.abs(Props.mouseVector.x) - Math.abs(Props.oldMouseVector.x));
+		Props.mousePosDiffY = Math.abs(Math.abs(Props.mouseVector.y) - Math.abs(Props.oldMouseVector.y));
 		Props.speedX = ((1 + Props.mousePosDiffX) / dt);
 		Props.speedY = ((1 + Props.mousePosDiffY) / dt);
-		Props.oldNormalizedMousePos = Props.normalizedMousePos;
+		Props.oldMouseVector = Props.mouseVector;
 	}
 
 	onSceneMouseClick(event) {
-		const intersects = SceneUtils.getIntersectsFromMousePos(event, Props.graphContainer, Props.raycaster,
-			Props.mouseVector, Props.camera, Props.renderer);
+		Props.mouseVector = SceneUtils.getMouseVector(event);
+		let intersects = SceneUtils.getIntersectsFromMousePos(Props.graphContainer, Props.raycaster, Props.camera);
 		if (intersects.length) {
 			const selected = intersects[0].object;
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
-				this.startRelatedArtistSearch(selected);
+				this.getRelatedArtist(selected);
 			}
 		}
 	}
 
-	composeScene(artist) {
-		Props.mainArtistSphere = SceneUtils.createMainArtistSphere(artist);
-		Props.relatedArtistSpheres = SceneUtils.createRelatedSpheres(artist, Props.mainArtistSphere);
-		SceneUtils.appendObjectsToScene(Props.graphContainer, Props.mainArtistSphere, Props.relatedArtistSpheres);
-	}
-
-	startRelatedArtistSearch(selectedSphere) {
+	getRelatedArtist(selectedSphere) {
 		this.clearGraph();
 		SceneUtils.appendObjectsToScene(Props.graphContainer, selectedSphere);
 		this.motionLab.trackObjectToCamera(selectedSphere, () => {
 			this.clearGraph();
-			MusicDataService.getMainArtistData(selectedSphere.artistObj.name);
-			window.location.hash = encodeURIComponent(selectedSphere.artistObj.name);
+			MusicDataService.getArtist(selectedSphere.artistObj.id);
 		});
 	}
 
 	clearGraph() {
-		const oldParent = Props.graphContainer.getObjectByName('parent');
-		if (!oldParent) {
-			Props.graphContainer.remove(oldParent);
+		const parent = Props.graphContainer.getObjectByName('parent');
+		if (parent) {
+			Props.graphContainer.remove(parent);
 		}
 	}
 	zoom(direction) {

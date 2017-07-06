@@ -7,7 +7,7 @@ export class SceneComponent extends React.Component {
 	constructor() {
 		super();
 		this.artist = store.getState().artist;
-		this.mouseDown = false;
+		this.mouseIsDown = false;
 	}
 
 	render() {
@@ -49,11 +49,11 @@ export class SceneComponent extends React.Component {
 	}
 
 	mousedown() {
-		this.scene.mouseIsDown = true;
+		this.mouseIsDown = true;
 	}
 
 	mouseup() {
-		this.scene.mouseIsDown = false;
+		this.mouseIsDown = false;
 	}
 
 	mousewheel(event) {

@@ -47,6 +47,18 @@ router.route('/api/search/:artist')
 			.catch(() => res.status(401).json({error: 'Could not get Spotify API data.'}));
 	});
 
+router.route('/api/artist/:artistId')
+	.get((req, res) => {
+		let sess = req.session;
+		let artistId = req.params.artistId;
+		let token = sess.user.access_token;
+		SpotifyRequests.fetchArtist(token, artistId)
+			.then((artistData) => {
+				res.json(artistData);
+			})
+			.catch(() => res.status(401).json({error: 'Could not get Spotify API data.'}));
+	});
+
 
 app.use(router);
 app.listen(3000, () => console.log('App listening on port 3000!'));
