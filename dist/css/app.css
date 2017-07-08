@@ -70,41 +70,47 @@ body {
   overflow-y: auto;
   overflow-x: auto;
   background: url("../img/artist-nav-bg.png"); }
-
-.artist-navigation .artist {
-  width: 210px;
-  height: 150px;
-  padding: 20px;
-  box-sizing: border-box;
-  text-align: center;
-  position: relative;
-  float: left; }
-
-.artist-navigation .artist img.picture {
-  width: 100px;
-  height: 100px; }
-
-.artist-navigation .artist span.name {
-  width: 100%;
-  height: 30px;
-  display: block; }
-
-.artist-navigation .artist a {
-  color: #f0f0f0;
-  font-family: 'lucida grande', tahoma, Verdana, Arial;
-  text-shadow: black 0px 1px 1px;
-  font-size: 16px;
-  font-weight: bold;
-  height: 13px;
-  letter-spacing: normal;
-  text-decoration: none; }
+  .artist-navigation .artist {
+    display: flex;
+    width: 210px;
+    height: 150px;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    float: left;
+    justify-content: center;
+    flex-flow: column; }
+    .artist-navigation .artist a {
+      display: flex;
+      flex-flow: column;
+      height: 100%;
+      color: #f0f0f0;
+      font-family: 'lucida grande', tahoma, Verdana, Arial;
+      text-shadow: black 0px 1px 1px;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: normal;
+      text-decoration: none; }
+    .artist-navigation .artist .picture {
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 78px;
+      height: 78px;
+      background-size: cover;
+      background-position: 50%;
+      align-self: center; }
+    .artist-navigation .artist span.name {
+      width: 100%;
+      height: 30px;
+      display: block; }
 
 .info-container {
   color: #f0f0f0;
   font-family: 'lucida grande', tahoma, Verdana, Arial;
   text-shadow: black 0px 1px 1px;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
   background: url("../img/artist-nav-bg.png");
   position: absolute;
   display: flex;
@@ -114,13 +120,25 @@ body {
   width: 100%; }
   .info-container div {
     padding: 0 20px; }
+  .info-container .title {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 2px 6px;
+    margin: 4px; }
   .info-container .genres {
     display: flex;
     overflow: scroll; }
-  .info-container .artist-genre {
-    background-color: #222222;
+  .info-container .pill {
+    background-color: #ff4400;
     border-radius: 4px;
-    margin: 0 4px; }
+    white-space: nowrap;
+    padding: 2px 6px;
+    display: block;
+    position: relative;
+    margin: 4px; }
+  .info-container .popularity {
+    display: flex;
+    white-space: nowrap; }
 
 .info-container.related-artist {
   position: absolute;
