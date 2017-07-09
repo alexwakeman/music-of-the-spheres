@@ -92,15 +92,16 @@ body {
       font-weight: bold;
       letter-spacing: normal;
       text-decoration: none; }
-    .artist-navigation .artist .picture {
-      left: 0;
-      top: 0;
-      bottom: 0;
+    .artist-navigation .artist .picture-holder {
       width: 78px;
       height: 78px;
-      background-size: cover;
-      background-position: 50%;
       align-self: center; }
+    .artist-navigation .artist .picture {
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      background-position: center;
+      background-size: cover; }
     .artist-navigation .artist span.name {
       width: 100%;
       height: 30px;

@@ -10,7 +10,9 @@ export function ArtistListComponent({visitedArtists, handleGetArtist}) {
 			<div className="artist" key={artist.id}>
 				<a href={href} id={artist.id} className="nav-artist-link"
 				   onClick={(event) => { handleGetArtist(event, artist.id) }}>
-					<div className="picture" style={imgStyle} />
+					<div className="picture-holder">
+						<div className="picture" style={imgStyle} />
+					</div>
 					<span className="name">{artist.name}</span>
 				</a>
 			</div>
