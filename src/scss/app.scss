@@ -51,6 +51,19 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    &.grab {
+        cursor: -moz-grab;
+        cursor: -webkit-grab;
+        cursor: grab;
+    }
+    &.grabbed {
+        cursor: -moz-grabbing;
+        cursor: -webkit-grabbing;
+        cursor: grabbing;
+    }
+    &.pointer {
+        cursor: pointer;
+    }
 }
 .spotify-player-container {
     position: absolute;

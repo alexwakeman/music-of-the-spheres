@@ -50,6 +50,16 @@ body {
   left: 0;
   width: 100%;
   height: 100%; }
+  .spheres-scene.grab {
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    cursor: grab; }
+  .spheres-scene.grabbed {
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+    cursor: grabbing; }
+  .spheres-scene.pointer {
+    cursor: pointer; }
 
 .spotify-player-container {
   position: absolute;

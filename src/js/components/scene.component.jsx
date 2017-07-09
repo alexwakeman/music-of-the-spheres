@@ -24,7 +24,7 @@ export class SceneComponent extends React.Component {
 
 	componentDidMount() {
 		this.scene = new SpheresScene(this.sceneDom);
-		this.sceneDom.addEventListener('contextmenu', event => event.preventDefault()); // rmeove right click
+		this.sceneDom.addEventListener('contextmenu', event => event.preventDefault()); // remove right click
 		this.sceneDom.addEventListener('click', this, true);
 		this.sceneDom.addEventListener('mousewheel', this, true);
 		this.sceneDom.addEventListener('mousemove', this, true);
@@ -46,11 +46,19 @@ export class SceneComponent extends React.Component {
 	}
 
 	mousemove(event) {
+		let isOverRelated = false;
+		this.sceneDom.className = 'spheres-scene grab';
 		if (this.mouseIsDown) {
 			this.isDragging = true;
 			this.scene.onSceneMouseDrag(event);
 		} else {
-			this.scene.onSceneMouseHover(event);
+			isOverRelated = this.scene.onSceneMouseHover(event);
+		}
+		if (isOverRelated && !this.isDragging) {
+			this.sceneDom.className = 'spheres-scene pointer';
+		}
+		if (this.isDragging) {
+			this.sceneDom.className = 'spheres-scene grabbed';
 		}
 	}
 
@@ -59,6 +67,7 @@ export class SceneComponent extends React.Component {
 	}
 
 	mouseup() {
+		this.sceneDom.className = 'spheres-scene grab';
 		window.setTimeout(() => {
 			this.mouseIsDown = false;
 		}, 100);

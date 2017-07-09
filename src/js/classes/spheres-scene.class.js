@@ -47,6 +47,7 @@ export class SpheresScene {
 	onSceneMouseHover(event) {
 		let selected;
 		let intersects;
+		let isOverRelated = false;
 		Props.mouseVector = SceneUtils.getMouseVector(event);
 		intersects = SceneUtils.getIntersectsFromMousePos(Props.graphContainer, Props.raycaster, Props.camera);
 		Props.mouseIsOverRelated = false;
@@ -60,10 +61,12 @@ export class SpheresScene {
 			Props.mouseIsOverRelated = true;
 			selected = intersects[0].object;
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
+				isOverRelated = true;
 				selected.material.color.setHex(Colours.relatedArtistHover);
 			}
 		}
 		Props.oldMouseVector = Props.mouseVector;
+		return isOverRelated;
 	}
 
 	onSceneMouseDrag(event) {
