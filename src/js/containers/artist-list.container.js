@@ -8,15 +8,7 @@ const mapStateToProps = (state) => {
 	}
 };
 
-const mapDispatchToProps = () => {
-	return {
-		handleGetArtist: (evt, artistId) => {
-			evt.preventDefault();
-			MusicDataService.getArtist(artistId);
-		},
-	}
-};
 
-const ArtistListContainer = connect(mapStateToProps, mapDispatchToProps)(ArtistListComponent);
+const ArtistListContainer = connect(mapStateToProps)(ArtistListComponent);
 
 export default ArtistListContainer;

@@ -11,14 +11,8 @@ export class SceneComponent extends React.Component {
 	}
 
 	render() {
-		const markup = <div className="spheres-scene"
-							ref={elem => this.sceneDom = elem}/>;
-		if (this.sceneDom) {
-			this.initScene();
-		}
-
 		return (
-			<div>{markup}</div>
+			<div className="spheres-scene" ref={elem => this.sceneDom = elem}/>
 		)
 	}
 
@@ -27,6 +21,10 @@ export class SceneComponent extends React.Component {
 			this.scene = new SpheresScene(this.sceneDom);
 			this.initScene();
 		});
+	}
+
+	componentDidUpdate() {
+		this.initScene();
 	}
 
 	initScene() {
@@ -48,6 +46,7 @@ export class SceneComponent extends React.Component {
 	}
 
 	click(event) {
+		this.sceneDom.className = 'spheres-scene grab';
 		if (!this.isDragging) {
 			this.scene.onSceneMouseClick(event);
 		} else {
@@ -77,10 +76,7 @@ export class SceneComponent extends React.Component {
 	}
 
 	mouseup() {
-		this.sceneDom.className = 'spheres-scene grab';
-		window.setTimeout(() => {
-			this.mouseIsDown = false;
-		}, 100);
+		this.mouseIsDown = false;
 	}
 
 	mousewheel(event) {
