@@ -50,9 +50,9 @@ router.route('/api/search/:artist')
 router.route('/api/artist/:artistId')
 	.get((req, res) => {
 		let sess = req.session;
-		let artistId = req.params.artistId;
+		let id = req.params.artistId;
 		let token = sess.user.access_token;
-		SpotifyRequests.fetchArtist(token, artistId)
+		SpotifyRequests.fetchArtist(token, id)
 			.then((artistData) => {
 				res.json(artistData);
 			})

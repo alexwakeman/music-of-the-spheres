@@ -1,0 +1,11 @@
+@mixin gradientBG {
+    background: #000033; /* Old browsers */
+    background: -moz-linear-gradient(top, #000033 9%, #003366 20%, #99cc99 50%, #006666 76%, #1b1b1b 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(9%,#000033), color-stop(20%,#003366), color-stop(50%,#99cc99), color-stop(76%,#006666), color-stop(100%,#1b1b1b)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #000033 9%,#003366 20%,#99cc99 50%,#006666 76%,#1b1b1b 100%); /* Chrome10+,Safari5.1+ */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}

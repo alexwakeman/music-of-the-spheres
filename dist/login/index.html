@@ -3,11 +3,20 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Login to Spotify</title>
+	<link rel="stylesheet" href="./app/css/normalize.css">
+	<link rel="stylesheet" href="./app/css/main.css">
+	<link rel="stylesheet" href="./app/css/app.css">
 </head>
 <body>
-	<button type="button" class="login">Login now</button>
+<div class="login">
+	<div class="btn-container">
+		<img src="./app/img/spotify-connect.png">
+		<button type="button" class="login-btn">Login<br /></button>
+	</div>
+</div>
+
 <script>
-	let loginBtn = document.querySelector('button.login');
+	let loginBtn = document.querySelector('.login-btn');
 	loginBtn.addEventListener('click', () => {
 		self.location = '/auth';
 	});
