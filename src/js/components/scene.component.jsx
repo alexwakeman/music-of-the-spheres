@@ -11,19 +11,26 @@ export class SceneComponent extends React.Component {
 	}
 
 	render() {
-		const { artist } = this.props;
-		if (artist.id) {
-			this.scene.composeScene(artist);
+		const markup = <div className="spheres-scene"
+							ref={elem => this.sceneDom = elem}/>;
+		if (this.sceneDom) {
+			this.initScene();
 		}
+
 		return (
-			<div className="spheres-scene"
-				 ref={elem => this.sceneDom = elem}
-			/>
+			<div>{markup}</div>
 		)
 	}
 
 	componentDidMount() {
-		this.scene = new SpheresScene(this.sceneDom);
+		SceneUtils.init().then(() => { // load the font first (async)
+			this.scene = new SpheresScene(this.sceneDom);
+			this.initScene();
+		});
+	}
+
+	initScene() {
+		const { artist } = this.props;
 		this.sceneDom.addEventListener('contextmenu', event => event.preventDefault()); // remove right click
 		this.sceneDom.addEventListener('click', this, true);
 		this.sceneDom.addEventListener('mousewheel', this, true);
@@ -31,6 +38,9 @@ export class SceneComponent extends React.Component {
 		this.sceneDom.addEventListener('mousedown', this, true);
 		this.sceneDom.addEventListener('mouseup', this, true);
 		window.addEventListener('resize', this, false);
+		if (artist.id) {
+			this.scene.composeScene(artist);
+		}
 	}
 
 	handleEvent(event) {

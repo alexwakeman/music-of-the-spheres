@@ -10,8 +10,13 @@ const TOTAL_RELATED = 10;
 
 class SceneUtils {
 	static init() {
-		const loader = new THREE.FontLoader();
-		loader.load('./js/fonts/helvetiker_regular.typeface.json', (font) => HELVETIKER = font);
+		return new Promise((resolve, reject) => {
+			const loader = new THREE.FontLoader();
+			loader.load('./js/fonts/helvetiker_regular.typeface.json', (font) => {
+				HELVETIKER = font;
+				resolve();
+			}, ()=>{}, reject);
+		});
 	}
 	/**
 	 *

@@ -12,7 +12,6 @@ import {Props} from './props';
  */
 export class SpheresScene {
 	constructor(container) {
-		SceneUtils.init();
 		this.motionLab = new MotionLab();
 
 		// attach to dom
