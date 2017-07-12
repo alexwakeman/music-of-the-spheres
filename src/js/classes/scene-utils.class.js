@@ -151,8 +151,8 @@ class SceneUtils {
 	}
 
 	static lighting() {
-		let lightA = new THREE.DirectionalLight(0xffffff, 1.725);
-		let lightB = new THREE.DirectionalLight(0xffffff, 1.5);
+		let lightA = new THREE.DirectionalLight(0xcccccc, 1.725);
+		let lightB = new THREE.DirectionalLight(0xcccccc, 1.5);
 		lightA.position.setX(500);
 		lightB.position.setY(-800);
 		lightB.position.setX(-500);

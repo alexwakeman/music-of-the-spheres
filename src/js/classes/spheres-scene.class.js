@@ -1,15 +1,17 @@
-import {SceneUtils} from "./scene-utils.class";
-import {Colours} from "../config/colours";
-import {MotionLab} from "./motion-lab.class";
-import {MusicDataService} from "../services/music-data.service";
-import {Props} from './props';
-
 /**
  * SpheresScene is designed to handle adding and removing entities from the scene,
  * and handling events.
  *
  * It aims to deal not with changes over time, only immediate changes in one frame.
  */
+import {SceneUtils} from "./scene-utils.class";
+import {Colours} from "../config/colours";
+import {MotionLab} from "./motion-lab.class";
+import {MusicDataService} from "../services/music-data.service";
+import {Props} from './props';
+import {store} from '../state/store';
+import {relatedClick} from "../state/actions";
+
 export class SpheresScene {
 	constructor(container) {
 		this.motionLab = new MotionLab();
@@ -86,6 +88,7 @@ export class SpheresScene {
 		if (intersects.length) {
 			const selected = intersects[0].object;
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
+				store.dispatch(relatedClick());
 				this.getRelatedArtist(selected);
 			}
 		}

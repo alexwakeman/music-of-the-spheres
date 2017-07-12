@@ -4,6 +4,10 @@
     @include gradientBG;
 }
 
+.hidden {
+    display: none;
+}
+
 .search-form-container {
     position: absolute;
     top: 0;

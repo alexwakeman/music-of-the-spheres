@@ -29,8 +29,9 @@ export class ArtistListComponent extends React.Component {
 				</div>
 			)
 		});
+		const classes = this.props.isHidden ? 'hidden artist-navigation' : 'artist-navigation';
 		return (
-			<div className="artist-navigation">
+			<div className={classes}>
 				{artists}
 			</div>
 		)

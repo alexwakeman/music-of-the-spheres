@@ -1,4 +1,4 @@
-import {SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE} from '../actions'
+import {SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE, RELATED_CLICK} from '../actions'
 let initialState = sessionStorage.getItem('state');
 
 if (!initialState) {
@@ -12,7 +12,8 @@ if (!initialState) {
 			images: []
 		},
 		searchTerm: '',
-		visitedArtists: []
+		visitedArtists: [],
+		hideInfo: true
 	};
 } else {
 	initialState = JSON.parse(sessionStorage.getItem('state'));
@@ -40,11 +41,18 @@ const artistSearch = (state = initialState, action) => {
 						...visitedArtists,
 					],
 					searchTerm: action.data.name,
+					hideInfo: false
 				};
 			} else {
 				console.warn('No API data available for given artist. Need to refresh API session?');
 				newState = state;
 			}
+			break;
+		case RELATED_CLICK:
+			newState = {
+				...state,
+				hideInfo: true
+			};
 			break;
 		default:
 			newState = state;

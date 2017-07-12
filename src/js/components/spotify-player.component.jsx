@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export function SpotifyPlayerComponent({artist}) {
+export function SpotifyPlayerComponent({artist, isHidden}) {
 	const embedUrl = 'https://open.spotify.com/embed/artist/';
 	const artistEmbedUrl = `${embedUrl}${artist.id}`;
 	let iFrameMarkup = '';
@@ -11,8 +11,9 @@ export function SpotifyPlayerComponent({artist}) {
 			</div>
 		)
 	}
+	const classes = isHidden ? 'hidden spotify-player-container' : 'spotify-player-container';
 	return (
-		<div className="spotify-player-container">
+		<div className={classes}>
 			{iFrameMarkup}
 		</div>
 	)

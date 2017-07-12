@@ -13,6 +13,9 @@
   left: 0;
   top: 0; }
 
+.hidden {
+  display: none; }
+
 .search-form-container {
   position: absolute;
   top: 0;

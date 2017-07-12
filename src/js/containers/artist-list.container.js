@@ -4,7 +4,8 @@ import {MusicDataService} from "../services/music-data.service";
 
 const mapStateToProps = (state) => {
 	return {
-		visitedArtists: state.visitedArtists
+		visitedArtists: state.visitedArtists,
+		isHidden: state.hideInfo
 	}
 };
 

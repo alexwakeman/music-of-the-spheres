@@ -2,6 +2,7 @@ import * as React from 'react';
 import {store} from '../state/store';
 import {SceneUtils} from "../classes/scene-utils.class";
 import {SpheresScene} from "../classes/spheres-scene.class";
+import {relatedClick} from "../state/actions";
 
 export class SceneComponent extends React.Component {
 	constructor() {

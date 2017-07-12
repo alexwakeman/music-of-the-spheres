@@ -3,7 +3,8 @@ import {SpotifyPlayerComponent} from "../components/spotify-player.component";
 
 const mapStateToProps = (state) => {
 	return {
-		artist: state.artist
+		artist: state.artist,
+		isHidden: state.hideInfo
 	}
 };
 
