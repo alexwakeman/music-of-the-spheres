@@ -5,8 +5,7 @@ import { updateSearchTerm } from '../state/actions';
 
 const mapStateToProps = (state) => {
 	return {
-		searchTerm: state.searchTerm,
-		isHidden: state.hideInfo
+		searchTerm: state.searchTerm
 	}
 };
 

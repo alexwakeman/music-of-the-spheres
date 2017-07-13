@@ -1,6 +1,5 @@
 const DISTANCE_SCALAR = 50;
 const SIZE_SCALAR = 1.5;
-import {SceneUtils} from './scene-utils.class';
 
 export class Statistics {
     static getArtistSphereSize(artist) {

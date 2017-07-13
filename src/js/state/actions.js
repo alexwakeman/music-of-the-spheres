@@ -1,6 +1,8 @@
 export const ARTIST_DATA_AVAILABLE = 'ARTIST_DATA_AVAILABLE';
 export const SEARCH_TERM_UPDATE = 'SEARCH_TERM_UPDATE';
 export const RELATED_CLICK = 'RELATED_CLICK';
+export const SHOW_RELATED = 'SHOW_RELATED';
+export const HIDE_RELATED = 'HIDE_RELATED';
 
 export function artistDataAvailable(data) {
 	return {
@@ -19,5 +21,19 @@ export function updateSearchTerm(searchTerm) {
 export function relatedClick() {
 	return {
 		type: RELATED_CLICK
+	}
+}
+
+export function showRelated(relatedArtist) {
+	return {
+		type: SHOW_RELATED,
+		data: relatedArtist
+	}
+}
+
+export function hideRelated() {
+	return {
+		type: HIDE_RELATED,
+		data: null
 	}
 }

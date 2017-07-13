@@ -5,6 +5,7 @@ import SpotifyPlayerContainer from "../containers/spotify-player.container";
 import SceneContainer from "../containers/scene.container";
 import ArtistListContainer from "../containers/artist-list.container";
 import ArtistInfoContainer from "../containers/artist-info.container";
+import RelatedArtistInfoContainer from "../containers/related-artist-info.container";
 
 export class AppComponent extends React.Component {
 
@@ -16,10 +17,11 @@ export class AppComponent extends React.Component {
         return (
             <div className="app-container">
 				<SearchContainer />
-                <SceneContainer />
                 <SpotifyPlayerContainer />
-                <ArtistListContainer />
+                <SceneContainer />
+                <RelatedArtistInfoContainer />
                 <ArtistInfoContainer />
+                <ArtistListContainer />
             </div>
         )
     }

@@ -10,7 +10,7 @@ import {MotionLab} from "./motion-lab.class";
 import {MusicDataService} from "../services/music-data.service";
 import {Props} from './props';
 import {store} from '../state/store';
-import {relatedClick} from "../state/actions";
+import {hideRelated, relatedClick, showRelated} from "../state/actions";
 
 export class SpheresScene {
 	constructor(container) {
@@ -62,9 +62,14 @@ export class SpheresScene {
 			Props.mouseIsOverRelated = true;
 			selected = intersects[0].object;
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
+				store.dispatch(showRelated(selected.artistObj));
 				isOverRelated = true;
 				selected.material.color.setHex(Colours.relatedArtistHover);
+			} else {
+				store.dispatch(hideRelated());
 			}
+		} else {
+			store.dispatch(hideRelated());
 		}
 		Props.oldMouseVector = Props.mouseVector;
 		return isOverRelated;

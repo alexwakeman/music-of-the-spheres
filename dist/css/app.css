@@ -141,10 +141,13 @@
   background-color: rgba(0, 0, 51, 0.11);
   position: absolute;
   display: flex;
-  bottom: 155px;
   left: 0;
   padding: 0;
   width: 100%; }
+  .info-container.main {
+    bottom: 155px; }
+  .info-container.related {
+    bottom: 196px; }
   .info-container div {
     padding: 0 20px; }
   .info-container .title {
@@ -154,7 +157,7 @@
     margin: 4px; }
   .info-container .genres {
     display: flex;
-    overflow: scroll; }
+    overflow: hidden; }
   .info-container .pill {
     background-color: #ff4400;
     border-radius: 4px;
@@ -167,13 +170,21 @@
     display: flex;
     white-space: nowrap; }
 
-.info-container.related-artist {
+.artist-name-tag {
   position: absolute;
-  bottom: 150px;
-  right: 0;
-  padding: 20px;
-  width: 410px;
-  height: 140px; }
+  left: 20px;
+  border: 1px solid #000;
+  padding: 9px;
+  border-bottom: 0;
+  color: #f0f0f0;
+  font-family: 'lucida grande', tahoma, Verdana, Arial;
+  text-shadow: black 0px 1px 1px;
+  font-size: 14px;
+  background-color: rgba(0, 0, 51, 0.11); }
+  .artist-name-tag.related {
+    bottom: 232px; }
+  .artist-name-tag.main {
+    bottom: 132px; }
 
 .artist-genre {
   padding-right: 4px; }

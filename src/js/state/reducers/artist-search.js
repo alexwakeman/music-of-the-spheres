@@ -1,4 +1,4 @@
-import {SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE, RELATED_CLICK} from '../actions'
+import {SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE, RELATED_CLICK, SHOW_RELATED, HIDE_RELATED} from '../actions'
 let initialState = sessionStorage.getItem('state');
 
 if (!initialState) {
@@ -13,7 +13,14 @@ if (!initialState) {
 		},
 		searchTerm: '',
 		visitedArtists: [],
-		hideInfo: true
+		hideInfo: true,
+			relatedArtist: {
+				genres: [],
+				popularity: 0,
+				id: '',
+				name: ''
+			},
+		showRelated: false
 	};
 } else {
 	initialState = JSON.parse(sessionStorage.getItem('state'));
@@ -52,6 +59,25 @@ const artistSearch = (state = initialState, action) => {
 			newState = {
 				...state,
 				hideInfo: true
+			};
+			break;
+		case SHOW_RELATED:
+			newState = {
+				...state,
+				relatedArtist: action.data,
+				showRelated: true
+			};
+			break;
+		case HIDE_RELATED:
+			newState = {
+				...state,
+				relatedArtist: {
+					genres: [],
+					popularity: 0,
+					id: '',
+					name: ''
+				},
+				showRelated: false
 			};
 			break;
 		default:
