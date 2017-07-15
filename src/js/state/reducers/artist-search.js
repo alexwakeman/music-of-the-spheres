@@ -1,25 +1,21 @@
 import {SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE, RELATED_CLICK, SHOW_RELATED, HIDE_RELATED} from '../actions'
 let initialState = sessionStorage.getItem('state');
+const emptyArtist = {
+	id: '',
+	name: '',
+	imgUrl: '',
+	genres: [],
+	popularity: 0,
+	images: []
+}
 
 if (!initialState) {
 	initialState = {
-		artist: {
-			id: '',
-			name: '',
-			imgUrl: '',
-			genres: [],
-			popularity: 0,
-			images: []
-		},
+		artist: emptyArtist,
 		searchTerm: '',
 		visitedArtists: [],
 		hideInfo: true,
-			relatedArtist: {
-				genres: [],
-				popularity: 0,
-				id: '',
-				name: ''
-			},
+		relatedArtist: emptyArtist,
 		showRelated: false
 	};
 } else {
@@ -48,7 +44,11 @@ const artistSearch = (state = initialState, action) => {
 						...visitedArtists,
 					],
 					searchTerm: action.data.name,
-					hideInfo: false
+					hideInfo: false,
+					hideRelated: true,
+					relatedArtist: {
+						...emptyArtist
+					}
 				};
 			} else {
 				console.warn('No API data available for given artist. Need to refresh API session?');
@@ -65,19 +65,16 @@ const artistSearch = (state = initialState, action) => {
 			newState = {
 				...state,
 				relatedArtist: action.data,
-				showRelated: true
+				hideRelated: false
 			};
 			break;
 		case HIDE_RELATED:
 			newState = {
 				...state,
 				relatedArtist: {
-					genres: [],
-					popularity: 0,
-					id: '',
-					name: ''
+					...emptyArtist
 				},
-				showRelated: false
+				hideRelated: true
 			};
 			break;
 		default:

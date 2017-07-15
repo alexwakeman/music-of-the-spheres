@@ -17,8 +17,8 @@ export class AppComponent extends React.Component {
         return (
             <div className="app-container">
 				<SearchContainer />
-                <SpotifyPlayerContainer />
                 <SceneContainer />
+                <SpotifyPlayerContainer />
                 <RelatedArtistInfoContainer />
                 <ArtistInfoContainer />
                 <ArtistListContainer />

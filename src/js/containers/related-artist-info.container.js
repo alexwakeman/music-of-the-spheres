@@ -4,7 +4,8 @@ import {RelatedArtistInfoComponent} from '../components/related-artist-info.comp
 const mapStateToProps = (state) => {
 	return {
 		relatedArtist: state.relatedArtist,
-		showRelated: state.showRelated
+		hideRelated: state.hideRelated,
+		hideInfo: state.hideInfo
 	}
 };
 

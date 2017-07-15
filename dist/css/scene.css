@@ -141,15 +141,16 @@
   background-color: rgba(0, 0, 51, 0.11);
   position: absolute;
   display: flex;
-  left: 0;
-  padding: 0;
-  width: 100%; }
+  padding: 0; }
   .info-container.main {
-    bottom: 155px; }
+    bottom: 195px;
+    width: 100%;
+    left: 0; }
   .info-container.related {
-    bottom: 196px; }
-  .info-container div {
-    padding: 0 20px; }
+    bottom: 240px;
+    border: 1px solid black;
+    width: 250px;
+    flex-direction: column; }
   .info-container .title {
     font-size: 16px;
     font-weight: bold;
@@ -157,7 +158,8 @@
     margin: 4px; }
   .info-container .genres {
     display: flex;
-    overflow: hidden; }
+    overflow: hidden;
+    margin-left: 10px; }
   .info-container .pill {
     background-color: #ff4400;
     border-radius: 4px;
@@ -168,23 +170,25 @@
     margin: 4px; }
   .info-container .popularity {
     display: flex;
-    white-space: nowrap; }
+    white-space: nowrap;
+    margin-left: 10px; }
 
 .artist-name-tag {
   position: absolute;
   left: 20px;
   border: 1px solid #000;
   padding: 9px;
-  border-bottom: 0;
   color: #f0f0f0;
   font-family: 'lucida grande', tahoma, Verdana, Arial;
   text-shadow: black 0px 1px 1px;
   font-size: 14px;
   background-color: rgba(0, 0, 51, 0.11); }
   .artist-name-tag.related {
-    bottom: 232px; }
+    bottom: 69px;
+    border-bottom: 0; }
   .artist-name-tag.main {
-    bottom: 132px; }
+    bottom: -39px;
+    border-top: 0; }
 
 .artist-genre {
   padding-right: 4px; }

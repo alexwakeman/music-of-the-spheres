@@ -6,13 +6,10 @@ export function ArtistInfoComponent({artist, isHidden}) {
 	});
 	const classes = isHidden ? 'hidden info-container main' : 'info-container main';
 	return (
-		<div>
-			<div className="artist-name-tag main"><span className="title">{artist.name}</span></div>
-			<div className={classes}>
-				<div className="popularity"><span className="title">Popularity:</span> <span className="pill">{artist.popularity}</span></div>
-				<div className="genres">{genres}</div>
-			</div>
+		<div className={classes}>
+			<div className="artist-name-tag main">{artist.name}</div>
+			<div className="popularity"><span className="title">Popularity:</span> <span className="pill">{artist.popularity}</span></div>
+			<div className="genres">{genres}</div>
 		</div>
-
 	)
 }
