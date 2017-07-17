@@ -83,11 +83,13 @@ class SceneUtils {
 			let radius = Statistics.getArtistSphereSize(relatedArtist);
 			let geometry = new THREE.SphereGeometry(radius, 35, 35);
 			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.relatedArtist}));
+			let genreMetrics = Statistics.getSharedGenreMetric(artist, relatedArtist);
 			relatedArtistSphere.artistObj = relatedArtist;
+			relatedArtistSphere.artistObj.genreSimilarity = genreMetrics.genreSimilarity;
+			relatedArtistSphere.distance = genreMetrics.lineLength;
 			relatedArtistSphere.radius = radius;
-			relatedArtistSphere.isRelatedArtistSphere = true;
 			relatedArtistSphere.isSphere = true;
-			relatedArtistSphere.distance = Statistics.getSharedGenreMetric(artist, relatedArtist);
+			relatedArtistSphere.isRelatedArtistSphere = true;
 			sphereFaceIndex += step;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
