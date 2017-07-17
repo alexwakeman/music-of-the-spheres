@@ -3,6 +3,7 @@ export const SEARCH_TERM_UPDATE = 'SEARCH_TERM_UPDATE';
 export const RELATED_CLICK = 'RELATED_CLICK';
 export const SHOW_RELATED = 'SHOW_RELATED';
 export const HIDE_RELATED = 'HIDE_RELATED';
+export const CLEAR_SESSION = 'CLEAR_SESSION';
 
 export function artistDataAvailable(data) {
 	return {
@@ -35,5 +36,11 @@ export function hideRelated() {
 	return {
 		type: HIDE_RELATED,
 		data: null
+	}
+}
+
+export function clearSession() {
+	return {
+		type: CLEAR_SESSION
 	}
 }

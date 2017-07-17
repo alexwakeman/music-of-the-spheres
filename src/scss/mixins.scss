@@ -9,3 +9,23 @@
     left: 0;
     top: 0;
 }
+
+@mixin funkyButton {
+    font-family: 'lucida grande', tahoma, Verdana, Arial;
+    text-shadow: rgb(0, 0, 0) 0px 1px 1px;
+    font-size: 14px;
+    background-color: rgba(250, 252, 255, 0.2);
+    border: 1px solid black;
+    border-radius: 12px;
+    padding: 4px;
+    -webkit-transition: background-color 2s linear;
+    -moz-transition: background-color 2s linear;
+    -ms-transition: background-color 2s linear;
+    -o-transition: background-color 2s linear;
+    transition: background-color 2s linear;
+    color: #fff;
+
+    &:hover {
+        background-color: rgba(14, 218, 214, 0.9);
+    }
+}

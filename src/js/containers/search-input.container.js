@@ -1,11 +1,12 @@
 import { connect } from 'react-redux';
 import { SearchInputComponent } from '../components/search-input.component.jsx';
 import { MusicDataService } from '../services/music-data.service';
-import { updateSearchTerm } from '../state/actions';
+import {clearSession, updateSearchTerm} from '../state/actions';
 
 const mapStateToProps = (state) => {
 	return {
-		searchTerm: state.searchTerm
+		searchTerm: state.searchTerm,
+		artist: state.artist
 	}
 };
 
@@ -17,6 +18,10 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		handleSearchTermUpdate: (evt) => {
 			dispatch(updateSearchTerm(evt.target.value));
+		},
+		clearSession: (evt) => {
+			evt.preventDefault();
+			dispatch(clearSession());
 		}
 	}
 };

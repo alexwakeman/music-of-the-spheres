@@ -39,6 +39,9 @@ export class SceneComponent extends React.Component {
 		window.addEventListener('resize', this, false);
 		if (artist.id) {
 			this.scene.composeScene(artist);
+		} else {
+			this.scene.clearGraph();
+			this.scene.clearAddress();
 		}
 	}
 

@@ -115,6 +115,10 @@ export class SpheresScene {
 		}
 	}
 
+	clearAddress() {
+		window.location.hash = '';
+	}
+
 	zoom(direction) {
 		switch (direction) {
 			case 'in':

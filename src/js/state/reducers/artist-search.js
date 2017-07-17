@@ -1,4 +1,7 @@
-import {SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE, RELATED_CLICK, SHOW_RELATED, HIDE_RELATED} from '../actions'
+import {
+	SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE, RELATED_CLICK, SHOW_RELATED, HIDE_RELATED,
+	CLEAR_SESSION
+} from '../actions'
 let initialState = sessionStorage.getItem('state');
 const emptyArtist = {
 	id: '',
@@ -7,16 +10,19 @@ const emptyArtist = {
 	genres: [],
 	popularity: 0,
 	images: []
-}
+};
+const emptyState = {
+	artist: emptyArtist,
+	searchTerm: '',
+	visitedArtists: [],
+	hideInfo: true,
+	relatedArtist: emptyArtist,
+	showRelated: false
+};
 
 if (!initialState) {
 	initialState = {
-		artist: emptyArtist,
-		searchTerm: '',
-		visitedArtists: [],
-		hideInfo: true,
-		relatedArtist: emptyArtist,
-		showRelated: false
+		...emptyState
 	};
 } else {
 	initialState = JSON.parse(sessionStorage.getItem('state'));
@@ -75,6 +81,11 @@ const artistSearch = (state = initialState, action) => {
 					...emptyArtist
 				},
 				hideRelated: true
+			};
+			break;
+		case CLEAR_SESSION:
+			newState = {
+				...emptyState
 			};
 			break;
 		default:
