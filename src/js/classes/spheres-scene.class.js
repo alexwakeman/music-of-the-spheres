@@ -65,6 +65,13 @@ export class SpheresScene {
 				store.dispatch(showRelated(selected.artistObj));
 				isOverRelated = true;
 				selected.material.color.setHex(Colours.relatedArtistHover);
+			} else if (selected.hasOwnProperty('isText')) {
+				let parent = selected.parent;
+				if (parent.hasOwnProperty('isRelatedArtistSphere')) {
+					store.dispatch(showRelated(parent.artistObj));
+					isOverRelated = true;
+					parent.material.color.setHex(Colours.relatedArtistHover);
+				}
 			} else {
 				store.dispatch(hideRelated());
 			}
@@ -95,6 +102,12 @@ export class SpheresScene {
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
 				store.dispatch(relatedClick());
 				this.getRelatedArtist(selected);
+			} else if (selected.hasOwnProperty('isText')) {
+				let parent = selected.parent;
+				if (parent.hasOwnProperty('isRelatedArtistSphere')) {
+					store.dispatch(relatedClick());
+					this.getRelatedArtist(parent);
+				}
 			}
 		}
 	}
