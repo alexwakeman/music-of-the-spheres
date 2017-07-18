@@ -1,5 +1,5 @@
-const MIN_DISTANCE = 10;
-const MAX_DISTANCE = 1000;
+const MIN_DISTANCE = 50;
+const MAX_DISTANCE = 800;
 const DISTANCE_SCALAR = 50;
 const SIZE_SCALAR = 1.5;
 
@@ -26,11 +26,11 @@ export class Statistics {
 		let artistGenreCount = artist.genres.length ? artist.genres.length : 1;
 		let unit = 1 / artistGenreCount;
 		unit = unit === 1 ? 0 : unit;
-		let genreSimilarity = Math.round((matches.length * unit) * 100);
-		let minDistance = ((artist.popularity + relatedArtist.popularity) * SIZE_SCALAR) + MIN_DISTANCE;
+		let genreSimilarity = matches.length * unit;
+		let minDistance = ((artist.popularity * SIZE_SCALAR) + (relatedArtist.popularity * SIZE_SCALAR)) + MIN_DISTANCE;
 		return {
-			lineLength: Math.max(minDistance, MAX_DISTANCE - (matches.length * DISTANCE_SCALAR)),
-			genreSimilarity: genreSimilarity
+			lineLength: Math.max(minDistance, MAX_DISTANCE - (MAX_DISTANCE * genreSimilarity)),
+			genreSimilarity: Math.round(genreSimilarity * 100)
 		};
 	}
 
