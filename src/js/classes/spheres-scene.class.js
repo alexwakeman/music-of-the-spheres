@@ -14,6 +14,8 @@ import {hideRelated, relatedClick, showRelated} from "../state/actions";
 
 export class SpheresScene {
 	constructor(container) {
+		let artistId;
+		this.hoveredRelatedSphere = null;
 		this.motionLab = new MotionLab();
 
 		// attach to dom
@@ -31,7 +33,7 @@ export class SpheresScene {
 		SceneUtils.lighting(Props.scene);
 
 		// check for query string
-		const artistId = decodeURIComponent(window.location.hash.replace('#', ''));
+		artistId = decodeURIComponent(window.location.hash.replace('#', ''));
 		if (artistId) {
 			MusicDataService.getArtist(artistId);
 		}
@@ -50,36 +52,41 @@ export class SpheresScene {
 		let intersects;
 		let isOverRelated = false;
 		Props.mouseVector = SceneUtils.getMouseVector(event);
-		intersects = SceneUtils.getIntersectsFromMousePos(Props.graphContainer, Props.raycaster, Props.camera);
 		Props.mouseIsOverRelated = false;
-		Props.graphContainer.traverse((obj) => {
-			if (obj.hasOwnProperty('isRelatedArtistSphere')) { // reset the related sphere to red
-				obj.material.color.setHex(Colours.relatedArtist);
-			}
-		});
-
-		if (intersects.length) { // mouse is over a Mesh
-			Props.mouseIsOverRelated = true;
+		intersects = SceneUtils.getIntersectsFromMousePos(Props.graphContainer, Props.raycaster, Props.camera);
+		this.unhighlightRelatedSphere();
+		if (intersects.length) {
 			selected = intersects[0].object;
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
-				store.dispatch(showRelated(selected.artistObj));
 				isOverRelated = true;
-				selected.material.color.setHex(Colours.relatedArtistHover);
+				this.highlightRelatedSphere(selected);
 			} else if (selected.hasOwnProperty('isText')) {
-				let parent = selected.parent;
-				if (parent.hasOwnProperty('isRelatedArtistSphere')) {
-					store.dispatch(showRelated(parent.artistObj));
+				if (selected.parent.hasOwnProperty('isRelatedArtistSphere')) {
 					isOverRelated = true;
-					parent.material.color.setHex(Colours.relatedArtistHover);
+					this.highlightRelatedSphere(selected.parent);
 				}
 			} else {
+				this.unhighlightRelatedSphere();
 				store.dispatch(hideRelated());
 			}
 		} else {
+			this.unhighlightRelatedSphere();
 			store.dispatch(hideRelated());
 		}
 		Props.oldMouseVector = Props.mouseVector;
 		return isOverRelated;
+	}
+
+	unhighlightRelatedSphere() {
+		this.hoveredRelatedSphere &&
+			this.hoveredRelatedSphere.material.color.setHex(Colours.relatedArtist);
+		this.hoveredRelatedSphere = null;
+	}
+
+	highlightRelatedSphere(sphere) {
+		this.hoveredRelatedSphere = sphere;
+		store.dispatch(showRelated(this.hoveredRelatedSphere.artistObj));
+		this.hoveredRelatedSphere.material.color.setHex(Colours.relatedArtistHover);
 	}
 
 	onSceneMouseDrag(event) {
