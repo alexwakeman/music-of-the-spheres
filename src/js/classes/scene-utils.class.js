@@ -31,7 +31,7 @@ class SceneUtils {
 
 	/**
 	 * Given positive x return 1, negative x return -1, or 0 otherwise
-	 * @param x
+	 * @param n
 	 * @returns {number}
 	 */
 	static sign(n) {
@@ -149,7 +149,7 @@ class SceneUtils {
 		let textMesh = new THREE.Mesh(textGeom, materialArray);
 		textMesh.isText = true;
 		sphere.add(textMesh);
-		textMesh.position.set(-sphere.radius, -(sphere.radius + size * 2), -sphere.radius / 2);
+		textMesh.position.set((sphere.radius + size), (sphere.radius + size), -sphere.radius / 2);
 	}
 
 	static lighting() {
