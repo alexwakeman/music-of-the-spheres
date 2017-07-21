@@ -5,7 +5,7 @@ const express = require('express'),
 	session = require('express-session'),
 	MongoStore = require('express-session-mongo'),
 	SpotifyRequests = require('./spotify-api-request'),
-	auth = require('./oauth').runAuth();
+	auth = require('./oauth')();
 
 app.use(session({
 	secret: 'test-test',

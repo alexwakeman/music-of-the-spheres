@@ -1,0 +1,7 @@
+{
+  "clientId": "-- Your Spotify client ID --",
+  "clientSecret": "-- Your Spotify client secret --",
+  "accessTokenUri": "https://accounts.spotify.com/api/token",
+  "authorizationUri": "https://accounts.spotify.com/authorize",
+  "redirectUri": "http://exmaple:3000/auth/callback"
+}
