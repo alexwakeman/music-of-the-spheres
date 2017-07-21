@@ -147,9 +147,16 @@ class SceneUtils {
 			bevelSegments: 3
 		});
 		let textMesh = new THREE.Mesh(textGeom, materialArray);
+		let cameraNorm = Props.camera.position.clone().normalize();
 		textMesh.isText = true;
 		sphere.add(textMesh);
-		textMesh.position.set((sphere.radius + size), (sphere.radius + size), -sphere.radius / 2);
+		textMesh.position.set(
+			cameraNorm.x * sphere.radius,
+			cameraNorm.y * sphere.radius,
+			cameraNorm.z * sphere.radius
+		);
+		textMesh.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
+
 	}
 
 	static lighting() {

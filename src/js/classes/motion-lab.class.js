@@ -90,6 +90,12 @@ export class MotionLab {
 		// this makes them readable
 		Props.graphContainer.traverse((obj) => {
 			if (obj.hasOwnProperty('isText')) {
+				let cameraNorm = Props.camera.position.clone().normalize();
+				obj.position.set(
+					cameraNorm.x * obj.parent.radius,
+					cameraNorm.y * obj.parent.radius,
+					cameraNorm.z * obj.parent.radius
+				);
 				obj.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
 			}
 		});
