@@ -140,7 +140,8 @@
   background-color: rgba(0, 0, 51, 0.11);
   position: absolute;
   display: flex;
-  padding: 0; }
+  padding: 0;
+  cursor: default; }
   .info-container.main {
     bottom: 195px;
     width: 100%;

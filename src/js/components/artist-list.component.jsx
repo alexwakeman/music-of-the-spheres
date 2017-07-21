@@ -31,10 +31,17 @@ export class ArtistListComponent extends React.Component {
 		});
 		const classes = this.props.isHidden ? 'hidden artist-navigation' : 'artist-navigation';
 		return (
-			<div className={classes}>
+			<div className={classes} ref={elem => this.artistListDom = elem}>
 				{artists}
 			</div>
 		)
 	}
 
+	componentDidMount() {
+		this.artistListDom.scrollTop = this.artistListDom.scrollHeight;
+	}
+
+	componentDidUpdate() {
+		this.artistListDom.scrollTop = this.artistListDom.scrollHeight;
+	}
 }
