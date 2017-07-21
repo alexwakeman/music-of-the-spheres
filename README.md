@@ -26,7 +26,7 @@ TODO:
 - [DONE] Get genre similarity statistic
 - [DONE] Allow clicking of text, make hover over text highlight sphere
 - [DONE] Align text with camera by placing it adjacent to sphere face segment whose normal is closest to the camera
-- If popularity is over 50, accentuate sphere size, if less, diminish size by scalar factor
+- [DONE] If popularity is over 50, accentuate sphere size, if less, diminish size by scalar factor
 - [DONE] Scroll visited artists to bottom
 - [DONE] Factor out Spotify API keys into JSON, include example version in git repo
 - [DONE] Cursor over text on panels should be pointer

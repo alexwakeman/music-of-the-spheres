@@ -1,10 +1,15 @@
-const MIN_DISTANCE = 50;
 const MAX_DISTANCE = 800;
-const SIZE_SCALAR = 1.5;
+const SIZE_SCALAR_SMALL = 1.25;
+const SIZE_SCALAR_BIG = 1.75;
 
 export class Statistics {
     static getArtistSphereSize(artist) {
-        return Math.max(40, artist.popularity * SIZE_SCALAR);
+    	if (artist.popularity >= 50) {
+			return artist.popularity * SIZE_SCALAR_BIG;
+		} else {
+			return artist.popularity * SIZE_SCALAR_SMALL;
+		}
+
     }
 
 	/**
@@ -14,7 +19,7 @@ export class Statistics {
 	 * @returns {object}
 	 */
 	static getSharedGenreMetric(artist, relatedArtist) {
-		let unit, genreSimilarity, minDistance, artistGenreCount;
+		let unit, genreSimilarity, relativeMinDistance, artistGenreCount;
 		let matches = artist.genres
             .map((mainArtistGenre) => Statistics.matchArtistToRelatedGenres(mainArtistGenre, relatedArtist))
             .reduce((accumulator, match) => {
@@ -27,9 +32,9 @@ export class Statistics {
 		unit = 1 / artistGenreCount;
 		unit = unit === 1 ? 0 : unit;
 		genreSimilarity = matches.length * unit;
-		minDistance = ((artist.popularity * SIZE_SCALAR) + (relatedArtist.popularity * SIZE_SCALAR)) + MIN_DISTANCE;
+		relativeMinDistance = Statistics.getArtistSphereSize(artist) + Statistics.getArtistSphereSize(relatedArtist);
 		return {
-			lineLength: Math.max(minDistance, MAX_DISTANCE - (MAX_DISTANCE * genreSimilarity)),
+			lineLength: (MAX_DISTANCE - (MAX_DISTANCE * genreSimilarity)) + relativeMinDistance,
 			genreSimilarity: Math.round(genreSimilarity * 100)
 		};
 	}
