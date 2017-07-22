@@ -32,8 +32,12 @@ TODO:
 - [DONE] Cursor over text on panels should be pointer
 - [DONE] Optimise the hover check so it does not need to iterate over all related spheres
 - Fix back and forwards browser navigation
+- Show set of albums and tracks, with player
 
 # Next phase:
+- Think about: clicking related artist shows their music
+- Think about having an 'Explore' button, to attach related artists to related artist, so
+when a related artist is clicked, it shows their music instead of 'flying in'
 - Connect all related artist that are clicked, avoid repeats, allow navigating around
 the "solar system"
 - Keyboard controls navigation around

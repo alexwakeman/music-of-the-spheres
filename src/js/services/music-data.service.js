@@ -19,4 +19,13 @@ export class MusicDataService {
 		.then((data) => data.json())
 		.then((json) => store.dispatch(artistDataAvailable(json)));
 	}
+
+	static getArtistAlbums(artistId) {
+		let artistURL = '/api/albums/' + artistId;
+		return window.fetch(artistURL, {
+			credentials: "same-origin"
+		})
+		.then((data) => data.json())
+		.then((json) => store.dispatch(artistAlbumsAvailable(json)));
+	}
 }
