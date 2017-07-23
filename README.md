@@ -31,13 +31,13 @@ TODO:
 - [DONE] Factor out Spotify API keys into JSON, include example version in git repo
 - [DONE] Cursor over text on panels should be pointer
 - [DONE] Optimise the hover check so it does not need to iterate over all related spheres
-- Fix back and forwards browser navigation
+- Fix back and forwards browser navigation (albums)
 - Show set of albums and tracks, with player
+- Clicking related artist makes them main artist - replaces the info panel
+- Make mobile responsive version
 
 # Next phase:
-- Think about: clicking related artist shows their music
-- Think about having an 'Explore' button, to attach related artists to related artist, so
-when a related artist is clicked, it shows their music instead of 'flying in'
+- 'Explore' button, to attach related artists to related artist
 - Connect all related artist that are clicked, avoid repeats, allow navigating around
 the "solar system"
 - Keyboard controls navigation around

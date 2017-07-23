@@ -1,6 +1,6 @@
 import {
 	SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE, RELATED_CLICK, SHOW_RELATED, HIDE_RELATED,
-	CLEAR_SESSION
+	CLEAR_SESSION, ARTIST_ALBUMS_AVAILABLE
 } from '../actions'
 let initialState = sessionStorage.getItem('state');
 const emptyArtist = {
@@ -9,14 +9,17 @@ const emptyArtist = {
 	imgUrl: '',
 	genres: [],
 	popularity: 0,
-	images: []
+	images: [],
+	albums: []
 };
 const emptyState = {
 	artist: emptyArtist,
+	relatedArtist: emptyArtist,
+	displayAlbums: [],
+	displayAlbumIndex: 0,
 	searchTerm: '',
 	visitedArtists: [],
 	hideInfo: true,
-	relatedArtist: emptyArtist,
 	showRelated: false
 };
 
@@ -25,10 +28,10 @@ if (!initialState) {
 		...emptyState
 	};
 } else {
-	initialState = JSON.parse(sessionStorage.getItem('state'));
+	initialState = JSON.parse(initialState);
 }
 
-const artistSearch = (state = initialState, action) => {
+const appState = (state = initialState, action) => {
 	let newState;
 	switch (action.type) {
 		case SEARCH_TERM_UPDATE:
@@ -39,9 +42,8 @@ const artistSearch = (state = initialState, action) => {
 			break;
 		case ARTIST_DATA_AVAILABLE:
 			if (action.data.id) {
-				let alreadyVisited = !!state.visitedArtists.length && state.visitedArtists.some((artist) => {
-						return artist.id === action.data.id;
-					});
+				let alreadyVisited = !!state.visitedArtists.length
+					&& state.visitedArtists.some((artist) => artist.id === action.data.id);
 				let visitedArtists = alreadyVisited ? state.visitedArtists : [...state.visitedArtists, action.data];
 				newState = {
 					...state,
@@ -54,7 +56,9 @@ const artistSearch = (state = initialState, action) => {
 					hideRelated: true,
 					relatedArtist: {
 						...emptyArtist
-					}
+					},
+					displayAlbums: action.data.albums,
+					displayAlbumIndex: 0
 				};
 			} else {
 				console.warn('No API data available for given artist. Need to refresh API session?');
@@ -64,7 +68,15 @@ const artistSearch = (state = initialState, action) => {
 		case RELATED_CLICK:
 			newState = {
 				...state,
-				hideInfo: true
+				relatedArtist: action.data
+			};
+			break;
+		case ARTIST_ALBUMS_AVAILABLE:
+			newState = {
+				...state,
+				displayAlbums: [
+					...action.data
+				]
 			};
 			break;
 		case SHOW_RELATED:
@@ -95,4 +107,4 @@ const artistSearch = (state = initialState, action) => {
 	return newState;
 };
 
-export default artistSearch;
+export default appState;

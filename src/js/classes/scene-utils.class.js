@@ -49,9 +49,9 @@ class SceneUtils {
 		return q;
 	}
 
-	static getIntersectsFromMousePos(graph, raycaster, camera) {
-		raycaster.setFromCamera(Props.mouseVector, camera);
-		return raycaster.intersectObjects(graph.children, true);
+	static getIntersectsFromMousePos() {
+		Props.raycaster.setFromCamera(Props.mouseVector, Props.camera);
+		return Props.raycaster.intersectObjects(Props.graphContainer.children, true);
 	}
 
 	static getMouseVector(event) {

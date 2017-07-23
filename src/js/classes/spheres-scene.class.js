@@ -53,7 +53,7 @@ export class SpheresScene {
 		let isOverRelated = false;
 		Props.mouseVector = SceneUtils.getMouseVector(event);
 		Props.mouseIsOverRelated = false;
-		intersects = SceneUtils.getIntersectsFromMousePos(Props.graphContainer, Props.raycaster, Props.camera);
+		intersects = SceneUtils.getIntersectsFromMousePos();
 		this.unhighlightRelatedSphere();
 		if (intersects.length) {
 			selected = intersects[0].object;
@@ -85,8 +85,8 @@ export class SpheresScene {
 
 	highlightRelatedSphere(sphere) {
 		this.hoveredRelatedSphere = sphere;
-		store.dispatch(showRelated(this.hoveredRelatedSphere.artistObj));
 		this.hoveredRelatedSphere.material.color.setHex(Colours.relatedArtistHover);
+		store.dispatch(showRelated(this.hoveredRelatedSphere.artistObj));
 	}
 
 	onSceneMouseDrag(event) {
@@ -103,18 +103,17 @@ export class SpheresScene {
 
 	onSceneMouseClick(event) {
 		Props.mouseVector = SceneUtils.getMouseVector(event);
-		let intersects = SceneUtils.getIntersectsFromMousePos(Props.graphContainer, Props.raycaster, Props.camera);
+		let intersects = SceneUtils.getIntersectsFromMousePos();
 		if (intersects.length) {
 			const selected = intersects[0].object;
 			if (selected.hasOwnProperty('isRelatedArtistSphere')) {
-				store.dispatch(relatedClick());
-				this.getRelatedArtist(selected);
+				store.dispatch(relatedClick(selected.artistObj));
+				MusicDataService.fetchDisplayAlbums(selected.artistObj);
 			} else if (selected.hasOwnProperty('isText')) {
-				let parent = selected.parent;
-				if (parent.hasOwnProperty('isRelatedArtistSphere')) {
-					store.dispatch(relatedClick());
-					this.getRelatedArtist(parent);
-				}
+				store.dispatch(relatedClick(selected.parent.artistObj));
+				MusicDataService.fetchDisplayAlbums(selected.parent.artistObj);
+			} else if (selected.hasOwnProperty('isMainArtistSphere')) {
+				MusicDataService.fetchDisplayAlbums(selected.artistObj);
 			}
 		}
 	}

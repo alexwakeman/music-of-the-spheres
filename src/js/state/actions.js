@@ -13,7 +13,7 @@ export function artistDataAvailable(data) {
 	}
 }
 
-export function artistAlbumsAvailable(data) {
+export function displayAlbums(data) {
 	return {
 		type: ARTIST_ALBUMS_AVAILABLE,
 		data: data
@@ -27,9 +27,10 @@ export function updateSearchTerm(searchTerm) {
 	}
 }
 
-export function relatedClick() {
+export function relatedClick(relatedArtist) {
 	return {
-		type: RELATED_CLICK
+		type: RELATED_CLICK,
+		data: relatedArtist
 	}
 }
 

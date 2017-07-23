@@ -65,12 +65,14 @@
     top: 0;
     right: 0;
     width: 300px;
-    height: 100px;
+
     .spotify-player {
         position: relative;
     }
-    iframe {
-        border: 0;
+    .albums-list {
+        position: relative;
+        max-height: 200px;
+        overflow: auto;
     }
 }
 
