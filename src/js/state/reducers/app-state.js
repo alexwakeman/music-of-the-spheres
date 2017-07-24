@@ -76,7 +76,8 @@ const appState = (state = initialState, action) => {
 				...state,
 				displayAlbums: [
 					...action.data
-				]
+				],
+				displayAlbumIndex: 0
 			};
 			break;
 		case SHOW_RELATED:

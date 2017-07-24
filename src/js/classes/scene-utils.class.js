@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import {Colours} from '../config/colours';
-import {Props} from "./props";
+import {CONNECTING_LINE, MAIN_ARTIST_SPHERE, RELATED_ARTIST_SPHERE, TEXT_GEOMETRY, Props} from "./props";
 import {Statistics} from "./statistics.class";
 
 let HELVETIKER;
 const MAIN_ARTIST_FONT_SIZE = 34;
 const RELATED_ARTIST_FONT_SIZE = 20;
-const TOTAL_RELATED = 10;
+const TOTAL_RELATED = 5;
 
 class SceneUtils {
 	static init() {
@@ -65,8 +65,7 @@ class SceneUtils {
 		let sphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.mainArtist}));
 		sphere.artistObj = artist;
 		sphere.radius = radius;
-		sphere.isMainArtistSphere = true;
-		sphere.isSphere = true;
+		sphere.type = MAIN_ARTIST_SPHERE;
 		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere);
 		return sphere;
 	}
@@ -88,8 +87,7 @@ class SceneUtils {
 			relatedArtistSphere.artistObj.genreSimilarity = genreMetrics.genreSimilarity;
 			relatedArtistSphere.distance = genreMetrics.lineLength;
 			relatedArtistSphere.radius = radius;
-			relatedArtistSphere.isSphere = true;
-			relatedArtistSphere.isRelatedArtistSphere = true;
+			relatedArtistSphere.type = RELATED_ARTIST_SPHERE;
 			sphereFaceIndex += step;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
@@ -118,6 +116,7 @@ class SceneUtils {
 		geometry.vertices.push(new THREE.Vector3(0, 0, 0));
 		geometry.vertices.push(relatedSphere.position.clone());
 		line = new THREE.Line(geometry, material);
+		line.type = CONNECTING_LINE;
 		mainArtistSphere.add(line);
 	}
 
@@ -148,7 +147,7 @@ class SceneUtils {
 		});
 		let textMesh = new THREE.Mesh(textGeom, materialArray);
 		let cameraNorm = Props.camera.position.clone().normalize();
-		textMesh.isText = true;
+		textMesh.type = TEXT_GEOMETRY;
 		sphere.add(textMesh);
 		textMesh.position.set(
 			cameraNorm.x * sphere.radius,
@@ -156,12 +155,11 @@ class SceneUtils {
 			cameraNorm.z * sphere.radius
 		);
 		textMesh.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
-
 	}
 
 	static lighting() {
-		let lightA = new THREE.DirectionalLight(0xCCCCCC, 1.725);
-		let lightB = new THREE.DirectionalLight(0xAAAAAA, 1.5);
+		let lightA = new THREE.DirectionalLight(0xcccccc, 1.725);
+		let lightB = new THREE.DirectionalLight(0xaaaaaa, 1.5);
 		lightA.position.setX(500);
 		lightB.position.setY(-800);
 		lightB.position.setX(-500);

@@ -5,6 +5,7 @@ export const RELATED_CLICK = 'RELATED_CLICK';
 export const SHOW_RELATED = 'SHOW_RELATED';
 export const HIDE_RELATED = 'HIDE_RELATED';
 export const CLEAR_SESSION = 'CLEAR_SESSION';
+export const LOAD_ALBUM = 'LOAD_ALBUM';
 
 export function artistDataAvailable(data) {
 	return {
@@ -51,5 +52,12 @@ export function hideRelated() {
 export function clearSession() {
 	return {
 		type: CLEAR_SESSION
+	}
+}
+
+export function loadAlbum(album) {
+	return {
+		type: LOAD_ALBUM,
+		data: album
 	}
 }

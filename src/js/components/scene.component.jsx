@@ -13,7 +13,7 @@ export class SceneComponent extends React.Component {
 
 	render() {
 		return (
-			<div className="spheres-scene" ref={elem => this.sceneDom = elem}/>
+			<div className="spheres-scene" ref={elem => this.sceneDom = elem} />
 		)
 	}
 

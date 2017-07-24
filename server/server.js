@@ -41,9 +41,7 @@ router.route('/api/search/:artist')
 		let artist = req.params.artist;
 		let token = sess.user.access_token;
 		SpotifyRequests.performSearch(token, artist)
-			.then((artistData) => {
-				res.json(artistData);
-			})
+			.then((artistData) => res.json(artistData))
 			.catch(() => res.status(401).json({error: 'Could not get Spotify API data.'}));
 	});
 
@@ -53,9 +51,7 @@ router.route('/api/artist/:artistId')
 		let id = req.params.artistId;
 		let token = sess.user.access_token;
 		SpotifyRequests.fetchArtist(token, id)
-			.then((artistData) => {
-				res.json(artistData);
-			})
+			.then((artistData) => res.json(artistData))
 			.catch(() => res.status(401).json({error: 'Could not get Spotify API data.'}));
 	});
 
@@ -64,10 +60,8 @@ router.route('/api/albums/:artistId')
 		let sess = req.session;
 		let id = req.params.artistId;
 		let token = sess.user.access_token;
-		SpotifyRequests.getAlbums(token, id)
-			.then((artistData) => {
-				res.json(artistData);
-			})
+		SpotifyRequests.getAlbumsById(token, id)
+			.then((albums) => res.json(albums))
 			.catch(() => res.status(401).json({error: 'Could not get Spotify API data.'}));
 	});
 

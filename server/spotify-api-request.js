@@ -1,7 +1,7 @@
 const request = require('request');
 const apiAddress = 'https://api.spotify.com/v1';
 
-module.exports = class SpotifyRequests {
+class SpotifyRequests {
 	static performSearch(apiToken, artistName) {
 		return SpotifyRequests
 			.search(apiToken, artistName)
@@ -66,9 +66,28 @@ module.exports = class SpotifyRequests {
 					const data = JSON.parse(body);
 					if (data.total) {
 						artist.albums = data.items;
-
 					}
 					return resolve(artist);
+				}
+				reject();
+			});
+		});
+	}
+	static getAlbumsById(apiToken, artistId) {
+		return new Promise((resolve, reject) => {
+			let options = {
+				url: `${apiAddress}/artists/${artistId}/albums`,
+				headers: {
+					'Authorization': 'Bearer ' + apiToken
+				}
+			};
+			request(options, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					const data = JSON.parse(body);
+					if (data.total) {
+						return resolve(data.items);
+					}
+					resolve([]);
 				}
 				reject();
 			});
@@ -96,4 +115,6 @@ module.exports = class SpotifyRequests {
 			});
 		})
 	}
-};
+}
+
+module.exports = SpotifyRequests;

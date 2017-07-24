@@ -22,3 +22,8 @@ export const Props = {
 	relatedArtistSpheres: [],
 	mainArtistSphere: {}
 };
+
+export const MAIN_ARTIST_SPHERE = 'MAIN_ARTIST_SPHERE';
+export const RELATED_ARTIST_SPHERE = 'RELATED_ARTIST_SPHERE';
+export const TEXT_GEOMETRY = 'TEXT_GEOMETRY';
+export const CONNECTING_LINE = 'CONNECTING_LINE';
