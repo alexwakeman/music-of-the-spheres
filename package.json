@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "description": "3D music explorer for Spotify",
   "main": "gulpfile.js",
+  "repository": "https://github.com/alexwakeman/music-of-the-spheres",
   "dependencies": {
     "babel-register": "^6.24.1",
     "client-oauth2": "^4.1.0",
@@ -16,7 +17,8 @@
     "react-redux": "^5.0.5",
     "redux": "^3.7.1",
     "request": "^2.81.0",
-    "three": "^0.86.0"
+    "three": "^0.86.0",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "@types/jasmine": "^2.5.51",
@@ -66,5 +68,5 @@
     "3D"
   ],
   "author": "Alex Wakeman",
-  "license": "Copyright 2017 onwards Alex Wakeman"
+  "license": "CC-BY-NC-ND-4.0"
 }

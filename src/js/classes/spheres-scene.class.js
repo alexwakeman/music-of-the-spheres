@@ -44,6 +44,7 @@ export class SpheresScene {
 		window.location.hash = encodeURIComponent(artist.id);
 		Props.mainArtistSphere = SceneUtils.createMainArtistSphere(artist);
 		Props.relatedArtistSpheres = SceneUtils.createRelatedSpheres(artist, Props.mainArtistSphere);
+		Props.selectedArtistSphere = Props.mainArtistSphere;
 		SceneUtils.appendObjectsToScene(Props.graphContainer, Props.mainArtistSphere, Props.relatedArtistSpheres);
 	}
 
@@ -54,38 +55,59 @@ export class SpheresScene {
 		Props.mouseVector = SceneUtils.getMouseVector(event);
 		Props.mouseIsOverRelated = false;
 		intersects = SceneUtils.getIntersectsFromMousePos();
-		this.unhighlightRelatedSphere();
 		if (intersects.length) {
 			selected = intersects[0].object;
+			if (this.hoveredSphere && selected.id === this.hoveredSphere.id) {
+				return true;
+			}
 			switch (selected.type) {
 				case RELATED_ARTIST_SPHERE:
-					this.hoveredRelatedSphere = selected;
+					this.hoveredSphere = selected;
 					this.highlightRelatedSphere(Colours.relatedArtistHover);
 					break;
 				case TEXT_GEOMETRY:
-					this.hoveredRelatedSphere = selected.parent;
+					this.hoveredSphere = selected.parent;
 					this.highlightRelatedSphere(Colours.relatedArtistHover);
 					break;
 				case MAIN_ARTIST_SPHERE:
 				default:
-					this.unhighlightRelatedSphere();
+					this.hoveredSphere = selected;
+					if (Props.selectedArtistSphere.id !== this.hoveredRelatedSphere.id) {
+						this.highlightRelatedSphere(Colours.relatedArtistHover);
+					}
 					break;
 			}
+		} else {
+			this.unhighlightRelatedSphere();
 		}
 		Props.oldMouseVector = Props.mouseVector;
 		return isOverRelated;
 	}
 
-	unhighlightRelatedSphere() {
-		this.hoveredRelatedSphere &&
-			this.hoveredRelatedSphere.material.color.setHex(Colours.relatedArtist);
-		this.hoveredRelatedSphere = null;
-		store.dispatch(hideRelated());
-	}
-
-	highlightRelatedSphere(colour) {
-		this.hoveredRelatedSphere.material.color.setHex(colour);
-		store.dispatch(showRelated(this.hoveredRelatedSphere.artistObj));
+	onSceneMouseClick(event) {
+		Props.mouseVector = SceneUtils.getMouseVector(event);
+		let intersects = SceneUtils.getIntersectsFromMousePos();
+		if (intersects.length) {
+			const selected = intersects[0].object;
+			if (Props.selectedArtistSphere && selected.id === Props.selectedArtistSphere.id) {
+				return;
+			}
+			this.resetClickedSphere();
+			switch (selected.type) {
+				case RELATED_ARTIST_SPHERE:
+					Props.selectedArtistSphere = selected;
+					this.setupClickedSphere(Colours.relatedArtistClicked);
+					break;
+				case TEXT_GEOMETRY:
+					Props.selectedArtistSphere = selected.parent;
+					this.setupClickedSphere(Colours.relatedArtistClicked);
+					break;
+				case MAIN_ARTIST_SPHERE:
+					Props.selectedArtistSphere = selected;
+					this.setupClickedSphere(Colours.mainArtist);
+					break;
+			}
+		}
 	}
 
 	onSceneMouseDrag(event) {
@@ -100,50 +122,37 @@ export class SpheresScene {
 		Props.oldMouseVector = Props.mouseVector;
 	}
 
-	onSceneMouseClick(event) {
-		Props.mouseVector = SceneUtils.getMouseVector(event);
-		let intersects = SceneUtils.getIntersectsFromMousePos();
-		if (intersects.length) {
-			const selected = intersects[0].object;
-			switch (selected.type) {
-				case RELATED_ARTIST_SPHERE:
-					this.resetClickedSphere();
-					this.clickedSphere = selected;
-					this.setupClickedSphere(Colours.relatedArtistClicked);
-					break;
-				case TEXT_GEOMETRY:
-					this.resetClickedSphere();
-					this.clickedSphere = selected.parent;
-					this.setupClickedSphere(Colours.relatedArtistClicked);
-					break;
-				case MAIN_ARTIST_SPHERE:
-					this.resetClickedSphere();
-					this.clickedSphere = selected;
-					this.setupClickedSphere(Colours.mainArtist);
-					break;
-			}
-		}
+	unhighlightRelatedSphere() {
+		this.hoveredSphere &&
+			this.hoveredSphere.material.color.setHex(Colours.relatedArtist);
+		this.hoveredSphere = null;
+		store.dispatch(hideRelated());
+	}
+
+	highlightRelatedSphere(colour) {
+		this.hoveredSphere.material.color.setHex(colour);
+		store.dispatch(showRelated(this.hoveredSphere.artistObj));
 	}
 
 	setupClickedSphere(colour) {
-		this.clickedSphere.material.color.setHex(colour);
-		store.dispatch(relatedClick(this.clickedSphere.artistObj));
-		MusicDataService.fetchDisplayAlbums(this.clickedSphere.artistObj);
+		Props.selectedArtistSphere.material.color.setHex(colour);
+		store.dispatch(relatedClick(Props.selectedArtistSphere.artistObj));
+		MusicDataService.fetchDisplayAlbums(Props.selectedArtistSphere.artistObj);
 	}
 
 	resetClickedSphere() {
-		if (!this.clickedSphere) {
+		if (!Props.selectedArtistSphere.type) {
 			return;
 		}
-		switch (this.clickedSphere.type) {
+		switch (Props.selectedArtistSphere.type) {
 			case RELATED_ARTIST_SPHERE:
-				this.clickedSphere.material.color.setHex(Colours.relatedArtist);
+				Props.selectedArtistSphere.material.color.setHex(Colours.relatedArtist);
 				break;
 			case MAIN_ARTIST_SPHERE:
-				this.clickedSphere.material.color.setHex(Colours.mainArtist);
+				Props.selectedArtistSphere.material.color.setHex(Colours.mainArtist);
 				break;
 		}
-		this.clickedSphere = null;
+		Props.selectedArtistSphere = {};
 	}
 
 	getRelatedArtist(selectedSphere) {

@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 export const Props = {
 	renderer: new THREE.WebGLRenderer({antialias: true, alpha: true}),
 	scene: new THREE.Scene(),
@@ -20,7 +20,8 @@ export const Props = {
 	mouseVector: new THREE.Vector2(),
 	
 	relatedArtistSpheres: [],
-	mainArtistSphere: {}
+	mainArtistSphere: {},
+	selectedArtistSphere: {}
 };
 
 export const MAIN_ARTIST_SPHERE = 'MAIN_ARTIST_SPHERE';

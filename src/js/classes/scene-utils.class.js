@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import {Colours} from '../config/colours';
+import uuid from 'uuid/v4';
 import {CONNECTING_LINE, MAIN_ARTIST_SPHERE, RELATED_ARTIST_SPHERE, TEXT_GEOMETRY, Props} from "./props";
 import {Statistics} from "./statistics.class";
 
@@ -66,6 +67,7 @@ class SceneUtils {
 		sphere.artistObj = artist;
 		sphere.radius = radius;
 		sphere.type = MAIN_ARTIST_SPHERE;
+		sphere.id = uuid();
 		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere);
 		return sphere;
 	}
@@ -88,6 +90,7 @@ class SceneUtils {
 			relatedArtistSphere.distance = genreMetrics.lineLength;
 			relatedArtistSphere.radius = radius;
 			relatedArtistSphere.type = RELATED_ARTIST_SPHERE;
+			relatedArtistSphere.id = uuid();
 			sphereFaceIndex += step;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
