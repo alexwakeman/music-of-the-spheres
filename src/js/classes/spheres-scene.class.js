@@ -15,8 +15,8 @@ import {hideRelated, relatedClick, showRelated} from "../state/actions";
 export class SpheresScene {
 	constructor(container) {
 		let artistId;
-		this.hoveredRelatedSphere = null;
 		this.motionLab = new MotionLab();
+		this.hoveredSphere = null;
 
 		// attach to dom
 		Props.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -58,25 +58,14 @@ export class SpheresScene {
 		this.unhighlightRelatedSphere();
 		if (intersects.length) {
 			selected = intersects[0].object;
-			if (this.hoveredSphere && selected.id === this.hoveredSphere.id) {
-				return true;
-			}
-			if (Props.selectedArtistSphere && selected.id === Props.selectedArtistSphere.id) {
-				return true;
-			}
 			switch (selected.type) {
 				case RELATED_ARTIST_SPHERE:
 					this.hoveredSphere = selected;
 					this.highlightRelatedSphere(Colours.relatedArtistHover);
 					break;
 				case TEXT_GEOMETRY:
-					this.hoveredSphere = selected.parent;
-					this.highlightRelatedSphere(Colours.relatedArtistHover);
-					break;
-				case MAIN_ARTIST_SPHERE:
-				default:
-					this.hoveredSphere = selected;
-					if (this.hoveredRelatedSphere && Props.selectedArtistSphere.id !== this.hoveredRelatedSphere.id) {
+					if (selected.parent.type !== MAIN_ARTIST_SPHERE) {
+						this.hoveredSphere = selected.parent;
 						this.highlightRelatedSphere(Colours.relatedArtistHover);
 					}
 					break;
@@ -84,6 +73,19 @@ export class SpheresScene {
 		}
 		Props.oldMouseVector = Props.mouseVector;
 		return isOverRelated;
+	}
+
+	unhighlightRelatedSphere() {
+		if (this.hoveredSphere && this.hoveredSphere.id !== Props.selectedArtistSphere.id) {
+			this.hoveredSphere.material.color.setHex(Colours.relatedArtist);
+			this.hoveredSphere = null;
+			store.dispatch(hideRelated());
+		}
+	}
+
+	highlightRelatedSphere(colour) {
+		this.hoveredSphere.material.color.setHex(colour);
+		store.dispatch(showRelated(this.hoveredSphere.artistObj));
 	}
 
 	onSceneMouseClick(event) {
@@ -112,30 +114,6 @@ export class SpheresScene {
 		}
 	}
 
-	onSceneMouseDrag(event) {
-		const dt = Props.t2 - Props.t1;
-		Props.mouseVector = SceneUtils.getMouseVector(event);
-		Props.mousePosXIncreased = (Props.mouseVector.x > Props.oldMouseVector.x);
-		Props.mousePosYIncreased = (Props.mouseVector.y > Props.oldMouseVector.y);
-		Props.mousePosDiffX = Math.abs(Math.abs(Props.mouseVector.x) - Math.abs(Props.oldMouseVector.x));
-		Props.mousePosDiffY = Math.abs(Math.abs(Props.mouseVector.y) - Math.abs(Props.oldMouseVector.y));
-		Props.speedX = ((1 + Props.mousePosDiffX) / dt);
-		Props.speedY = ((1 + Props.mousePosDiffY) / dt);
-		Props.oldMouseVector = Props.mouseVector;
-	}
-
-	unhighlightRelatedSphere() {
-		this.hoveredSphere &&
-			this.hoveredSphere.material.color.setHex(Colours.relatedArtist);
-		this.hoveredSphere = null;
-		store.dispatch(hideRelated());
-	}
-
-	highlightRelatedSphere(colour) {
-		this.hoveredSphere.material.color.setHex(colour);
-		store.dispatch(showRelated(this.hoveredSphere.artistObj));
-	}
-
 	setupClickedSphere(colour) {
 		Props.selectedArtistSphere.material.color.setHex(colour);
 		MusicDataService.fetchDisplayAlbums(Props.selectedArtistSphere.artistObj);
@@ -153,7 +131,19 @@ export class SpheresScene {
 				Props.selectedArtistSphere.material.color.setHex(Colours.mainArtist);
 				break;
 		}
-		Props.selectedArtistSphere = {};
+		Props.selectedArtistSphere = {id: 0};
+	}
+
+	onSceneMouseDrag(event) {
+		const dt = Props.t2 - Props.t1;
+		Props.mouseVector = SceneUtils.getMouseVector(event);
+		Props.mousePosXIncreased = (Props.mouseVector.x > Props.oldMouseVector.x);
+		Props.mousePosYIncreased = (Props.mouseVector.y > Props.oldMouseVector.y);
+		Props.mousePosDiffX = Math.abs(Math.abs(Props.mouseVector.x) - Math.abs(Props.oldMouseVector.x));
+		Props.mousePosDiffY = Math.abs(Math.abs(Props.mouseVector.y) - Math.abs(Props.oldMouseVector.y));
+		Props.speedX = ((1 + Props.mousePosDiffX) / dt);
+		Props.speedY = ((1 + Props.mousePosDiffY) / dt);
+		Props.oldMouseVector = Props.mouseVector;
 	}
 
 	getRelatedArtist(selectedSphere) {
