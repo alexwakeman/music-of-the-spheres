@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import {Colours} from '../config/colours';
-import uuid from 'uuid/v4';
-import {CONNECTING_LINE, MAIN_ARTIST_SPHERE, RELATED_ARTIST_SPHERE, TEXT_GEOMETRY, Props} from "./props";
+import {
+	CONNECTING_LINE, MAIN_ARTIST_SPHERE, RELATED_ARTIST_SPHERE, Props,
+	RELATED_ARTIST_TEXT
+} from "./props";
 import {Statistics} from "./statistics.class";
 
 let HELVETIKER;
@@ -67,7 +69,7 @@ class SceneUtils {
 		sphere.artistObj = artist;
 		sphere.radius = radius;
 		sphere.type = MAIN_ARTIST_SPHERE;
-		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere);
+		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere, RELATED_ARTIST_TEXT);
 		return sphere;
 	}
 
@@ -92,7 +94,7 @@ class SceneUtils {
 			sphereFaceIndex += step;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
-			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere);
+			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
 			relatedArtistsSphereArray.push(relatedArtistSphere);
 		}
 		return relatedArtistsSphereArray;
@@ -133,7 +135,7 @@ class SceneUtils {
 		);
 	}
 
-	static addText(label, size, sphere) {
+	static addText(label, size, sphere, textType) {
 		let materialFront = new THREE.MeshBasicMaterial({color: Colours.textOuter});
 		let materialSide = new THREE.MeshBasicMaterial({color: Colours.textInner});
 		let materialArray = [materialFront, materialSide];
@@ -148,7 +150,7 @@ class SceneUtils {
 		});
 		let textMesh = new THREE.Mesh(textGeom, materialArray);
 		let cameraNorm = Props.camera.position.clone().normalize();
-		textMesh.type = TEXT_GEOMETRY;
+		textMesh.type = textType;
 		sphere.add(textMesh);
 		textMesh.position.set(
 			cameraNorm.x * sphere.radius,

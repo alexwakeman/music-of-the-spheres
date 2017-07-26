@@ -8,7 +8,10 @@ import {SceneUtils} from "./scene-utils.class";
 import {Colours} from "../config/colours";
 import {MotionLab} from "./motion-lab.class";
 import {MusicDataService} from "../services/music-data.service";
-import {MAIN_ARTIST_SPHERE, Props, RELATED_ARTIST_SPHERE, TEXT_GEOMETRY} from './props';
+import {
+	MAIN_ARTIST_SPHERE, MAIN_ARTIST_TEXT, Props, RELATED_ARTIST_SPHERE, RELATED_ARTIST_TEXT,
+	TEXT_GEOMETRY
+} from './props';
 import {store} from '../state/store';
 import {hideRelated, relatedClick, showRelated} from "../state/actions";
 
@@ -63,11 +66,9 @@ export class SpheresScene {
 					this.hoveredSphere = selected;
 					this.highlightRelatedSphere(Colours.relatedArtistHover);
 					break;
-				case TEXT_GEOMETRY:
-					if (selected.parent.type !== MAIN_ARTIST_SPHERE) {
-						this.hoveredSphere = selected.parent;
-						this.highlightRelatedSphere(Colours.relatedArtistHover);
-					}
+				case RELATED_ARTIST_TEXT:
+					this.hoveredSphere = selected.parent;
+					this.highlightRelatedSphere(Colours.relatedArtistHover);
 					break;
 			}
 		}
@@ -84,8 +85,10 @@ export class SpheresScene {
 	}
 
 	highlightRelatedSphere(colour) {
-		this.hoveredSphere.material.color.setHex(colour);
-		store.dispatch(showRelated(this.hoveredSphere.artistObj));
+		if (this.hoveredSphere && this.hoveredSphere.id !== Props.selectedArtistSphere.id) {
+			this.hoveredSphere.material.color.setHex(colour);
+			store.dispatch(showRelated(this.hoveredSphere.artistObj));
+		}
 	}
 
 	onSceneMouseClick(event) {
@@ -102,13 +105,14 @@ export class SpheresScene {
 					Props.selectedArtistSphere = selected;
 					this.setupClickedSphere(Colours.relatedArtistClicked);
 					break;
-				case TEXT_GEOMETRY:
-					Props.selectedArtistSphere = selected.parent;
-					this.setupClickedSphere(Colours.relatedArtistClicked);
-					break;
 				case MAIN_ARTIST_SPHERE:
 					Props.selectedArtistSphere = selected;
 					this.setupClickedSphere(Colours.mainArtist);
+					break;
+				case MAIN_ARTIST_TEXT:
+				case RELATED_ARTIST_TEXT:
+					Props.selectedArtistSphere = selected.parent;
+					this.setupClickedSphere(Colours.relatedArtistClicked);
 					break;
 			}
 		}
