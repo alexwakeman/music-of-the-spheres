@@ -55,9 +55,13 @@ export class SpheresScene {
 		Props.mouseVector = SceneUtils.getMouseVector(event);
 		Props.mouseIsOverRelated = false;
 		intersects = SceneUtils.getIntersectsFromMousePos();
+		this.unhighlightRelatedSphere();
 		if (intersects.length) {
 			selected = intersects[0].object;
 			if (this.hoveredSphere && selected.id === this.hoveredSphere.id) {
+				return true;
+			}
+			if (Props.selectedArtistSphere && selected.id === Props.selectedArtistSphere.id) {
 				return true;
 			}
 			switch (selected.type) {
@@ -72,13 +76,11 @@ export class SpheresScene {
 				case MAIN_ARTIST_SPHERE:
 				default:
 					this.hoveredSphere = selected;
-					if (Props.selectedArtistSphere.id !== this.hoveredRelatedSphere.id) {
+					if (this.hoveredRelatedSphere && Props.selectedArtistSphere.id !== this.hoveredRelatedSphere.id) {
 						this.highlightRelatedSphere(Colours.relatedArtistHover);
 					}
 					break;
 			}
-		} else {
-			this.unhighlightRelatedSphere();
 		}
 		Props.oldMouseVector = Props.mouseVector;
 		return isOverRelated;
@@ -136,7 +138,6 @@ export class SpheresScene {
 
 	setupClickedSphere(colour) {
 		Props.selectedArtistSphere.material.color.setHex(colour);
-		store.dispatch(relatedClick(Props.selectedArtistSphere.artistObj));
 		MusicDataService.fetchDisplayAlbums(Props.selectedArtistSphere.artistObj);
 	}
 

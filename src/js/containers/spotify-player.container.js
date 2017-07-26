@@ -5,16 +5,16 @@ import {loadAlbum} from "../state/actions";
 const mapStateToProps = (state) => {
 	return {
 		isHidden: state.hideInfo,
-		displayAlbums: state.displayAlbums,
+		displayArtist: state.displayArtist,
 		displayAlbumIndex: state.displayAlbumIndex
 	}
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		albumClickHandler: (evt, album) => {
+		albumClickHandler: (evt, albumIndex) => {
 			evt.preventDefault();
-			dispatch(loadAlbum(album));
+			dispatch(loadAlbum(albumIndex));
 		}
 	}
 };

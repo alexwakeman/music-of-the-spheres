@@ -1,34 +1,33 @@
 import * as React from 'react';
 
 export class SpotifyPlayerComponent extends React.Component {
-	constructor({displayAlbums, displayAlbumIndex, isHidden, albumClickHandler}) {
+	constructor({albumClickHandler}) {
 		super();
-		this.displayAlbums = displayAlbums;
-		this.displayAlbumIndex = displayAlbumIndex;
-		this.isHidden = isHidden;
 		this.albumClickHandler = albumClickHandler;
 	}
 
 	render() {
+		const { displayAlbumIndex, displayArtist, isHidden } = this.props;
 		const embedUrl = 'https://open.spotify.com/embed?uri=spotify:album:';
-		const classes = this.isHidden ? 'hidden spotify-player-container' : 'spotify-player-container';
+		const classes = isHidden ? 'hidden spotify-player-container' : 'spotify-player-container';
+		const albums = displayArtist.albums;
 		let artistEmbedUrl,
 			iFrameMarkup = '',
 			albumsListMarkup = '',
 			albumId;
 		
-		if (this.displayAlbums.length) {
-			albumId = this.displayAlbums[this.displayAlbumIndex].id;
+		if (albums && albums.length) {
+			albumId = albums[displayAlbumIndex].id;
 			artistEmbedUrl = `${embedUrl}${albumId}`;
 			iFrameMarkup = (
 				<div className="spotify-player">
 					<iframe src={artistEmbedUrl} width="300" height="380" frameBorder="0" allowTransparency="true"/>
 				</div>
 			);
-			albumsListMarkup = this.displayAlbums.map((album) => {
+			albumsListMarkup = albums.map((album, index) => {
 				return (
-					<div className="album">
-						<a onClick={(evt) => this.albumClickHandler(evt, album)}>{album.name}</a>
+					<div className="album" key={album.id}>
+						<a href="javascript:void(0);" onClick={(evt) => this.albumClickHandler(evt, index)}>{album.name}</a>
 					</div>
 				)
 			});

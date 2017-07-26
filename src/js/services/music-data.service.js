@@ -1,5 +1,5 @@
 import {store} from '../state/store';
-import {artistDataAvailable, displayAlbums} from "../state/actions";
+import {artistDataAvailable, displayAlbums, displayArtist} from "../state/actions";
 
 export class MusicDataService {
 	static search(artistName) {
@@ -22,14 +22,17 @@ export class MusicDataService {
 
 	static fetchDisplayAlbums(artist) {
 		let artistURL = '/api/albums/' + artist.id;
-		if (artist.albums.length) { // we've already downloaded the album list so just trigger UI update
-			 return store.dispatch(displayAlbums(artist.albums));
+		if (artist.albums && artist.albums.length) { // we've already downloaded the album list so just trigger UI update
+			 return store.dispatch(displayArtist(artist));
 		}
 
 		return window.fetch(artistURL, {
 			credentials: 'same-origin'
 		})
 		.then((data) => data.json())
-		.then((json) => store.dispatch(displayAlbums(json)));
+		.then((json) => {
+			artist.albums = json;
+			store.dispatch(displayArtist(artist))
+		});
 	}
 }

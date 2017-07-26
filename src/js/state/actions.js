@@ -1,9 +1,9 @@
 export const ARTIST_DATA_AVAILABLE = 'ARTIST_DATA_AVAILABLE';
-export const ARTIST_ALBUMS_AVAILABLE = 'ARTIST_ALBUMS_AVAILABLE';
+export const UPDATE_DISPLAY_ARTIST = 'UPDATE_DISPLAY_ARTIST';
 export const SEARCH_TERM_UPDATE = 'SEARCH_TERM_UPDATE';
 export const RELATED_CLICK = 'RELATED_CLICK';
-export const SHOW_RELATED = 'SHOW_RELATED';
-export const HIDE_RELATED = 'HIDE_RELATED';
+export const SHOW_RELATED_INFO = 'SHOW_RELATED_INFO';
+export const HIDE_RELATED_INFO = 'HIDE_RELATED_INFO';
 export const CLEAR_SESSION = 'CLEAR_SESSION';
 export const LOAD_ALBUM = 'LOAD_ALBUM';
 
@@ -14,9 +14,9 @@ export function artistDataAvailable(data) {
 	}
 }
 
-export function displayAlbums(data) {
+export function displayArtist(data) {
 	return {
-		type: ARTIST_ALBUMS_AVAILABLE,
+		type: UPDATE_DISPLAY_ARTIST,
 		data: data
 	}
 }
@@ -37,14 +37,14 @@ export function relatedClick(relatedArtist) {
 
 export function showRelated(relatedArtist) {
 	return {
-		type: SHOW_RELATED,
+		type: SHOW_RELATED_INFO,
 		data: relatedArtist
 	}
 }
 
 export function hideRelated() {
 	return {
-		type: HIDE_RELATED,
+		type: HIDE_RELATED_INFO,
 		data: null
 	}
 }
@@ -55,9 +55,9 @@ export function clearSession() {
 	}
 }
 
-export function loadAlbum(album) {
+export function loadAlbum(albumId) {
 	return {
 		type: LOAD_ALBUM,
-		data: album
+		data: albumId
 	}
 }
