@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {Colours} from '../config/colours';
 import {
 	CONNECTING_LINE, MAIN_ARTIST_SPHERE, RELATED_ARTIST_SPHERE, Props,
-	RELATED_ARTIST_TEXT
+	RELATED_ARTIST_TEXT, MAIN_ARTIST_TEXT
 } from "./props";
 import {Statistics} from "./statistics.class";
 
@@ -69,7 +69,7 @@ class SceneUtils {
 		sphere.artistObj = artist;
 		sphere.radius = radius;
 		sphere.type = MAIN_ARTIST_SPHERE;
-		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere, RELATED_ARTIST_TEXT);
+		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere, MAIN_ARTIST_TEXT);
 		return sphere;
 	}
 

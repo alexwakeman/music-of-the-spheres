@@ -63,10 +63,12 @@ export class SpheresScene {
 			selected = intersects[0].object;
 			switch (selected.type) {
 				case RELATED_ARTIST_SPHERE:
+					isOverRelated = true;
 					this.hoveredSphere = selected;
 					this.highlightRelatedSphere(Colours.relatedArtistHover);
 					break;
 				case RELATED_ARTIST_TEXT:
+					isOverRelated = true;
 					this.hoveredSphere = selected.parent;
 					this.highlightRelatedSphere(Colours.relatedArtistHover);
 					break;
@@ -99,27 +101,33 @@ export class SpheresScene {
 			if (Props.selectedArtistSphere && selected.id === Props.selectedArtistSphere.id) {
 				return;
 			}
-			this.resetClickedSphere();
 			switch (selected.type) {
 				case RELATED_ARTIST_SPHERE:
+					this.resetClickedSphere();
 					Props.selectedArtistSphere = selected;
-					this.setupClickedSphere(Colours.relatedArtistClicked);
+					this.setupClickedSphere();
 					break;
 				case MAIN_ARTIST_SPHERE:
+					this.resetClickedSphere();
 					Props.selectedArtistSphere = selected;
-					this.setupClickedSphere(Colours.mainArtist);
+					this.setupClickedSphere();
 					break;
 				case MAIN_ARTIST_TEXT:
 				case RELATED_ARTIST_TEXT:
+					this.resetClickedSphere();
 					Props.selectedArtistSphere = selected.parent;
-					this.setupClickedSphere(Colours.relatedArtistClicked);
+					this.setupClickedSphere();
 					break;
 			}
 		}
 	}
 
-	setupClickedSphere(colour) {
-		Props.selectedArtistSphere.material.color.setHex(colour);
+	setupClickedSphere() {
+		if (Props.selectedArtistSphere.type === MAIN_ARTIST_SPHERE) {
+			Props.selectedArtistSphere.material.color.setHex(Colours.mainArtist);
+		} else {
+			Props.selectedArtistSphere.material.color.setHex(Colours.relatedArtistClicked);
+		}
 		MusicDataService.fetchDisplayAlbums(Props.selectedArtistSphere.artistObj);
 	}
 

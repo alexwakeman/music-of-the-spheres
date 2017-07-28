@@ -2,7 +2,7 @@
  * MotionLab deals with controlling each tick of the animation frame sequence
  * It's aim is to isolate code that happens over a number of frames (i.e. motion)
  */
-import {Props, TEXT_GEOMETRY} from './props';
+import {Props, MAIN_ARTIST_TEXT, RELATED_ARTIST_TEXT} from './props';
 import {SceneUtils} from "./scene-utils.class";
 import * as THREE from "three";
 
@@ -89,7 +89,7 @@ export class MotionLab {
 		// update rotation of text attached objects, to force them to look at camera
 		// this makes them readable
 		Props.graphContainer.traverse((obj) => {
-			if (obj.type === TEXT_GEOMETRY) {
+			if (obj.type === MAIN_ARTIST_TEXT || obj.type === RELATED_ARTIST_TEXT) {
 				let cameraNorm = Props.camera.position.clone().normalize();
 				obj.position.set(
 					cameraNorm.x * obj.parent.radius,
