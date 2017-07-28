@@ -72,6 +72,10 @@ export class SpheresScene {
 					this.hoveredSphere = selected.parent;
 					this.highlightRelatedSphere(Colours.relatedArtistHover);
 					break;
+				case MAIN_ARTIST_TEXT:
+				case MAIN_ARTIST_SPHERE:
+					isOverRelated = true;
+					break;
 			}
 		}
 		Props.oldMouseVector = Props.mouseVector;
@@ -79,18 +83,26 @@ export class SpheresScene {
 	}
 
 	unhighlightRelatedSphere() {
-		if (this.hoveredSphere && this.hoveredSphere.id !== Props.selectedArtistSphere.id) {
+		if (!this.hoveredSphereIsSelected()) {
 			this.hoveredSphere.material.color.setHex(Colours.relatedArtist);
 			this.hoveredSphere = null;
-			store.dispatch(hideRelated());
+			if (Props.selectedArtistSphere.type !== RELATED_ARTIST_SPHERE) {
+				store.dispatch(hideRelated());
+			}
 		}
 	}
 
 	highlightRelatedSphere(colour) {
-		if (this.hoveredSphere && this.hoveredSphere.id !== Props.selectedArtistSphere.id) {
+		if (!this.hoveredSphereIsSelected()) {
 			this.hoveredSphere.material.color.setHex(colour);
-			store.dispatch(showRelated(this.hoveredSphere.artistObj));
+			if (Props.selectedArtistSphere.type !== RELATED_ARTIST_SPHERE) {
+				store.dispatch(showRelated(this.hoveredSphere.artistObj));
+			}
 		}
+	}
+
+	hoveredSphereIsSelected() {
+		return !(this.hoveredSphere && this.hoveredSphere.id !== Props.selectedArtistSphere.id);
 	}
 
 	onSceneMouseClick(event) {
@@ -126,6 +138,7 @@ export class SpheresScene {
 		if (Props.selectedArtistSphere.type === MAIN_ARTIST_SPHERE) {
 			Props.selectedArtistSphere.material.color.setHex(Colours.mainArtist);
 		} else {
+			store.dispatch(showRelated(Props.selectedArtistSphere.artistObj));
 			Props.selectedArtistSphere.material.color.setHex(Colours.relatedArtistClicked);
 		}
 		MusicDataService.fetchDisplayAlbums(Props.selectedArtistSphere.artistObj);
