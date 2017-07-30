@@ -87,6 +87,7 @@ export class SpheresScene {
 			this.hoveredSphere.material.color.setHex(Colours.relatedArtist);
 			this.hoveredSphere = null;
 			if (Props.selectedArtistSphere.type !== RELATED_ARTIST_SPHERE) {
+				// only dispatch related artist event for un-selected
 				store.dispatch(hideRelated());
 			}
 		}
@@ -131,6 +132,9 @@ export class SpheresScene {
 					this.setupClickedSphere();
 					break;
 			}
+		} else {
+			this.resetClickedSphere();
+			store.dispatch(hideRelated());
 		}
 	}
 
