@@ -97,7 +97,7 @@ export class SpheresScene {
 
 			this.hoveredSphere = null;
 			if (Props.selectedArtistSphere.type !== RELATED_ARTIST_SPHERE) {
-				// only dispatch related artist event for un-selected
+				// only dispatch related artist hide panel event for un-selected
 				store.dispatch(hideRelated());
 			}
 		}
@@ -150,6 +150,7 @@ export class SpheresScene {
 
 	setupClickedSphere() {
 		if (Props.selectedArtistSphere.type === MAIN_ARTIST_SPHERE) {
+			store.dispatch(hideRelated());
 			Props.selectedArtistSphere.material.color.setHex(Colours.mainArtist);
 		} else {
 			store.dispatch(showRelated(Props.selectedArtistSphere.artistObj));

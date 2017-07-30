@@ -1,15 +1,15 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 import {Colours} from '../config/colours';
 import {
 	CONNECTING_LINE, MAIN_ARTIST_SPHERE, RELATED_ARTIST_SPHERE, Props,
 	RELATED_ARTIST_TEXT, MAIN_ARTIST_TEXT
-} from "./props";
-import {Statistics} from "./statistics.class";
+} from './props';
+import {Statistics} from './statistics.class';
 
 let HELVETIKER;
 const MAIN_ARTIST_FONT_SIZE = 34;
 const RELATED_ARTIST_FONT_SIZE = 20;
-const TOTAL_RELATED = 5;
+const TOTAL_RELATED = 6;
 
 class SceneUtils {
 	static init() {
@@ -91,11 +91,11 @@ class SceneUtils {
 			relatedArtistSphere.distance = genreMetrics.lineLength;
 			relatedArtistSphere.radius = radius;
 			relatedArtistSphere.type = RELATED_ARTIST_SPHERE;
-			sphereFaceIndex += step;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
 			relatedArtistsSphereArray.push(relatedArtistSphere);
+			sphereFaceIndex += step;
 		}
 		return relatedArtistsSphereArray;
 	}
