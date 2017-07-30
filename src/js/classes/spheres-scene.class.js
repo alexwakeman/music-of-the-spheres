@@ -75,6 +75,8 @@ export class SpheresScene {
 				case MAIN_ARTIST_TEXT:
 				case MAIN_ARTIST_SPHERE:
 					isOverRelated = true;
+					this.hoveredSphere = selected;
+					this.highlightRelatedSphere(Colours.mainArtistHover);
 					break;
 			}
 		}
@@ -84,7 +86,15 @@ export class SpheresScene {
 
 	unhighlightRelatedSphere() {
 		if (!this.hoveredSphereIsSelected()) {
-			this.hoveredSphere.material.color.setHex(Colours.relatedArtist);
+			switch (this.hoveredSphere.type) {
+				case RELATED_ARTIST_SPHERE:
+					this.hoveredSphere.material.color.setHex(Colours.relatedArtist);
+					break;
+				case MAIN_ARTIST_SPHERE:
+					this.hoveredSphere.material.color.setHex(Colours.mainArtist);
+					break;
+			}
+
 			this.hoveredSphere = null;
 			if (Props.selectedArtistSphere.type !== RELATED_ARTIST_SPHERE) {
 				// only dispatch related artist event for un-selected
