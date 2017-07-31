@@ -19,8 +19,8 @@ export class SpheresScene {
 	constructor(container) {
 		let artistId;
 		this.motionLab = new MotionLab();
-		this.hoveredSphere = null;
-		this.selectedSphere = null;
+		this.hoveredSphere = {id: NaN};
+		this.selectedSphere = {id: NaN};
 
 		// attach to dom
 		Props.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -29,7 +29,6 @@ export class SpheresScene {
 		Props.container.appendChild(Props.renderer.domElement);
 
 		// init the scene
-		Props.graphContainer.position.set(0, 0, 0);
 		Props.scene.add(Props.graphContainer);
 		Props.scene.add(Props.camera);
 		Props.camera.position.set(0, 250, Props.cameraDistance);
@@ -59,32 +58,39 @@ export class SpheresScene {
 		Props.mouseVector = SceneUtils.getMouseVector(event);
 		Props.mouseIsOverRelated = false;
 		intersects = SceneUtils.getIntersectsFromMousePos();
-		this.unHighlightHoveredSphere();
+
 		if (intersects.length) {
 			selected = intersects[0].object;
+			if (selected.id === this.hoveredSphere.id) {
+				return;
+			}
 			switch (selected.type) {
 				case MAIN_ARTIST_SPHERE:
 				case RELATED_ARTIST_SPHERE:
 					isOverRelated = true;
+					this.unHighlightHoveredSphere();
 					this.hoveredSphere = selected;
 					this.highlightHoveredSphere();
 					break;
 				case MAIN_ARTIST_TEXT:
 				case RELATED_ARTIST_TEXT:
 					isOverRelated = true;
+					this.unHighlightHoveredSphere();
 					this.hoveredSphere = selected.parent;
 					this.highlightHoveredSphere();
 					break;
 			}
+		} else {
+			this.unHighlightHoveredSphere();
 		}
 		Props.oldMouseVector = Props.mouseVector;
 		return isOverRelated;
 	}
 
 	unHighlightHoveredSphere() {
-		if (!this.hoveredSphereIsSelected()) {
+		if (this.hoveredSphere.id && !this.hoveredSphereIsSelected()) {
 			this.hoveredSphere.material.color.setHex(this.hoveredSphere.colours.default);
-			this.hoveredSphere = null;
+			this.hoveredSphere = {id: NaN};
 			if (this.selectedSphere.type !== RELATED_ARTIST_SPHERE) {
 				store.dispatch(hideRelated());
 			}
@@ -101,7 +107,7 @@ export class SpheresScene {
 	}
 
 	hoveredSphereIsSelected() {
-		return !(!!this.selectedSphere && !!this.hoveredSphere && this.hoveredSphere.id !== this.selectedSphere.id);
+		return this.hoveredSphere.id === this.selectedSphere.id;
 	}
 
 	onSceneMouseClick(event) {
@@ -154,7 +160,7 @@ export class SpheresScene {
 			return;
 		}
 		this.selectedSphere.material.color.setHex(this.selectedSphere.colours.default);
-		this.selectedSphere = null;
+		this.selectedSphere = {id: NaN};
 	}
 
 	onSceneMouseDrag(event) {
@@ -172,7 +178,7 @@ export class SpheresScene {
 	getRelatedArtist(selectedSphere) {
 		MusicDataService.getArtist(selectedSphere.artistObj.id)
 			.then((artistObj) => {
-				
+
 			});
 	}
 
