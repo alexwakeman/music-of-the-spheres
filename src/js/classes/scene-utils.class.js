@@ -69,6 +69,10 @@ class SceneUtils {
 		sphere.artistObj = artist;
 		sphere.radius = radius;
 		sphere.type = MAIN_ARTIST_SPHERE;
+		sphere.colours = {};
+		sphere.colours.default = Colours.mainArtist;
+		sphere.colours.hover = Colours.mainArtistHover;
+		sphere.colours.selected = Colours.mainArtist;
 		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere, MAIN_ARTIST_TEXT);
 		return sphere;
 	}
@@ -91,6 +95,10 @@ class SceneUtils {
 			relatedArtistSphere.distance = genreMetrics.lineLength;
 			relatedArtistSphere.radius = radius;
 			relatedArtistSphere.type = RELATED_ARTIST_SPHERE;
+			relatedArtistSphere.colours = {};
+			relatedArtistSphere.colours.default = Colours.relatedArtist;
+			relatedArtistSphere.colours.hover = Colours.relatedArtistHover;
+			relatedArtistSphere.colours.selected = Colours.relatedArtistClicked;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);

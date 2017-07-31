@@ -20,6 +20,7 @@ export class SpheresScene {
 		let artistId;
 		this.motionLab = new MotionLab();
 		this.hoveredSphere = null;
+		this.selectedSphere = null;
 
 		// attach to dom
 		Props.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -28,7 +29,7 @@ export class SpheresScene {
 		Props.container.appendChild(Props.renderer.domElement);
 
 		// init the scene
-		Props.graphContainer.position.set(1, 5, 0);
+		Props.graphContainer.position.set(0, 0, 0);
 		Props.scene.add(Props.graphContainer);
 		Props.scene.add(Props.camera);
 		Props.camera.position.set(0, 250, Props.cameraDistance);
@@ -47,7 +48,7 @@ export class SpheresScene {
 		window.location.hash = encodeURIComponent(artist.id);
 		Props.mainArtistSphere = SceneUtils.createMainArtistSphere(artist);
 		Props.relatedArtistSpheres = SceneUtils.createRelatedSpheres(artist, Props.mainArtistSphere);
-		Props.selectedArtistSphere = Props.mainArtistSphere;
+		this.selectedSphere = Props.mainArtistSphere;
 		SceneUtils.appendObjectsToScene(Props.graphContainer, Props.mainArtistSphere, Props.relatedArtistSpheres);
 	}
 
@@ -58,25 +59,21 @@ export class SpheresScene {
 		Props.mouseVector = SceneUtils.getMouseVector(event);
 		Props.mouseIsOverRelated = false;
 		intersects = SceneUtils.getIntersectsFromMousePos();
-		this.unhighlightRelatedSphere();
+		this.unHighlightHoveredSphere();
 		if (intersects.length) {
 			selected = intersects[0].object;
 			switch (selected.type) {
+				case MAIN_ARTIST_SPHERE:
 				case RELATED_ARTIST_SPHERE:
 					isOverRelated = true;
 					this.hoveredSphere = selected;
-					this.highlightRelatedSphere(Colours.relatedArtistHover);
+					this.highlightHoveredSphere();
 					break;
+				case MAIN_ARTIST_TEXT:
 				case RELATED_ARTIST_TEXT:
 					isOverRelated = true;
 					this.hoveredSphere = selected.parent;
-					this.highlightRelatedSphere(Colours.relatedArtistHover);
-					break;
-				case MAIN_ARTIST_TEXT:
-				case MAIN_ARTIST_SPHERE:
-					isOverRelated = true;
-					this.hoveredSphere = selected;
-					this.highlightRelatedSphere(Colours.mainArtistHover);
+					this.highlightHoveredSphere();
 					break;
 			}
 		}
@@ -84,36 +81,27 @@ export class SpheresScene {
 		return isOverRelated;
 	}
 
-	unhighlightRelatedSphere() {
+	unHighlightHoveredSphere() {
 		if (!this.hoveredSphereIsSelected()) {
-			switch (this.hoveredSphere.type) {
-				case RELATED_ARTIST_SPHERE:
-					this.hoveredSphere.material.color.setHex(Colours.relatedArtist);
-					break;
-				case MAIN_ARTIST_SPHERE:
-					this.hoveredSphere.material.color.setHex(Colours.mainArtist);
-					break;
-			}
-
+			this.hoveredSphere.material.color.setHex(this.hoveredSphere.colours.default);
 			this.hoveredSphere = null;
-			if (Props.selectedArtistSphere.type !== RELATED_ARTIST_SPHERE) {
-				// only dispatch related artist hide panel event for un-selected
+			if (this.selectedSphere.type !== RELATED_ARTIST_SPHERE) {
 				store.dispatch(hideRelated());
 			}
 		}
 	}
 
-	highlightRelatedSphere(colour) {
-		if (!this.hoveredSphereIsSelected()) {
-			this.hoveredSphere.material.color.setHex(colour);
-			if (Props.selectedArtistSphere.type !== RELATED_ARTIST_SPHERE) {
+	highlightHoveredSphere() {
+		if (this.selectedSphere && !this.hoveredSphereIsSelected()) {
+			this.hoveredSphere.material.color.setHex(this.hoveredSphere.colours.hover);
+			if (this.selectedSphere.type !== RELATED_ARTIST_SPHERE) {
 				store.dispatch(showRelated(this.hoveredSphere.artistObj));
 			}
 		}
 	}
 
 	hoveredSphereIsSelected() {
-		return !(this.hoveredSphere && this.hoveredSphere.id !== Props.selectedArtistSphere.id);
+		return !(this.hoveredSphere && this.hoveredSphere.id !== this.selectedSphere.id);
 	}
 
 	onSceneMouseClick(event) {
@@ -121,25 +109,33 @@ export class SpheresScene {
 		let intersects = SceneUtils.getIntersectsFromMousePos();
 		if (intersects.length) {
 			const selected = intersects[0].object;
-			if (Props.selectedArtistSphere && selected.id === Props.selectedArtistSphere.id) {
+			if (this.selectedSphere && selected.id === this.selectedSphere.id) {
 				return;
 			}
 			switch (selected.type) {
 				case RELATED_ARTIST_SPHERE:
 					this.resetClickedSphere();
-					Props.selectedArtistSphere = selected;
+					this.selectedSphere = selected;
 					this.setupClickedSphere();
+					store.dispatch(showRelated(this.selectedSphere.artistObj));
+					break;
+				case RELATED_ARTIST_TEXT:
+					this.resetClickedSphere();
+					this.selectedSphere = selected.parent;
+					this.setupClickedSphere();
+					store.dispatch(showRelated(this.selectedSphere.artistObj));
 					break;
 				case MAIN_ARTIST_SPHERE:
 					this.resetClickedSphere();
-					Props.selectedArtistSphere = selected;
+					this.selectedSphere = selected;
 					this.setupClickedSphere();
+					store.dispatch(hideRelated());
 					break;
 				case MAIN_ARTIST_TEXT:
-				case RELATED_ARTIST_TEXT:
 					this.resetClickedSphere();
-					Props.selectedArtistSphere = selected.parent;
+					this.selectedSphere = selected.parent;
 					this.setupClickedSphere();
+					store.dispatch(hideRelated());
 					break;
 			}
 		} else {
@@ -149,29 +145,16 @@ export class SpheresScene {
 	}
 
 	setupClickedSphere() {
-		if (Props.selectedArtistSphere.type === MAIN_ARTIST_SPHERE) {
-			store.dispatch(hideRelated());
-			Props.selectedArtistSphere.material.color.setHex(Colours.mainArtist);
-		} else {
-			store.dispatch(showRelated(Props.selectedArtistSphere.artistObj));
-			Props.selectedArtistSphere.material.color.setHex(Colours.relatedArtistClicked);
-		}
-		MusicDataService.fetchDisplayAlbums(Props.selectedArtistSphere.artistObj);
+		this.selectedSphere.material.color.setHex(this.selectedSphere.colours.selected);
+		MusicDataService.fetchDisplayAlbums(this.selectedSphere.artistObj);
 	}
 
 	resetClickedSphere() {
-		if (!Props.selectedArtistSphere.type) {
+		if (!this.selectedSphere) {
 			return;
 		}
-		switch (Props.selectedArtistSphere.type) {
-			case RELATED_ARTIST_SPHERE:
-				Props.selectedArtistSphere.material.color.setHex(Colours.relatedArtist);
-				break;
-			case MAIN_ARTIST_SPHERE:
-				Props.selectedArtistSphere.material.color.setHex(Colours.mainArtist);
-				break;
-		}
-		Props.selectedArtistSphere = {id: 0};
+		this.selectedSphere.material.color.setHex(this.selectedSphere.colours.default);
+		this.selectedSphere = null;
 	}
 
 	onSceneMouseDrag(event) {
