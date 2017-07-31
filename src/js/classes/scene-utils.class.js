@@ -86,9 +86,6 @@ class SceneUtils {
 	static createRelatedSpheres(artist, mainArtistSphere) {
 		let relatedArtistsSphereArray = [];
 		let relatedArtist;
-		let sphereFaceIndex = 0;
-		let facesCount = mainArtistSphere.geometry.faces.length - 1;
-		let step = Math.round(facesCount / TOTAL_RELATED - 1);
 
 		for (let i = 0, len = Math.min(TOTAL_RELATED, artist.related.length); i < len; i++) {
 			relatedArtist = artist.related[i];
@@ -105,23 +102,20 @@ class SceneUtils {
 			relatedArtistSphere.colours.default = Colours.relatedArtist;
 			relatedArtistSphere.colours.hover = Colours.relatedArtistHover;
 			relatedArtistSphere.colours.selected = Colours.relatedArtistClicked;
-			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, sphereFaceIndex);
+			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, i);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
 			relatedArtistsSphereArray.push(relatedArtistSphere);
-			sphereFaceIndex += step;
 		}
 		return relatedArtistsSphereArray;
 	}
 
-	static appendObjectsToScene(graphContainer, sphere, sphereArray) {
+	static appendObjectsToScene(graphContainer, sphere, sphereArray = []) {
 		const parent = new THREE.Object3D();
 		parent.name = 'parent';
 		parent.add(sphere);
-		if (sphereArray) {
-			for (let i = 0; i < sphereArray.length; i++) {
-				parent.add(sphereArray[i]);
-			}
+		for (let i = 0; i < sphereArray.length; i++) {
+			parent.add(sphereArray[i]);
 		}
 		graphContainer.add(parent);
 	}
@@ -137,16 +131,18 @@ class SceneUtils {
 		mainArtistSphere.add(line);
 	}
 
-	static positionRelatedArtist(mainArtistSphere, relatedSphere, sphereFaceIndex) {
-		let mainArtistSphereFace = mainArtistSphere.geometry.faces[Math.floor(sphereFaceIndex)].normal.clone();
+	static positionRelatedArtist(mainArtistSphere, relatedSphere, positionIndex) {
+		let mainArtistSpherePos = mainArtistSphere.position.clone();
+		let direction = RELATED_POSTIONS[positionIndex];
 		relatedSphere.position
-			.copy(mainArtistSphereFace.multiply(new THREE.Vector3(
-					relatedSphere.distance,
-					relatedSphere.distance,
-					relatedSphere.distance
+			.copy(mainArtistSpherePos.add(new THREE.Vector3(
+					direction.x * relatedSphere.distance,
+					direction.y * relatedSphere.distance,
+					direction.z * relatedSphere.distance
 				)
 			)
 		);
+		relatedSphere.directionNorm = direction;
 	}
 
 	static addText(label, size, sphere, textType) {

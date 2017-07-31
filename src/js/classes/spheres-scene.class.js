@@ -101,7 +101,7 @@ export class SpheresScene {
 	}
 
 	hoveredSphereIsSelected() {
-		return !(this.selectedSphere && this.hoveredSphere && this.hoveredSphere.id !== this.selectedSphere.id);
+		return !(!!this.selectedSphere && !!this.hoveredSphere && this.hoveredSphere.id !== this.selectedSphere.id);
 	}
 
 	onSceneMouseClick(event) {
@@ -170,12 +170,10 @@ export class SpheresScene {
 	}
 
 	getRelatedArtist(selectedSphere) {
-		this.clearGraph();
-		SceneUtils.appendObjectsToScene(Props.graphContainer, selectedSphere);
-		this.motionLab.trackObjectToCamera(selectedSphere, () => {
-			this.clearGraph();
-			MusicDataService.getArtist(selectedSphere.artistObj.id);
-		});
+		MusicDataService.getArtist(selectedSphere.artistObj.id)
+			.then((artistObj) => {
+				
+			});
 	}
 
 	clearGraph() {
