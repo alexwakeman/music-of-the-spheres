@@ -5,11 +5,17 @@ import {
 	RELATED_ARTIST_TEXT, MAIN_ARTIST_TEXT
 } from './props';
 import {Statistics} from './statistics.class';
+import {Vector3} from "three";
 
 let HELVETIKER;
 const MAIN_ARTIST_FONT_SIZE = 34;
 const RELATED_ARTIST_FONT_SIZE = 20;
 const TOTAL_RELATED = 6;
+const RELATED_POSTIONS = [
+	new Vector3(1, 0, 0), new Vector3(-1, 0, 0),
+	new Vector3(0, 1, 0), new Vector3(0, -1, 0),
+	new Vector3(0, 0, 1), new Vector3(0, 0, -1)
+];
 
 class SceneUtils {
 	static init() {
@@ -90,11 +96,11 @@ class SceneUtils {
 			let geometry = new THREE.SphereGeometry(radius, 35, 35);
 			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.relatedArtist}));
 			let genreMetrics = Statistics.getSharedGenreMetric(artist, relatedArtist);
+			relatedArtistSphere.type = RELATED_ARTIST_SPHERE;
 			relatedArtistSphere.artistObj = relatedArtist;
 			relatedArtistSphere.artistObj.genreSimilarity = genreMetrics.genreSimilarity;
 			relatedArtistSphere.distance = genreMetrics.lineLength;
 			relatedArtistSphere.radius = radius;
-			relatedArtistSphere.type = RELATED_ARTIST_SPHERE;
 			relatedArtistSphere.colours = {};
 			relatedArtistSphere.colours.default = Colours.relatedArtist;
 			relatedArtistSphere.colours.hover = Colours.relatedArtistHover;

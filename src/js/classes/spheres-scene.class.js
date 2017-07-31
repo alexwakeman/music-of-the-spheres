@@ -92,7 +92,7 @@ export class SpheresScene {
 	}
 
 	highlightHoveredSphere() {
-		if (this.selectedSphere && !this.hoveredSphereIsSelected()) {
+		if (!this.hoveredSphereIsSelected()) {
 			this.hoveredSphere.material.color.setHex(this.hoveredSphere.colours.hover);
 			if (this.selectedSphere.type !== RELATED_ARTIST_SPHERE) {
 				store.dispatch(showRelated(this.hoveredSphere.artistObj));
@@ -101,7 +101,7 @@ export class SpheresScene {
 	}
 
 	hoveredSphereIsSelected() {
-		return !(this.hoveredSphere && this.hoveredSphere.id !== this.selectedSphere.id);
+		return !(this.selectedSphere && this.hoveredSphere && this.hoveredSphere.id !== this.selectedSphere.id);
 	}
 
 	onSceneMouseClick(event) {
