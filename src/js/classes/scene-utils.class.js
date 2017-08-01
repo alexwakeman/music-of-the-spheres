@@ -5,16 +5,15 @@ import {
 	RELATED_ARTIST_TEXT, MAIN_ARTIST_TEXT
 } from './props';
 import {Statistics} from './statistics.class';
-import {Vector3} from "three";
 
 let HELVETIKER;
 const MAIN_ARTIST_FONT_SIZE = 34;
 const RELATED_ARTIST_FONT_SIZE = 20;
 const TOTAL_RELATED = 6;
 const RELATED_POSTIONS = [
-	new Vector3(1, 0, 0), new Vector3(-1, 0, 0),
-	new Vector3(0, 1, 0), new Vector3(0, -1, 0),
-	new Vector3(0, 0, 1), new Vector3(0, 0, -1)
+	new THREE.Vector3(1, 0, 0), new THREE.Vector3(-1, 0, 0),
+	new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, -1, 0),
+	new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1)
 ];
 
 class SceneUtils {
@@ -27,25 +26,32 @@ class SceneUtils {
 			}, ()=>{}, reject);
 		});
 	}
-	/**
-	 *
-	 * @param a - min
-	 * @param b - max
-	 * @param c - value to clamp
-	 * @returns {number}
-	 */
+
 	static clamp(a, b, c) {
 		return Math.max(b, Math.min(c, a));
 	}
 
-	/**
-	 * Given positive x return 1, negative x return -1, or 0 otherwise
-	 * @param n
-	 * @returns {number}
-	 */
 	static sign(n) {
 		return n > 0 ? 1 : n < 0 ? -1 : 0;
-	};
+	}
+
+	static invertVector(vector) {
+		return new THREE.Vector3(
+			SceneUtils.invertNumber(vector.x),
+			SceneUtils.invertNumber(vector.y),
+			SceneUtils.invertNumber(vector.z)
+		)
+	}
+
+	static invertNumber(n) {
+		if (n === 0) {
+			return n;
+		} else if (n < 0) {
+			return Math.abs(n);
+		} else {
+			return -Math.abs(n);
+		}
+	}
 	
 	static renormalizeQuaternion(object) {
 		let clone = object.clone();

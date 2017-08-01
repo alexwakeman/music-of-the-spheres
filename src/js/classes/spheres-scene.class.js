@@ -19,7 +19,7 @@ export class SpheresScene {
 	constructor(container) {
 		let artistId;
 		this.motionLab = new MotionLab();
-		this.hoveredSphere = {id: NaN};
+		this.hoveredSphere = {id: NaN}; // set to NaN as optimisation (NaN !== NaN) and simpler branching
 		this.selectedSphere = {id: NaN};
 
 		// attach to dom
@@ -67,17 +67,17 @@ export class SpheresScene {
 			switch (selected.type) {
 				case MAIN_ARTIST_SPHERE:
 				case RELATED_ARTIST_SPHERE:
-					isOverRelated = true;
 					this.unHighlightHoveredSphere();
 					this.hoveredSphere = selected;
 					this.highlightHoveredSphere();
+					isOverRelated = true;
 					break;
 				case MAIN_ARTIST_TEXT:
 				case RELATED_ARTIST_TEXT:
-					isOverRelated = true;
 					this.unHighlightHoveredSphere();
 					this.hoveredSphere = selected.parent;
 					this.highlightHoveredSphere();
+					isOverRelated = true;
 					break;
 			}
 		} else {
@@ -156,7 +156,7 @@ export class SpheresScene {
 	}
 
 	resetClickedSphere() {
-		if (!this.selectedSphere) {
+		if (!this.selectedSphere.id) {
 			return;
 		}
 		this.selectedSphere.material.color.setHex(this.selectedSphere.colours.default);
@@ -176,6 +176,9 @@ export class SpheresScene {
 	}
 
 	getRelatedArtist(selectedSphere) {
+		// remove the selectedSphere from the graph
+		// replace it with duplicate as 'mainArtistSphere',
+		// attach related artists to it (avoiding inverted direction norm)
 		MusicDataService.getArtist(selectedSphere.artistObj.id)
 			.then((artistObj) => {
 
