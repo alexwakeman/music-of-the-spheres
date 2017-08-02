@@ -35,21 +35,21 @@ class SceneUtils {
 		return n > 0 ? 1 : n < 0 ? -1 : 0;
 	}
 
-	static invertVector(vector) {
+	static negateVector(vector) {
 		return new THREE.Vector3(
-			SceneUtils.invertNumber(vector.x),
-			SceneUtils.invertNumber(vector.y),
-			SceneUtils.invertNumber(vector.z)
+			SceneUtils.negateNumber(vector.x),
+			SceneUtils.negateNumber(vector.y),
+			SceneUtils.negateNumber(vector.z)
 		)
 	}
 
-	static invertNumber(n) {
+	static negateNumber(n) {
 		if (n === 0) {
 			return n;
 		} else if (n < 0) {
 			return Math.abs(n);
 		} else {
-			return -Math.abs(n);
+			return -n;
 		}
 	}
 	
@@ -74,31 +74,39 @@ class SceneUtils {
 			-(event.clientY / Props.renderer.domElement.clientHeight) * 2 + 1);
 	}
 
-	static createMainArtistSphere(artist) {
-		let radius = Statistics.getArtistSphereSize(artist);
+	static createMainArtistSphere(mainArtist, relatedArtistExplored = null) {
+		let radius = Statistics.getArtistSphereSize(mainArtist);
 		let geometry = new THREE.SphereGeometry(radius, 35, 35);
 		let sphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.mainArtist}));
-		sphere.artistObj = artist;
+		sphere.artistObj = mainArtist;
 		sphere.radius = radius;
 		sphere.type = MAIN_ARTIST_SPHERE;
 		sphere.colours = {};
 		sphere.colours.default = Colours.mainArtist;
 		sphere.colours.hover = Colours.mainArtistHover;
 		sphere.colours.selected = Colours.mainArtist;
-		SceneUtils.addText(artist.name, MAIN_ARTIST_FONT_SIZE, sphere, MAIN_ARTIST_TEXT);
+		if (relatedArtistExplored) {
+			sphere.position.copy(relatedArtistExplored.position);
+			sphere.exitPosition = SceneUtils.negateVector(relatedArtistExplored.directionNorm);
+		}
+		SceneUtils.addText(mainArtist.name, MAIN_ARTIST_FONT_SIZE, sphere, MAIN_ARTIST_TEXT);
 		return sphere;
 	}
 
-	static createRelatedSpheres(artist, mainArtistSphere) {
+	static createRelatedSpheres(mainArtist, mainArtistSphere) {
 		let relatedArtistsSphereArray = [];
 		let relatedArtist;
+		let limit = Math.min(TOTAL_RELATED, mainArtist.related.length);
+		if (mainArtistSphere.exitPosition && limit === TOTAL_RELATED) {
+			limit -= 1;
+		}
 
-		for (let i = 0, len = Math.min(TOTAL_RELATED, artist.related.length); i < len; i++) {
-			relatedArtist = artist.related[i];
+		for (let i = 0; i < limit; i++) {
+			relatedArtist = mainArtist.related[i];
 			let radius = Statistics.getArtistSphereSize(relatedArtist);
 			let geometry = new THREE.SphereGeometry(radius, 35, 35);
 			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.relatedArtist}));
-			let genreMetrics = Statistics.getSharedGenreMetric(artist, relatedArtist);
+			let genreMetrics = Statistics.getSharedGenreMetric(mainArtist, relatedArtist);
 			relatedArtistSphere.type = RELATED_ARTIST_SPHERE;
 			relatedArtistSphere.artistObj = relatedArtist;
 			relatedArtistSphere.artistObj.genreSimilarity = genreMetrics.genreSimilarity;
@@ -116,14 +124,18 @@ class SceneUtils {
 		return relatedArtistsSphereArray;
 	}
 
-	static appendObjectsToScene(graphContainer, sphere, sphereArray = []) {
-		const parent = new THREE.Object3D();
-		parent.name = 'parent';
+	static appendObjectsToScene(sphere, sphereArray = []) {
+		let parent = Props.graphContainer.getObjectByName('parent');
+		if (!parent) {
+			parent = new THREE.Object3D();
+			parent.name = 'parent';
+			Props.graphContainer.add(parent);
+		}
+
 		parent.add(sphere);
 		for (let i = 0; i < sphereArray.length; i++) {
 			parent.add(sphereArray[i]);
 		}
-		graphContainer.add(parent);
 	}
 
 	static joinRelatedArtistSphereToMain(mainArtistSphere, relatedSphere) {

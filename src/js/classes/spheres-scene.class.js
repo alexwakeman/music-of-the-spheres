@@ -48,7 +48,7 @@ export class SpheresScene {
 		Props.mainArtistSphere = SceneUtils.createMainArtistSphere(artist);
 		Props.relatedArtistSpheres = SceneUtils.createRelatedSpheres(artist, Props.mainArtistSphere);
 		this.selectedSphere = Props.mainArtistSphere;
-		SceneUtils.appendObjectsToScene(Props.graphContainer, Props.mainArtistSphere, Props.relatedArtistSpheres);
+		SceneUtils.appendObjectsToScene(Props.mainArtistSphere, Props.relatedArtistSpheres);
 	}
 
 	onSceneMouseHover(event) {
