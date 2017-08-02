@@ -42,10 +42,9 @@ export class SpheresScene {
 		}
 	}
 
-	composeScene(artist) {
-		this.clearGraph();
+	composeScene(artist, relatedArtistSphere = null) {
 		window.location.hash = encodeURIComponent(artist.id);
-		Props.mainArtistSphere = SceneUtils.createMainArtistSphere(artist);
+		Props.mainArtistSphere = SceneUtils.createMainArtistSphere(artist, relatedArtistSphere);
 		Props.relatedArtistSpheres = SceneUtils.createRelatedSpheres(artist, Props.mainArtistSphere);
 		this.selectedSphere = Props.mainArtistSphere;
 		SceneUtils.appendObjectsToScene(Props.mainArtistSphere, Props.relatedArtistSpheres);
@@ -181,7 +180,7 @@ export class SpheresScene {
 		// attach related artists to it (avoiding inverted direction norm)
 		MusicDataService.getArtist(selectedSphere.artistObj.id)
 			.then((artistObj) => {
-
+				this.composeScene(artistObj, selectedSphere);
 			});
 	}
 

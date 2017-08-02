@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {isEqual} from 'lodash';
 import {Colours} from '../config/colours';
 import {
 	CONNECTING_LINE, MAIN_ARTIST_SPHERE, RELATED_ARTIST_SPHERE, Props,
@@ -102,7 +103,12 @@ class SceneUtils {
 		}
 
 		for (let i = 0; i < limit; i++) {
+			let direction = RELATED_POSTIONS[i];
 			relatedArtist = mainArtist.related[i];
+			if (mainArtistSphere.exitPosition && isEqual(direction, mainArtistSphere.exitPosition)) {
+				i += 1;
+			}
+
 			let radius = Statistics.getArtistSphereSize(relatedArtist);
 			let geometry = new THREE.SphereGeometry(radius, 35, 35);
 			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.relatedArtist}));
@@ -157,9 +163,9 @@ class SceneUtils {
 					direction.x * relatedSphere.distance,
 					direction.y * relatedSphere.distance,
 					direction.z * relatedSphere.distance
+					)
 				)
-			)
-		);
+			);
 		relatedSphere.directionNorm = direction;
 	}
 
