@@ -5,7 +5,6 @@
  * It aims to deal not with changes over time, only immediate changes in one frame.
  */
 import {SceneUtils} from "./scene-utils.class";
-import {Colours} from "../config/colours";
 import {MotionLab} from "./motion-lab.class";
 import {MusicDataService} from "../services/music-data.service";
 import {
@@ -174,7 +173,7 @@ export class SpheresScene {
 		Props.oldMouseVector = Props.mouseVector;
 	}
 
-	getRelatedArtist() {
+	exploreSelectedArtist() {
 		// remove the selectedSphere from the graph
 		// replace it with duplicate as 'mainArtistSphere',
 		// attach related artists to it (avoiding inverted direction norm)

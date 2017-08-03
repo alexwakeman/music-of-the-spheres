@@ -4,7 +4,7 @@ import {loadAlbum} from "../state/actions";
 
 const mapStateToProps = (state) => {
 	return {
-		isHidden: state.hideInfo,
+		showUI: state.showUI,
 		displayArtist: state.displayArtist,
 		displayAlbumIndex: state.displayAlbumIndex
 	}

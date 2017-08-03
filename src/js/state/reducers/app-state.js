@@ -1,5 +1,5 @@
 import {
-	SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE, RELATED_CLICK,
+	SEARCH_TERM_UPDATE, ARTIST_DATA_AVAILABLE,
 	CLEAR_SESSION, UPDATE_DISPLAY_ARTIST, SHOW_RELATED_INFO, HIDE_RELATED_INFO, LOAD_ALBUM
 } from '../actions'
 let initialState = sessionStorage.getItem('state');
@@ -17,10 +17,11 @@ const emptyState = {
 	relatedArtist: emptyArtist,
 	searchTerm: '',
 	visitedArtists: [],
-	hideInfo: true,
-	showRelated: false,
 	displayArtist: emptyArtist,
-	displayAlbumIndex: 0
+	displayAlbumIndex: 0,
+	showRelated: false,
+	showExploreButton: false,
+	showUI: false
 };
 
 if (!initialState) {
@@ -53,8 +54,8 @@ const appState = (state = initialState, action) => {
 						...visitedArtists,
 					],
 					searchTerm: action.data.name,
-					hideInfo: false,
-					hideRelated: true,
+					showRelated: false,
+					showUI: true,
 					relatedArtist: {
 						...emptyArtist
 					},
@@ -69,7 +70,8 @@ const appState = (state = initialState, action) => {
 			newState = {
 				...state,
 				displayArtist: action.data,
-				displayAlbumIndex: 0
+				displayAlbumIndex: 0,
+				showExploreButton: true
 			};
 			break;
 		case LOAD_ALBUM:
@@ -82,7 +84,8 @@ const appState = (state = initialState, action) => {
 			newState = {
 				...state,
 				relatedArtist: action.data,
-				hideRelated: false
+				showRelated: true,
+				showExploreButton: false
 			};
 			break;
 		case HIDE_RELATED_INFO:
@@ -91,7 +94,8 @@ const appState = (state = initialState, action) => {
 				relatedArtist: {
 					...emptyArtist
 				},
-				hideRelated: true
+				showRelated: false,
+				showExploreButton: false
 			};
 			break;
 		case CLEAR_SESSION:

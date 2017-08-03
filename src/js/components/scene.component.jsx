@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {store} from '../state/store';
-import {SceneUtils} from "../classes/scene-utils.class";
-import {SpheresScene} from "../classes/spheres-scene.class";
-import {relatedClick} from "../state/actions";
+import {SceneUtils} from '../classes/scene-utils.class';
+import {SpheresScene} from '../classes/spheres-scene.class';
+import {Props} from '../classes/props';
 
 export class SceneComponent extends React.Component {
 	constructor() {
@@ -19,7 +19,7 @@ export class SceneComponent extends React.Component {
 
 	componentDidMount() {
 		SceneUtils.init().then(() => { // load the font first (async)
-			this.scene = new SpheresScene(this.sceneDom);
+			Props.sceneInst = new SpheresScene(this.sceneDom);
 			this.initScene();
 		});
 	}
@@ -38,10 +38,10 @@ export class SceneComponent extends React.Component {
 		this.sceneDom.addEventListener('mouseup', this, true);
 		window.addEventListener('resize', this, false);
 		if (artist.id) {
-			this.scene.composeScene(artist);
+			Props.sceneInst.composeScene(artist);
 		} else {
-			this.scene.clearGraph();
-			this.scene.clearAddress();
+			Props.sceneInst.clearGraph();
+			Props.sceneInst.clearAddress();
 		}
 	}
 
@@ -52,7 +52,7 @@ export class SceneComponent extends React.Component {
 	click(event) {
 		this.sceneDom.className = 'spheres-scene grab';
 		if (!this.isDragging) {
-			this.scene.onSceneMouseClick(event);
+			Props.sceneInst.onSceneMouseClick(event);
 		} else {
 			this.isDragging = false;
 		}
@@ -63,9 +63,9 @@ export class SceneComponent extends React.Component {
 		this.sceneDom.className = 'spheres-scene grab';
 		if (this.mouseIsDown) {
 			this.isDragging = true;
-			this.scene.onSceneMouseDrag(event);
+			Props.sceneInst.onSceneMouseDrag(event);
 		} else {
-			isOverRelated = this.scene.onSceneMouseHover(event);
+			isOverRelated = Props.sceneInst.onSceneMouseHover(event);
 		}
 		if (isOverRelated && !this.isDragging) {
 			this.sceneDom.className = 'spheres-scene pointer';
@@ -87,15 +87,15 @@ export class SceneComponent extends React.Component {
 	mousewheel(event) {
 		switch (SceneUtils.sign(event.wheelDeltaY)) {
 			case -1:
-				this.scene.zoom('out');
+				Props.sceneInst.zoom('out');
 				break;
 			case 1:
-				this.scene.zoom('in');
+				Props.sceneInst.zoom('in');
 				break;
 		}
 	}
 
 	resize() {
-		this.scene.updateCameraAspect();
+		Props.sceneInst.updateCameraAspect();
 	}
 }

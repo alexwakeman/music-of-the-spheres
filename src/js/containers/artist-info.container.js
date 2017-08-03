@@ -4,7 +4,7 @@ import {ArtistInfoComponent} from '../components/artist-info.component';
 const mapStateToProps = (state) => {
 	return {
 		artist: state.artist,
-		isHidden: state.hideInfo
+		showUI: state.showUI
 	}
 };
 

@@ -7,9 +7,9 @@ export class SpotifyPlayerComponent extends React.Component {
 	}
 
 	render() {
-		const { displayAlbumIndex, displayArtist, isHidden } = this.props;
+		const { displayAlbumIndex, displayArtist, showUI } = this.props;
 		const embedUrl = 'https://open.spotify.com/embed?uri=spotify:album:';
-		const classes = isHidden ? 'hidden spotify-player-container' : 'spotify-player-container';
+		const classes = showUI ? 'spotify-player-container' : 'hidden spotify-player-container';
 		const albums = displayArtist.albums;
 		let artistEmbedUrl,
 			iFrameMarkup = '',

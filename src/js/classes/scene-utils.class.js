@@ -88,7 +88,7 @@ class SceneUtils {
 		sphere.colours.selected = Colours.mainArtist;
 		if (relatedArtistExplored) {
 			sphere.position.copy(relatedArtistExplored.position);
-			sphere.exitPosition = SceneUtils.negateVector(relatedArtistExplored.directionNorm);
+			sphere.exitPosition = SceneUtils.negateVector(relatedArtistExplored.userData.directionNorm);
 		}
 		SceneUtils.addText(mainArtist.name, MAIN_ARTIST_FONT_SIZE, sphere, MAIN_ARTIST_TEXT);
 		return sphere;
@@ -170,7 +170,7 @@ class SceneUtils {
 					)
 				)
 			);
-		relatedSphere.directionNorm = direction;
+		relatedSphere.userData.directionNorm = direction;
 	}
 
 	static addText(label, size, sphere, textType) {

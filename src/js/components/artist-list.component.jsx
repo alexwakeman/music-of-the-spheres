@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {store} from '../state/store';
 import {MusicDataService} from "../services/music-data.service";
 
 export class ArtistListComponent extends React.Component {
@@ -29,7 +28,7 @@ export class ArtistListComponent extends React.Component {
 				</div>
 			)
 		});
-		const classes = this.props.isHidden ? 'hidden artist-navigation' : 'artist-navigation';
+		const classes = this.props.showUI ? 'artist-navigation' : 'hidden artist-navigation';
 		return (
 			<div className={classes} ref={elem => this.artistListDom = elem}>
 				{artists}

@@ -1,5 +1,5 @@
 import {store} from '../state/store';
-import {artistDataAvailable, displayAlbums, displayArtist} from "../state/actions";
+import {artistDataAvailable, displayArtist} from "../state/actions";
 
 export class MusicDataService {
 	static search(artistName) {
@@ -16,8 +16,7 @@ export class MusicDataService {
 		return window.fetch(artistURL, {
 			credentials: 'same-origin'
 		})
-		.then((data) => data.json())
-		.then((json) => store.dispatch(artistDataAvailable(json)));
+		.then((data) => data.json());
 	}
 
 	static fetchDisplayAlbums(artist) {

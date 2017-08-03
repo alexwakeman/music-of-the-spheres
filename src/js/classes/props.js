@@ -21,7 +21,9 @@ export const Props = {
 	
 	relatedArtistSpheres: [],
 	mainArtistSphere: {},
-	selectedArtistSphere: {id: 0}
+	selectedArtistSphere: {id: 0},
+
+	sceneInst: null
 };
 
 export const MAIN_ARTIST_SPHERE = 'MAIN_ARTIST_SPHERE';
