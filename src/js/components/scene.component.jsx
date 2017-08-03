@@ -69,6 +69,7 @@ export class SceneComponent extends React.Component {
 		}
 		if (isOverRelated && !this.isDragging) {
 			this.sceneDom.className = 'spheres-scene pointer';
+			return;
 		}
 		if (this.isDragging) {
 			this.sceneDom.className = 'spheres-scene grabbed';

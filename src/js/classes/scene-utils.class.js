@@ -11,7 +11,7 @@ let HELVETIKER;
 const MAIN_ARTIST_FONT_SIZE = 34;
 const RELATED_ARTIST_FONT_SIZE = 20;
 const TOTAL_RELATED = 6;
-const RELATED_POSTIONS = [
+const RELATED_POSITIONS = [
 	new THREE.Vector3(1, 0, 0), new THREE.Vector3(-1, 0, 0),
 	new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, -1, 0),
 	new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1)
@@ -103,10 +103,11 @@ class SceneUtils {
 		}
 
 		for (let i = 0; i < limit; i++) {
-			let direction = RELATED_POSTIONS[i];
+			let direction = RELATED_POSITIONS[i];
 			relatedArtist = mainArtist.related[i];
 			if (mainArtistSphere.exitPosition && isEqual(direction, mainArtistSphere.exitPosition)) {
 				i += 1;
+				direction = RELATED_POSITIONS[i];
 			}
 
 			let radius = Statistics.getArtistSphereSize(relatedArtist);
@@ -122,6 +123,7 @@ class SceneUtils {
 			relatedArtistSphere.colours.default = Colours.relatedArtist;
 			relatedArtistSphere.colours.hover = Colours.relatedArtistHover;
 			relatedArtistSphere.colours.selected = Colours.relatedArtistClicked;
+			relatedArtistSphere.index = i;
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, i);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
@@ -140,7 +142,9 @@ class SceneUtils {
 
 		parent.add(sphere);
 		for (let i = 0; i < sphereArray.length; i++) {
-			parent.add(sphereArray[i]);
+			if (sphereArray[i]) {
+				parent.add(sphereArray[i]);
+			}
 		}
 	}
 
@@ -157,7 +161,7 @@ class SceneUtils {
 
 	static positionRelatedArtist(mainArtistSphere, relatedSphere, positionIndex) {
 		let mainArtistSpherePos = mainArtistSphere.position.clone();
-		let direction = RELATED_POSTIONS[positionIndex];
+		let direction = RELATED_POSITIONS[positionIndex];
 		relatedSphere.position
 			.copy(mainArtistSpherePos.add(new THREE.Vector3(
 					direction.x * relatedSphere.distance,

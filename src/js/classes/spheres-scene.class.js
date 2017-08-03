@@ -174,13 +174,18 @@ export class SpheresScene {
 		Props.oldMouseVector = Props.mouseVector;
 	}
 
-	getRelatedArtist(selectedSphere) {
+	getRelatedArtist() {
 		// remove the selectedSphere from the graph
 		// replace it with duplicate as 'mainArtistSphere',
 		// attach related artists to it (avoiding inverted direction norm)
-		MusicDataService.getArtist(selectedSphere.artistObj.id)
+		const parent = Props.graphContainer.getObjectByName('parent');
+		MusicDataService.getArtist(this.selectedSphere.artistObj.id)
 			.then((artistObj) => {
-				this.composeScene(artistObj, selectedSphere);
+				let clonedExploredSphere = this.selectedSphere.clone();
+				delete Props.relatedArtistSpheres[this.selectedSphere.index];
+				parent.remove(this.selectedSphere);
+				this.selectedSphere = {id: NaN};
+				this.composeScene(artistObj, clonedExploredSphere);
 			});
 	}
 
