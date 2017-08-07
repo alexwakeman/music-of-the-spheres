@@ -4,6 +4,7 @@ export const Props = {
 	scene: new THREE.Scene(),
 	camera: new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000),
 	graphContainer: new THREE.Object3D(),
+	parent: new THREE.Object3D(),
 	cameraRotation: new THREE.Euler(0, -1, 0),
 	cameraLookAt: new THREE.Vector3(0, 0, 0),
 	cameraDistance: 3500,
@@ -18,13 +19,23 @@ export const Props = {
 	mousePosYIncreased: false,
 	raycaster: new THREE.Raycaster(),
 	mouseVector: new THREE.Vector2(),
-	
-	relatedArtistSpheres: [],
-	mainArtistSphere: {},
-	selectedArtistSphere: {id: 0},
 
-	sceneInst: null
+	artistPropsSet: [], // array of ArtistScene instances
+	sceneSetIndex: -1
 };
+
+export class ArtistProps {
+	constructor(mainArtistSphere, relatedArtistSpheres) {
+		this.mainArtistSphere = mainArtistSphere;
+		this.relatedArtistSpheres = relatedArtistSpheres;
+		this.artistProps = new THREE.Object3D();
+		this.artistProps.add(this.mainArtistSphere);
+		this.relatedArtistSpheres.forEach(related => this.artistProps.add(related));
+		Props.graphContainer.add(this.artistProps);
+		Props.artistPropsSet.push(this);
+		Props.sceneSetIndex++;
+	}
+}
 
 export const MAIN_ARTIST_SPHERE = 'MAIN_ARTIST_SPHERE';
 export const RELATED_ARTIST_SPHERE = 'RELATED_ARTIST_SPHERE';

@@ -13,6 +13,7 @@ import {
 } from './props';
 import {store} from '../state/store';
 import {hideRelated, relatedClick, showRelated} from "../state/actions";
+import * as THREE from "three";
 
 export class SpheresScene {
 	constructor(container) {
@@ -33,6 +34,7 @@ export class SpheresScene {
 		Props.camera.position.set(0, 250, Props.cameraDistance);
 		Props.camera.lookAt(Props.scene.position);
 		SceneUtils.lighting(Props.scene);
+		Props.graphContainer.add(Props.parent);
 
 		// check for query string
 		artistId = decodeURIComponent(window.location.hash.replace('#', ''));
@@ -177,22 +179,20 @@ export class SpheresScene {
 		// remove the selectedSphere from the graph
 		// replace it with duplicate as 'mainArtistSphere',
 		// attach related artists to it (avoiding inverted direction norm)
-		const parent = Props.graphContainer.getObjectByName('parent');
 		MusicDataService.getArtist(this.selectedSphere.artistObj.id)
 			.then((artistObj) => {
 				let clonedExploredSphere = this.selectedSphere.clone();
 				delete Props.relatedArtistSpheres[this.selectedSphere.index];
-				parent.remove(this.selectedSphere);
+				Props.parent.remove(this.selectedSphere);
 				this.selectedSphere = {id: NaN};
 				this.composeScene(artistObj, clonedExploredSphere);
 			});
 	}
 
 	clearGraph() {
-		const parent = Props.graphContainer.getObjectByName('parent');
-		if (parent) {
-			Props.graphContainer.remove(parent);
-		}
+		Props.graphContainer.remove(Props.parent);
+		Props.parent = new THREE.Object3D();
+		Props.graphContainer.add(Props.parent);
 	}
 
 	clearAddress() {

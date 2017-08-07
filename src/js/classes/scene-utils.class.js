@@ -3,7 +3,7 @@ import {isEqual} from 'lodash';
 import {Colours} from '../config/colours';
 import {
 	CONNECTING_LINE, MAIN_ARTIST_SPHERE, RELATED_ARTIST_SPHERE, Props,
-	RELATED_ARTIST_TEXT, MAIN_ARTIST_TEXT
+	RELATED_ARTIST_TEXT, MAIN_ARTIST_TEXT, ArtistProps
 } from './props';
 import {Statistics} from './statistics.class';
 
@@ -78,7 +78,11 @@ class SceneUtils {
 	static createMainArtistSphere(mainArtist, relatedArtistExplored = null) {
 		let radius = Statistics.getArtistSphereSize(mainArtist);
 		let geometry = new THREE.SphereGeometry(radius, 35, 35);
-		let sphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.mainArtist}));
+		let sphere = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
+			color: Colours.mainArtist,
+			specular: 0x050505,
+			shininess: 100
+		}));
 		sphere.artistObj = mainArtist;
 		sphere.radius = radius;
 		sphere.type = MAIN_ARTIST_SPHERE;
@@ -98,21 +102,22 @@ class SceneUtils {
 		let relatedArtistsSphereArray = [];
 		let relatedArtist;
 		let limit = Math.min(TOTAL_RELATED, mainArtist.related.length);
+		let availablePositions = SceneUtils.getAvailableRelatedPositions(mainArtistSphere);
+
 		if (mainArtistSphere.exitPosition && limit === TOTAL_RELATED) {
 			limit -= 1;
 		}
 
 		for (let i = 0; i < limit; i++) {
-			let direction = RELATED_POSITIONS[i];
 			relatedArtist = mainArtist.related[i];
-			if (mainArtistSphere.exitPosition && isEqual(direction, mainArtistSphere.exitPosition)) {
-				i += 1;
-				direction = RELATED_POSITIONS[i];
-			}
-
+			let direction = availablePositions[i];
 			let radius = Statistics.getArtistSphereSize(relatedArtist);
 			let geometry = new THREE.SphereGeometry(radius, 35, 35);
-			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: Colours.relatedArtist}));
+			let relatedArtistSphere = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
+				color: Colours.relatedArtist,
+				specular: 0x050505,
+				shininess: 100
+			}));
 			let genreMetrics = Statistics.getSharedGenreMetric(mainArtist, relatedArtist);
 			relatedArtistSphere.type = RELATED_ARTIST_SPHERE;
 			relatedArtistSphere.artistObj = relatedArtist;
@@ -124,7 +129,7 @@ class SceneUtils {
 			relatedArtistSphere.colours.hover = Colours.relatedArtistHover;
 			relatedArtistSphere.colours.selected = Colours.relatedArtistClicked;
 			relatedArtistSphere.index = i;
-			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, i);
+			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, direction);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
 			relatedArtistsSphereArray.push(relatedArtistSphere);
@@ -132,44 +137,32 @@ class SceneUtils {
 		return relatedArtistsSphereArray;
 	}
 
-	static appendObjectsToScene(sphere, sphereArray = []) {
-		let parent = Props.graphContainer.getObjectByName('parent');
-		if (!parent) {
-			parent = new THREE.Object3D();
-			parent.name = 'parent';
-			Props.graphContainer.add(parent);
+	static getAvailableRelatedPositions(mainArtistSphere) {
+		if (mainArtistSphere.exitPosition) {
+			return RELATED_POSITIONS.filter(pos => !isEqual(pos, mainArtistSphere.exitPosition));
+		} else {
+			return RELATED_POSITIONS;
 		}
+	}
 
-		parent.add(sphere);
-		for (let i = 0; i < sphereArray.length; i++) {
-			if (sphereArray[i]) {
-				parent.add(sphereArray[i]);
-			}
-		}
+	static appendObjectsToScene(sphere, sphereArray = []) {
+		return new ArtistProps(sphere, sphereArray);
 	}
 
 	static joinRelatedArtistSphereToMain(mainArtistSphere, relatedSphere) {
 		let material = new THREE.LineBasicMaterial({color: Colours.relatedLineJoin});
 		let geometry = new THREE.Geometry();
 		let line;
-		geometry.vertices.push(new THREE.Vector3(0, 0, 0));
+		geometry.vertices.push(mainArtistSphere.position.clone());
 		geometry.vertices.push(relatedSphere.position.clone());
 		line = new THREE.Line(geometry, material);
 		line.type = CONNECTING_LINE;
-		mainArtistSphere.add(line);
+		Props.parent.add(line);
 	}
 
-	static positionRelatedArtist(mainArtistSphere, relatedSphere, positionIndex) {
+	static positionRelatedArtist(mainArtistSphere, relatedSphere, direction) {
 		let mainArtistSpherePos = mainArtistSphere.position.clone();
-		let direction = RELATED_POSITIONS[positionIndex];
-		relatedSphere.position
-			.copy(mainArtistSpherePos.add(new THREE.Vector3(
-					direction.x * relatedSphere.distance,
-					direction.y * relatedSphere.distance,
-					direction.z * relatedSphere.distance
-					)
-				)
-			);
+		relatedSphere.target = mainArtistSpherePos.add(direction.multiplyScalar(relatedSphere.distance));
 		relatedSphere.userData.directionNorm = direction;
 	}
 

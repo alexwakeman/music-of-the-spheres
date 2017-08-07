@@ -7,6 +7,7 @@ import {SceneUtils} from "./scene-utils.class";
 import * as THREE from "three";
 
 const TRACK_CAM_TO_OBJ = 'TRACK_CAM_TO_OBJ';
+const GROW_OUT_RELATED = 'GROW_OUT_RELATED';
 const DEFAULT = 'DEFAULT';
 const defaultJob = {
 	type: DEFAULT
@@ -31,15 +32,18 @@ export class MotionLab {
 	processScene() {
 		switch (this.job.type) {
 			case TRACK_CAM_TO_OBJ:
-				this.translateTransitionObject();
+				this.translateOnPath();
 				break;
 			case DEFAULT:
 				this.updateRotation();
 				break;
+			case GROW_OUT_RELATED:
+				this.growOutRelated();
+				break;
 		}
 	}
 
-	translateTransitionObject() {
+	translateOnPath() {
 		const shouldEnd = parseInt(this.job.currentTime) === 1;
 		if (!shouldEnd) {
 			this.followPath();
@@ -55,11 +59,6 @@ export class MotionLab {
 		this.job.currentTime += 0.01;
 	}
 
-	endAnimation() {
-		this.job.callback && this.job.callback();
-		this.job = defaultJob;
-	}
-
 	trackObjectToCamera(object3D, callback) {
     	this.job = {};
     	this.job.type = TRACK_CAM_TO_OBJ;
@@ -72,6 +71,27 @@ export class MotionLab {
 			object3D.position.clone(),
 			Props.camera.position.clone()
 		]);
+	}
+
+	growOutRelated() {
+		const shouldEnd = this.job.currentTime >= 1.0;
+		if (!shouldEnd) {
+			this.continueGrow();
+		}
+		else {
+			this.endAnimation();
+		}
+	}
+
+	continueGrow() {
+    	this.job.related.forEach((relatedSphere) => {
+    		relatedSphere.position.copy(relatedSphere.target.multiply(this.job.currentTime));
+		});
+	}
+
+	endAnimation() {
+		this.job.callback && this.job.callback();
+		this.job = defaultJob;
 	}
 
 	/**
@@ -89,14 +109,18 @@ export class MotionLab {
 		// update rotation of text attached objects, to force them to look at camera
 		// this makes them readable
 		Props.graphContainer.traverse((obj) => {
-			if (obj.type === MAIN_ARTIST_TEXT || obj.type === RELATED_ARTIST_TEXT) {
-				let cameraNorm = Props.camera.position.clone().normalize();
-				obj.position.set(
-					cameraNorm.x * obj.parent.radius,
-					cameraNorm.y * obj.parent.radius,
-					cameraNorm.z * obj.parent.radius
-				);
-				obj.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
+			let cameraNorm;
+			switch (obj.type) {
+				case MAIN_ARTIST_TEXT:
+				case RELATED_ARTIST_TEXT:
+					cameraNorm = Props.camera.position.clone().normalize();
+					obj.position.set(
+						cameraNorm.x * obj.parent.radius,
+						cameraNorm.y * obj.parent.radius,
+						cameraNorm.z * obj.parent.radius
+					);
+					obj.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
+					break;
 			}
 		});
 		this.reduceSpeed(0.0005);
