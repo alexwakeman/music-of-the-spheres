@@ -45,10 +45,10 @@ export class SpheresScene {
 
 	composeScene(artist, relatedArtistSphere = null) {
 		window.location.hash = encodeURIComponent(artist.id);
-		Props.mainArtistSphere = SceneUtils.createMainArtistSphere(artist, relatedArtistSphere);
-		Props.relatedArtistSpheres = SceneUtils.createRelatedSpheres(artist, Props.mainArtistSphere);
-		this.selectedSphere = Props.mainArtistSphere;
-		SceneUtils.appendObjectsToScene(Props.mainArtistSphere, Props.relatedArtistSpheres);
+		let mainArtist = SceneUtils.createMainArtistSphere(artist, relatedArtistSphere);
+		let relatedArtists = SceneUtils.createRelatedSpheres(artist, mainArtist);
+		SceneUtils.appendObjectsToScene(mainArtist, relatedArtists);
+		this.motionLab.startGrowOut(relatedArtists);
 	}
 
 	onSceneMouseHover(event) {
@@ -182,17 +182,15 @@ export class SpheresScene {
 		MusicDataService.getArtist(this.selectedSphere.artistObj.id)
 			.then((artistObj) => {
 				let clonedExploredSphere = this.selectedSphere.clone();
-				delete Props.relatedArtistSpheres[this.selectedSphere.index];
-				Props.parent.remove(this.selectedSphere);
 				this.selectedSphere = {id: NaN};
 				this.composeScene(artistObj, clonedExploredSphere);
 			});
 	}
 
 	clearGraph() {
-		Props.graphContainer.remove(Props.parent);
-		Props.parent = new THREE.Object3D();
-		Props.graphContainer.add(Props.parent);
+		Props.artistPropsSet.forEach(artistProps => Props.graphContainer.remove(artistProps));
+		Props.artistPropsSet = [];
+		Props.sceneSetIndex = -1;
 	}
 
 	clearAddress() {

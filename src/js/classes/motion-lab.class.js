@@ -32,31 +32,30 @@ export class MotionLab {
 	processScene() {
 		switch (this.job.type) {
 			case TRACK_CAM_TO_OBJ:
-				this.translateOnPath();
+				this.processJob();
 				break;
 			case DEFAULT:
 				this.updateRotation();
 				break;
 			case GROW_OUT_RELATED:
-				this.growOutRelated();
+				this.processJob();
 				break;
 		}
 	}
 
-	translateOnPath() {
-		const shouldEnd = parseInt(this.job.currentTime) === 1;
+	processJob() {
+		const shouldEnd = this.job.currentTime >= 1.0;
 		if (!shouldEnd) {
-			this.followPath();
+			this.job.function();
 		}
 		else {
 			this.endAnimation();
 		}
 	}
 
-	followPath() {
-		const p = this.job.path.getPoint(this.job.currentTime);
-		this.job.object3D.position.copy(p);
-		this.job.currentTime += 0.01;
+	endAnimation() {
+		this.job.callback && this.job.callback();
+		this.job = defaultJob;
 	}
 
 	trackObjectToCamera(object3D, callback) {
@@ -71,16 +70,24 @@ export class MotionLab {
 			object3D.position.clone(),
 			Props.camera.position.clone()
 		]);
+		this.job.function = this.followPath;
 	}
 
-	growOutRelated() {
-		const shouldEnd = this.job.currentTime >= 1.0;
-		if (!shouldEnd) {
-			this.continueGrow();
-		}
-		else {
-			this.endAnimation();
-		}
+	followPath() {
+		const p = this.job.path.getPoint(this.job.currentTime);
+		this.job.object3D.position.copy(p);
+		this.job.currentTime += 0.01;
+	}
+
+	startGrowOut(related = [], callback = () => {}) {
+    	this.job = {};
+    	this.job.type = GROW_OUT_RELATED;
+    	this.job.related = related;
+		this.job.t = 0.0;
+		this.job.currentTime = 0.0;
+		this.job.ended = false;
+		this.job.callback = callback;
+		this.job.function = this.continueGrow;
 	}
 
 	continueGrow() {
@@ -89,10 +96,7 @@ export class MotionLab {
 		});
 	}
 
-	endAnimation() {
-		this.job.callback && this.job.callback();
-		this.job = defaultJob;
-	}
+
 
 	/**
 	 * TODO: optimisation - only use updateRotation() if the mouse is dragging / speed is above default minimum
@@ -100,15 +104,11 @@ export class MotionLab {
 	 */
 	updateRotation() {
 		const camQuaternionUpdate = this.getNewCameraDirection();
-		Props.camera.position.set(
-			camQuaternionUpdate.x * Props.cameraDistance,
-			camQuaternionUpdate.y * Props.cameraDistance,
-			camQuaternionUpdate.z * Props.cameraDistance
-		);
-		Props.camera.lookAt(Props.cameraLookAt);
+		Props.artistPropsSet[Props.sceneSetIndex].camera.position.copy(camQuaternionUpdate);
+		//Props.camera.lookAt(Props.cameraLookAt);
 		// update rotation of text attached objects, to force them to look at camera
 		// this makes them readable
-		Props.graphContainer.traverse((obj) => {
+		Props.artistPropsSet[Props.sceneSetIndex].traverse((obj) => {
 			let cameraNorm;
 			switch (obj.type) {
 				case MAIN_ARTIST_TEXT:
