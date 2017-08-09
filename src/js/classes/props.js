@@ -5,7 +5,7 @@ export const Props = {
 	camera: new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000),
 	graphContainer: new THREE.Object3D(),
 	parent: new THREE.Object3D(),
-	cameraRotation: new THREE.Euler(0, -1, 0),
+	artistSceneRotation: new THREE.Euler(0, -1, 0),
 	cameraLookAt: new THREE.Vector3(0, 0, 0),
 	cameraDistance: 3500,
 	
@@ -20,12 +20,12 @@ export const Props = {
 	raycaster: new THREE.Raycaster(),
 	mouseVector: new THREE.Vector2(),
 
-	artistPropsSet: [], // array of ArtistScene instances
-	sceneSetIndex: -1
+	artistPropsSet: [new THREE.Object3D()], // array of ArtistScene instances
+	sceneSetIndex: 0
 };
 
 export class ArtistProps {
-	constructor(mainArtistSphere, relatedArtistSpheres) {
+	static assign(mainArtistSphere, relatedArtistSpheres) {
 		this.mainArtistSphere = mainArtistSphere;
 		this.relatedArtistSpheres = relatedArtistSpheres;
 		this.artistProps = new THREE.Object3D();

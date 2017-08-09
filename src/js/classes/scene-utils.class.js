@@ -146,7 +146,7 @@ class SceneUtils {
 	}
 
 	static appendObjectsToScene(sphere, sphereArray = []) {
-		return new ArtistProps(sphere, sphereArray);
+		ArtistProps.assign(sphere, sphereArray);
 	}
 
 	static joinRelatedArtistSphereToMain(mainArtistSphere, relatedSphere) {

@@ -45,8 +45,8 @@ export class SpheresScene {
 
 	composeScene(artist, relatedArtistSphere = null) {
 		window.location.hash = encodeURIComponent(artist.id);
-		let mainArtist = SceneUtils.createMainArtistSphere(artist, relatedArtistSphere);
-		let relatedArtists = SceneUtils.createRelatedSpheres(artist, mainArtist);
+		const mainArtist = SceneUtils.createMainArtistSphere(artist, relatedArtistSphere);
+		const relatedArtists = SceneUtils.createRelatedSpheres(artist, mainArtist);
 		SceneUtils.appendObjectsToScene(mainArtist, relatedArtists);
 		this.motionLab.startGrowOut(relatedArtists);
 	}
