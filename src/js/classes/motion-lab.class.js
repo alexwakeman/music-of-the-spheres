@@ -9,13 +9,16 @@ import * as THREE from "three";
 const TRACK_CAM_TO_OBJ = 'TRACK_CAM_TO_OBJ';
 const GROW_OUT_RELATED = 'GROW_OUT_RELATED';
 const DEFAULT = 'DEFAULT';
+const nullJob = {
+	type: null
+};
 const defaultJob = {
 	type: DEFAULT
 };
 
 export class MotionLab {
     constructor() {
-		this.job = defaultJob;
+		this.job = nullJob;
 		this.animate();
 	}
 
@@ -40,11 +43,13 @@ export class MotionLab {
 			case GROW_OUT_RELATED:
 				this.processJob();
 				break;
+			default:
+				// null job (on init)
 		}
 	}
 
 	processJob() {
-		const shouldEnd = this.job.currentTime === 1.0;
+		const shouldEnd = parseInt(this.job.currentTime) === 1;
 		if (!shouldEnd) {
 			this.job.function();
 		}
@@ -101,26 +106,29 @@ export class MotionLab {
 	 */
 	updateRotation() {
 		const artistPropsSetRotation = this.getNewArtistPropsRotation();
-		Props.artistPropsSet[Props.sceneSetIndex].position.copy(artistPropsSetRotation);
-		Props.camera.lookAt(Props.cameraLookAt);
-		// update rotation of text attached objects, to force them to look at camera
-		// this makes them readable
-		Props.artistPropsSet[Props.sceneSetIndex].traverse((obj) => {
-			let cameraNorm;
+		let artistProps = Props.artistPropsSet[Props.sceneSetIndex].artistProps;
+		artistProps.setRotationFromQuaternion(artistPropsSetRotation);
+
+
+		artistProps.traverse((obj) => {
 			switch (obj.type) {
 				case MAIN_ARTIST_TEXT:
 				case RELATED_ARTIST_TEXT:
-					cameraNorm = Props.camera.position.clone().normalize();
-					obj.position.set(
-						cameraNorm.x * obj.parent.radius,
-						cameraNorm.y * obj.parent.radius,
-						cameraNorm.z * obj.parent.radius
-					);
-					obj.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
+					this.lookAt(obj, artistProps);
 					break;
 			}
 		});
 		this.reduceSpeed(0.0005);
+	}
+
+	lookAt(textObject, artistProps) {
+		let m1 = textObject.matrixWorld.clone();
+		textObject.matrixAutoUpdate = false;
+		m1.lookAt(textObject.localToWorld(textObject.position), Props.camera.position, THREE.Object3D.DefaultUp);
+		textObject.quaternion.setFromRotationMatrix(m1);
+		textObject.matrixWorld.makeRotationFromQuaternion(textObject.quaternion);
+		textObject.matrixWorldNeedsUpdate = true;
+		textObject.updateMatrixWorld();
 	}
 
 	getNewArtistPropsRotation() {
@@ -140,7 +148,7 @@ export class MotionLab {
 		else if (!Props.mousePosXIncreased && xMoreThanYMouse) {
 			Props.artistSceneRotation.y -= Props.speedY;
 		}
-		artistSceneQuaternionUpdate = SceneUtils.renormalizeQuaternion(Props.artistPropsSet[Props.sceneSetIndex]);
+		artistSceneQuaternionUpdate = SceneUtils.renormalizeQuaternion(Props.artistPropsSet[Props.sceneSetIndex].artistProps);
 		artistSceneQuaternionUpdate.setFromEuler(Props.artistSceneRotation);
 		return artistSceneQuaternionUpdate;
 	}

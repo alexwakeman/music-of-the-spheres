@@ -5,7 +5,7 @@ export const Props = {
 	camera: new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000),
 	graphContainer: new THREE.Object3D(),
 	parent: new THREE.Object3D(),
-	artistSceneRotation: new THREE.Euler(0, -1, 0),
+	artistSceneRotation: new THREE.Euler(0, 0, 0),
 	cameraLookAt: new THREE.Vector3(0, 0, 0),
 	cameraDistance: 3500,
 	

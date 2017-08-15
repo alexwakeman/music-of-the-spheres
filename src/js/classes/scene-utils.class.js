@@ -167,6 +167,7 @@ class SceneUtils {
 	}
 
 	static addText(label, size, sphere, textType) {
+		let worldPos = new THREE.Vector3();
 		let materialFront = new THREE.MeshBasicMaterial({color: Colours.textOuter});
 		let materialSide = new THREE.MeshBasicMaterial({color: Colours.textInner});
 		let materialArray = [materialFront, materialSide];
@@ -188,7 +189,12 @@ class SceneUtils {
 			cameraNorm.y * sphere.radius,
 			cameraNorm.z * sphere.radius
 		);
-		textMesh.lookAt(Props.graphContainer.worldToLocal(Props.camera.position));
+		textMesh.onBeforeRender = () => {
+			worldPos.setFromMatrixPosition(textMesh.matrixWorld);
+			textMesh.matrixWorld.lookAt(Props.camera.position, worldPos, THREE.Object3D.DefaultUp);
+			textMesh.modelViewMatrix.multiplyMatrices(Props.camera.matrixWorldInverse, textMesh.matrixWorld);
+			textMesh.normalMatrix.getNormalMatrix(textMesh.modelViewMatrix);
+		};
 	}
 
 	static lighting() {
