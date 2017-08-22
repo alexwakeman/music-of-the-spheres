@@ -108,13 +108,20 @@ export class MotionLab {
 		const artistPropsSetRotation = this.getNewArtistPropsRotation();
 		let artistProps = Props.artistPropsSet[Props.sceneSetIndex].artistProps;
 		artistProps.setRotationFromQuaternion(artistPropsSetRotation);
+		let ray = new THREE.Ray(Props.camera.position);
+		let worldPos2 = new THREE.Vector3();
 
 
 		artistProps.traverse((obj) => {
 			switch (obj.type) {
 				case MAIN_ARTIST_TEXT:
 				case RELATED_ARTIST_TEXT:
-					this.lookAt(obj, artistProps);
+					worldPos2.setFromMatrixPosition(obj.parent.matrixWorld);
+					ray.lookAt(worldPos2);
+					let pos = ray.intersectSphere(obj.parent.geometry.boundingSphere);
+					if (pos) {
+						obj.position.copy(pos);
+					}
 					break;
 			}
 		});

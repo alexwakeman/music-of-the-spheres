@@ -129,6 +129,7 @@ class SceneUtils {
 			relatedArtistSphere.colours.hover = Colours.relatedArtistHover;
 			relatedArtistSphere.colours.selected = Colours.relatedArtistClicked;
 			relatedArtistSphere.index = i;
+			relatedArtistSphere.geometry.computeBoundingSphere();
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, direction);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
@@ -168,6 +169,7 @@ class SceneUtils {
 
 	static addText(label, size, sphere, textType) {
 		let worldPos = new THREE.Vector3();
+		let worldPos2 = new THREE.Vector3();
 		let materialFront = new THREE.MeshBasicMaterial({color: Colours.textOuter});
 		let materialSide = new THREE.MeshBasicMaterial({color: Colours.textInner});
 		let materialArray = [materialFront, materialSide];
@@ -190,6 +192,7 @@ class SceneUtils {
 			cameraNorm.z * sphere.radius
 		);
 		textMesh.onBeforeRender = () => {
+
 			worldPos.setFromMatrixPosition(textMesh.matrixWorld);
 			textMesh.matrixWorld.lookAt(Props.camera.position, worldPos, THREE.Object3D.DefaultUp);
 			textMesh.modelViewMatrix.multiplyMatrices(Props.camera.matrixWorldInverse, textMesh.matrixWorld);
