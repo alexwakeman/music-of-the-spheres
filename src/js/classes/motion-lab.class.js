@@ -2,7 +2,7 @@
  * MotionLab deals with controlling each tick of the animation frame sequence
  * It's aim is to isolate code that happens over a number of frames (i.e. motion)
  */
-import {Props, MAIN_ARTIST_TEXT, RELATED_ARTIST_TEXT} from './props';
+import {Props, MAIN_ARTIST_TEXT, RELATED_ARTIST_TEXT, RELATED_ARTIST_SPHERE} from './props';
 import {SceneUtils} from "./scene-utils.class";
 import * as THREE from "three";
 
@@ -113,18 +113,19 @@ export class MotionLab {
 
 		artistProps.traverse((obj) => {
 			switch (obj.type) {
-				case MAIN_ARTIST_TEXT:
-				case RELATED_ARTIST_TEXT:
-					parentWorld.setFromMatrixPosition(obj.parent.matrixWorld);
-					parentWorld.normalize();
-					diffV.setFromMatrixPosition(obj.parent.matrixWorld);
+				case RELATED_ARTIST_SPHERE:
+					diffV.setFromMatrixPosition(obj.matrixWorld);
 					diffV.normalize();
-					diffV.sub(Props.camera.position.clone().normalize());
-					diffV.normalize();
-					diffV.multiplyScalar(obj.parent.radius);
-					diffV.multiplyScalar(-1);
-					obj.position.copy(diffV);
-					//obj.position.add(parentWorld);
+					diffV = Props.camera.position.clone().normalize().sub(diffV);
+					diffV.multiplyScalar(obj.radius);
+					parentWorld.setFromMatrixPosition(obj.matrixWorld);
+					//parentWorld.add(diffV);
+					obj.textMesh.position.copy(parentWorld);
+					obj.textMesh.position.add(diffV);
+					obj.textMesh.lookAt(Props.camera.position);
+					obj.textMesh.position.setY(obj.textMesh.position.y - (obj.radius / 2));
+					obj.textMesh.position.setX(obj.textMesh.position.x - obj.radius);
+					obj.textMesh.position.setZ(obj.textMesh.position.z + obj.radius);
 					break;
 			}
 		});
