@@ -2,18 +2,21 @@ const request = require('request');
 const apiAddress = 'https://api.spotify.com/v1';
 
 class SpotifyRequests {
+
 	static performSearch(apiToken, artistName) {
 		return SpotifyRequests
 			.search(apiToken, artistName)
 			.then((artistObj) => SpotifyRequests.getAlbums(apiToken, artistObj))
-			.then((artistObj) => SpotifyRequests.getReleated(apiToken, artistObj));
+			.then((artistObj) => SpotifyRequests.getRelated(apiToken, artistObj));
 	}
+
 	static fetchArtist(apiToken, artistId) {
 		return SpotifyRequests
 			.getArtist(apiToken, artistId)
 			.then((artistObj) => SpotifyRequests.getAlbums(apiToken, artistObj))
-			.then((artistObj) => SpotifyRequests.getReleated(apiToken, artistObj));
+			.then((artistObj) => SpotifyRequests.getRelated(apiToken, artistObj));
 	}
+
 	static search(apiToken, artistName) {
 		return new Promise((resolve, reject) => {
 			let options = {
@@ -35,6 +38,7 @@ class SpotifyRequests {
 			});
 		});
 	}
+
 	static getArtist(apiToken, artistId) {
 		return new Promise((resolve, reject) => {
 			let options = {
@@ -52,6 +56,7 @@ class SpotifyRequests {
 			});
 		});
 	}
+
 	static getAlbums(apiToken, artist) {
 		return new Promise((resolve, reject) => {
 			let artistId = artist.id;
@@ -93,7 +98,7 @@ class SpotifyRequests {
 			});
 		});
 	}
-	static getReleated(apiToken, artist) {
+	static getRelated(apiToken, artist) {
 		return new Promise((resolve, reject) => {
 			let artistId = artist.id;
 			let options = {

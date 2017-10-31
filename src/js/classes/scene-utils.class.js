@@ -8,8 +8,8 @@ import {
 import {Statistics} from './statistics.class';
 
 let HELVETIKER;
-const MAIN_ARTIST_FONT_SIZE = 44;
-const RELATED_ARTIST_FONT_SIZE = 30;
+const MAIN_ARTIST_FONT_SIZE = 34;
+const RELATED_ARTIST_FONT_SIZE = 25;
 const TOTAL_RELATED = 6;
 const RELATED_POSITIONS = [
 	new THREE.Vector3(1, 0, 0), new THREE.Vector3(-1, 0, 0),
@@ -131,7 +131,7 @@ class SceneUtils {
 			relatedArtistSphere.index = i;
 			relatedArtistSphere.geometry.computeBoundingSphere();
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, direction);
-			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
+			//SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
 			relatedArtistsSphereArray.push(relatedArtistSphere);
 		}
@@ -158,7 +158,7 @@ class SceneUtils {
 		geometry.vertices.push(relatedSphere.position.clone());
 		line = new THREE.Line(geometry, material);
 		line.type = CONNECTING_LINE;
-		Props.parent.add(line);
+		relatedSphere.add(line);
 	}
 
 	static positionRelatedArtist(mainArtistSphere, relatedSphere, direction) {
@@ -168,7 +168,6 @@ class SceneUtils {
 	}
 
 	static addText(label, size, sphere, textType) {
-		let worldPos = new THREE.Vector3();
 		let materialFront = new THREE.MeshBasicMaterial({color: Colours.textOuter});
 		let materialSide = new THREE.MeshBasicMaterial({color: Colours.textInner});
 		let materialArray = [materialFront, materialSide];
@@ -182,20 +181,9 @@ class SceneUtils {
 			bevelSegments: 3
 		});
 		let textMesh = new THREE.Mesh(textGeom, materialArray);
-		let cameraPos = Props.camera.position.clone();
-		let spherePos = sphere.position.clone();
-		let pos = spherePos.sub(cameraPos).addScalar(sphere.radius);
-
 		textMesh.type = textType;
-		textMesh.position.copy(pos);
 		sphere.textMesh = textMesh;
 		textMesh.parentSphere = sphere;
-		// textMesh.onBeforeRender = () => {
-		// 	worldPos.setFromMatrixPosition(textMesh.matrixWorld);
-		// 	textMesh.matrixWorld.lookAt(Props.camera.position, worldPos, THREE.Object3D.DefaultUp);
-		// 	textMesh.modelViewMatrix.multiplyMatrices(Props.camera.matrixWorldInverse, textMesh.matrixWorld);
-		// 	textMesh.normalMatrix.getNormalMatrix(textMesh.modelViewMatrix);
-		// };
 	}
 
 	static lighting() {

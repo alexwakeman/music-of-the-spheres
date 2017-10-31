@@ -214,3 +214,20 @@
 .artist-genre {
     padding-right: 4px;
 }
+
+.explore-container {
+    position: absolute;
+    left: 250px;
+    top: 20px;
+    border: 1px solid #000;
+    padding: 9px;
+    color: rgb(240, 240, 240);
+    font-family: 'lucida grande', tahoma, Verdana, Arial, sans-serif;
+    text-shadow: rgb(0, 0, 0) 0 1px 1px;
+    font-size: 14px;
+    background-color: rgba(0, 0, 51, 0.11);
+    button {
+        color: black;
+        border: 1px solid #000;
+    }
+}

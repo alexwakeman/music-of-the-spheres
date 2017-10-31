@@ -98,66 +98,57 @@ export class MotionLab {
 		this.job.currentTime += 0.01;
 	}
 
-
-
 	/**
-	 * TODO: optimisation - only use updateRotation() if the mouse is dragging / speed is above default minimum
 	 * Rotation of camera is *inverse* of mouse movement direction
 	 */
 	updateRotation() {
 		const artistPropsSetRotation = this.getNewArtistPropsRotation();
 		let artistProps = Props.artistPropsSet[Props.sceneSetIndex].artistProps;
-		artistProps.setRotationFromQuaternion(artistPropsSetRotation);
 		let parentWorld = new THREE.Vector3();
 		let diffV = new THREE.Vector3();
+		let camPos = Props.camera.position.clone().normalize();
+		let textMeshPos, radius, halfRadius;
+		artistProps.setRotationFromQuaternion(artistPropsSetRotation);
 
 		artistProps.traverse((obj) => {
 			switch (obj.type) {
 				case RELATED_ARTIST_SPHERE:
+					let box = new THREE.Box3().setFromObject(obj.textMesh);
+					let halfWidth = (box.max.x - box.min.x) / 2;
+					textMeshPos = obj.textMesh.position;
+					radius = obj.radius;
+					halfRadius = radius / 2;
 					diffV.setFromMatrixPosition(obj.matrixWorld);
 					diffV.normalize();
-					diffV = Props.camera.position.clone().normalize().sub(diffV);
-					diffV.multiplyScalar(obj.radius);
+					diffV = camPos.clone().sub(diffV);
+					diffV.multiplyScalar(halfRadius);
 					parentWorld.setFromMatrixPosition(obj.matrixWorld);
-					//parentWorld.add(diffV);
-					obj.textMesh.position.copy(parentWorld);
-					obj.textMesh.position.add(diffV);
-					obj.textMesh.lookAt(Props.camera.position);
-					obj.textMesh.position.setY(obj.textMesh.position.y - (obj.radius / 2));
-					obj.textMesh.position.setX(obj.textMesh.position.x - obj.radius);
-					obj.textMesh.position.setZ(obj.textMesh.position.z + obj.radius);
+					textMeshPos.copy(parentWorld);
+					textMeshPos.add(diffV);
+					textMeshPos.setX(textMeshPos.x - halfWidth);
+					textMeshPos.setZ(textMeshPos.z + 80);
 					break;
 			}
 		});
 		this.reduceSpeed(0.0005);
 	}
 
-	lookAt(textObject, artistProps) {
-		let m1 = textObject.matrixWorld.clone();
-		textObject.matrixAutoUpdate = false;
-		m1.lookAt(textObject.localToWorld(textObject.position), Props.camera.position, THREE.Object3D.DefaultUp);
-		textObject.quaternion.setFromRotationMatrix(m1);
-		textObject.matrixWorld.makeRotationFromQuaternion(textObject.quaternion);
-		textObject.matrixWorldNeedsUpdate = true;
-		textObject.updateMatrixWorld();
-	}
-
 	getNewArtistPropsRotation() {
 		let artistSceneQuaternionUpdate;
-		const yMoreThanXMouse = Props.mousePosDiffY >= Props.mousePosDiffX;
-		const xMoreThanYMouse = !yMoreThanXMouse;
+		const xMoreThanYMouse = Props.mousePosDiffX >= Props.mousePosDiffY;
+		const yMoreThanXMouse = !xMoreThanYMouse;
 		if (Props.mousePosYIncreased && yMoreThanXMouse) {
-			Props.artistSceneRotation.x -= Props.speedX;
+			Props.artistSceneRotation.x += Props.speedX;
 		}
 		else if (!Props.mousePosYIncreased && yMoreThanXMouse) {
-			Props.artistSceneRotation.x += Props.speedX;
+			Props.artistSceneRotation.x -= Props.speedX;
 		}
 
 		if (Props.mousePosXIncreased && xMoreThanYMouse) {
-			Props.artistSceneRotation.y += Props.speedY;
+			Props.artistSceneRotation.y -= Props.speedY;
 		}
 		else if (!Props.mousePosXIncreased && xMoreThanYMouse) {
-			Props.artistSceneRotation.y -= Props.speedY;
+			Props.artistSceneRotation.y += Props.speedY;
 		}
 		artistSceneQuaternionUpdate = SceneUtils.renormalizeQuaternion(Props.artistPropsSet[Props.sceneSetIndex].artistProps);
 		artistSceneQuaternionUpdate.setFromEuler(Props.artistSceneRotation);

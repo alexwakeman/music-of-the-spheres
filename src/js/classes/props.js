@@ -11,8 +11,8 @@ export const Props = {
 	
 	t1: 0.0, // old time
 	t2: 0.0, // now time
-	speedX: 0.005,
-	speedY: 0.000,
+	speedX: 0.000,
+	speedY: 0.005,
 	mousePosDiffX: 0.0,
 	mousePosDiffY: 0.0,
 	mousePosXIncreased: false,

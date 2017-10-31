@@ -75,7 +75,7 @@ export class SpheresScene {
 				case MAIN_ARTIST_TEXT:
 				case RELATED_ARTIST_TEXT:
 					this.unHighlightHoveredSphere();
-					this.hoveredSphere = selected.parent;
+					this.hoveredSphere = selected.parentSphere;
 					this.highlightHoveredSphere();
 					isOverRelated = true;
 					break;
@@ -127,7 +127,7 @@ export class SpheresScene {
 					break;
 				case RELATED_ARTIST_TEXT:
 					this.resetClickedSphere();
-					this.selectedSphere = selected.parent;
+					this.selectedSphere = selected.parentSphere;
 					this.setupClickedSphere();
 					store.dispatch(showRelated(this.selectedSphere.artistObj));
 					break;
@@ -139,7 +139,7 @@ export class SpheresScene {
 					break;
 				case MAIN_ARTIST_TEXT:
 					this.resetClickedSphere();
-					this.selectedSphere = selected.parent;
+					this.selectedSphere = selected.parentSphere;
 					this.setupClickedSphere();
 					store.dispatch(hideRelated());
 					break;
