@@ -45,13 +45,7 @@ class SceneUtils {
 	}
 
 	static negateNumber(n) {
-		if (n === 0) {
-			return n;
-		} else if (n < 0) {
-			return Math.abs(n);
-		} else {
-			return -n;
-		}
+		return n === 0 ? n : n < 0 ? Math.abs(n) : -n;
 	}
 	
 	static renormalizeQuaternion(object) {
@@ -131,7 +125,7 @@ class SceneUtils {
 			relatedArtistSphere.index = i;
 			relatedArtistSphere.geometry.computeBoundingSphere();
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, direction);
-			//SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
+			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
 			relatedArtistsSphereArray.push(relatedArtistSphere);
 		}
@@ -155,10 +149,10 @@ class SceneUtils {
 		let geometry = new THREE.Geometry();
 		let line;
 		geometry.vertices.push(mainArtistSphere.position.clone());
-		geometry.vertices.push(relatedSphere.position.clone());
+		geometry.vertices.push(relatedSphere.target.clone());
 		line = new THREE.Line(geometry, material);
 		line.type = CONNECTING_LINE;
-		relatedSphere.add(line);
+		mainArtistSphere.add(line);
 	}
 
 	static positionRelatedArtist(mainArtistSphere, relatedSphere, direction) {

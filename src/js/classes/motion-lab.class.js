@@ -94,43 +94,41 @@ export class MotionLab {
 	continueGrow() {
     	this.job.related.forEach((relatedSphere) => {
     		relatedSphere.position.copy(relatedSphere.target.clone().multiplyScalar(this.job.currentTime));
+    		this.positionText(relatedSphere);
 		});
 		this.job.currentTime += 0.01;
 	}
 
-	/**
-	 * Rotation of camera is *inverse* of mouse movement direction
-	 */
 	updateRotation() {
 		const artistPropsSetRotation = this.getNewArtistPropsRotation();
+		let related = Props.artistPropsSet[Props.sceneSetIndex].relatedArtistSpheres;
+		let main = Props.artistPropsSet[Props.sceneSetIndex].mainArtistSphere;
 		let artistProps = Props.artistPropsSet[Props.sceneSetIndex].artistProps;
+		artistProps.setRotationFromQuaternion(artistPropsSetRotation);
+		related.forEach((obj) => this.positionText(obj));
+		this.positionText(main);
+		this.reduceSpeed(0.0005);
+	}
+	
+	positionText(sphere) {
 		let parentWorld = new THREE.Vector3();
 		let diffV = new THREE.Vector3();
 		let camPos = Props.camera.position.clone().normalize();
 		let textMeshPos, radius, halfRadius;
-		artistProps.setRotationFromQuaternion(artistPropsSetRotation);
-
-		artistProps.traverse((obj) => {
-			switch (obj.type) {
-				case RELATED_ARTIST_SPHERE:
-					let box = new THREE.Box3().setFromObject(obj.textMesh);
-					let halfWidth = (box.max.x - box.min.x) / 2;
-					textMeshPos = obj.textMesh.position;
-					radius = obj.radius;
-					halfRadius = radius / 2;
-					diffV.setFromMatrixPosition(obj.matrixWorld);
-					diffV.normalize();
-					diffV = camPos.clone().sub(diffV);
-					diffV.multiplyScalar(halfRadius);
-					parentWorld.setFromMatrixPosition(obj.matrixWorld);
-					textMeshPos.copy(parentWorld);
-					textMeshPos.add(diffV);
-					textMeshPos.setX(textMeshPos.x - halfWidth);
-					textMeshPos.setZ(textMeshPos.z + 80);
-					break;
-			}
-		});
-		this.reduceSpeed(0.0005);
+		let box = new THREE.Box3().setFromObject(sphere.textMesh);
+		let halfWidth = (box.max.x - box.min.x) / 2;
+		textMeshPos = sphere.textMesh.position;
+		radius = sphere.radius;
+		halfRadius = radius / 2;
+		diffV.setFromMatrixPosition(sphere.matrixWorld);
+		diffV.normalize();
+		diffV = camPos.clone().sub(diffV);
+		diffV.multiplyScalar(halfRadius);
+		parentWorld.setFromMatrixPosition(sphere.matrixWorld);
+		textMeshPos.copy(parentWorld);
+		textMeshPos.add(diffV);
+		textMeshPos.setX(textMeshPos.x - halfWidth);
+		textMeshPos.setZ(textMeshPos.z + 80);
 	}
 
 	getNewArtistPropsRotation() {

@@ -56,13 +56,12 @@ export class SpheresScene {
 		let intersects;
 		let isOverRelated = false;
 		Props.mouseVector = SceneUtils.getMouseVector(event);
-		Props.mouseIsOverRelated = false;
 		intersects = SceneUtils.getIntersectsFromMousePos();
 
 		if (intersects.length) {
 			selected = intersects[0].object;
 			if (selected.id === this.hoveredSphere.id) {
-				return;
+				return true;
 			}
 			switch (selected.type) {
 				case MAIN_ARTIST_SPHERE:
@@ -74,9 +73,6 @@ export class SpheresScene {
 					break;
 				case MAIN_ARTIST_TEXT:
 				case RELATED_ARTIST_TEXT:
-					this.unHighlightHoveredSphere();
-					this.hoveredSphere = selected.parentSphere;
-					this.highlightHoveredSphere();
 					isOverRelated = true;
 					break;
 			}

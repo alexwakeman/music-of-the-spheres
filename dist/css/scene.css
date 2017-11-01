@@ -84,7 +84,16 @@
   .spotify-player-container .albums-list {
     position: relative;
     max-height: 200px;
-    overflow: auto; }
+    overflow: auto;
+    padding: 10px;
+    background-color: #181818; }
+    .spotify-player-container .albums-list .album {
+      padding: 4px;
+      background-color: #282828;
+      position: relative;
+      margin-top: 4px; }
+      .spotify-player-container .albums-list .album a {
+        color: #1ed760; }
 
 .artist-navigation {
   position: absolute;

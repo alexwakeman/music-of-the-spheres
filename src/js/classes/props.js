@@ -30,6 +30,7 @@ export class ArtistProps {
 		this.relatedArtistSpheres = relatedArtistSpheres;
 		this.artistProps = new THREE.Object3D();
 		this.artistProps.add(this.mainArtistSphere);
+		Props.graphContainer.add(this.mainArtistSphere.textMesh);
 		this.relatedArtistSpheres.forEach(related => {
 			this.artistProps.add(related);
 			Props.graphContainer.add(related.textMesh)

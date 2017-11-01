@@ -73,6 +73,18 @@
         position: relative;
         max-height: 200px;
         overflow: auto;
+        padding: 10px;
+        background-color: #181818;
+
+        .album {
+            padding: 4px;
+            background-color: #282828;
+            position: relative;
+            margin-top: 4px;
+            a {
+                color: #1ed760;
+            }
+        }
     }
 }
 
