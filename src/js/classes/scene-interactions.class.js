@@ -178,8 +178,9 @@ export class SpheresScene {
 		MusicDataService.getArtist(this.selectedSphere.artistObj.id)
 			.then((artistObj) => {
 				let clonedExploredSphere = this.selectedSphere.clone();
+                Props.artistPropsSet[Props.sceneSetIndex].removeRelatedArtistFromScene(this.selectedSphere);
 				this.selectedSphere = {id: NaN};
-				this.composeScene(artistObj, clonedExploredSphere);
+				//this.composeScene(artistObj, clonedExploredSphere);
 			});
 	}
 

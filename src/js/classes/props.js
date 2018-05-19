@@ -24,6 +24,8 @@ export const Props = {
 	sceneSetIndex: 0
 };
 
+// a way of encapsulating the non-connected spheres and text meshes.
+// no longer using parent->child relationship
 export class ArtistProps {
 	static assign(mainArtistSphere, relatedArtistSpheres) {
 		this.mainArtistSphere = mainArtistSphere;
@@ -33,11 +35,16 @@ export class ArtistProps {
 		Props.graphContainer.add(this.mainArtistSphere.textMesh);
 		this.relatedArtistSpheres.forEach(related => {
 			this.artistProps.add(related);
-			Props.graphContainer.add(related.textMesh)
+			Props.graphContainer.add(related.textMesh);
 		});
 		Props.graphContainer.add(this.artistProps);
-		Props.artistPropsSet.push(this);
+		Props.artistPropsSet.push(this); // a set of 'scenes' encapsulating one search to rotate
 		Props.sceneSetIndex++;
+	}
+
+	static removeRelatedArtistFromScene(relatedSphere) {
+        Props.graphContainer.remove(relatedSphere.textMesh);
+		this.artistProps.remove(relatedSphere);
 	}
 }
 

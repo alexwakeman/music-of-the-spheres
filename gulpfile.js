@@ -1,18 +1,10 @@
 var gulp = require('gulp');
-var path = require('path');
-var sourcemaps = require('gulp-sourcemaps');
 var sass = require('gulp-sass');
-var concat = require('gulp-concat');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var karma = require('karma');
 var gutil = require('gutil');
-var babel = require('gulp-babel');
 var react = require('gulp-react');
-var buffer = require('vinyl-buffer');
-var uglify = require('gulp-uglify');
-var del = require('del');
-
 
 var libs = ['react', 'react-dom', 'redux', 'react-redux', 'prop-types', 'three'];
 
