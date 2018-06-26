@@ -9,11 +9,9 @@ import {MotionLab} from "./motion-lab.class";
 import {MusicDataService} from "../services/music-data.service";
 import {
 	MAIN_ARTIST_SPHERE, MAIN_ARTIST_TEXT, Props, RELATED_ARTIST_SPHERE, RELATED_ARTIST_TEXT,
-	TEXT_GEOMETRY
 } from './props';
 import {store} from '../state/store';
-import {hideRelated, relatedClick, showRelated} from "../state/actions";
-import * as THREE from "three";
+import {hideRelated, showRelated} from "../state/actions";
 
 export class SpheresScene {
 	constructor(container) {
@@ -30,6 +28,7 @@ export class SpheresScene {
 
 		// init the scene
 		Props.scene.add(Props.graphContainer);
+		Props.scene.add(Props.textContainer);
 		Props.scene.add(Props.camera);
 		Props.camera.position.set(0, 250, Props.cameraDistance);
 		Props.camera.lookAt(Props.scene.position);
@@ -180,7 +179,7 @@ export class SpheresScene {
 				let clonedExploredSphere = this.selectedSphere.clone();
                 Props.artistPropsSet[Props.sceneSetIndex].removeRelatedArtistFromScene(this.selectedSphere);
 				this.selectedSphere = {id: NaN};
-				//this.composeScene(artistObj, clonedExploredSphere);
+				this.composeScene(artistObj, clonedExploredSphere);
 			});
 	}
 

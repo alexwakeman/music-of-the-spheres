@@ -4,6 +4,7 @@ export const Props = {
 	scene: new THREE.Scene(),
 	camera: new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 500, 150000),
 	graphContainer: new THREE.Object3D(),
+	textContainer: new THREE.Object3D(),
 	parent: new THREE.Object3D(),
 	artistSceneRotation: new THREE.Euler(0, 0, 0),
 	cameraLookAt: new THREE.Vector3(0, 0, 0),
@@ -30,21 +31,19 @@ export class ArtistProps {
 	static assign(mainArtistSphere, relatedArtistSpheres) {
 		this.mainArtistSphere = mainArtistSphere;
 		this.relatedArtistSpheres = relatedArtistSpheres;
-		this.artistProps = new THREE.Object3D();
-		this.artistProps.add(this.mainArtistSphere);
-		Props.graphContainer.add(this.mainArtistSphere.textMesh);
+        Props.graphContainer.add(this.mainArtistSphere);
+		Props.textContainer.add(this.mainArtistSphere.textMesh);
 		this.relatedArtistSpheres.forEach(related => {
-			this.artistProps.add(related);
-			Props.graphContainer.add(related.textMesh);
+            Props.graphContainer.add(related);
+			Props.textContainer.add(related.textMesh);
 		});
-		Props.graphContainer.add(this.artistProps);
 		Props.artistPropsSet.push(this); // a set of 'scenes' encapsulating one search to rotate
 		Props.sceneSetIndex++;
 	}
 
 	static removeRelatedArtistFromScene(relatedSphere) {
-        Props.graphContainer.remove(relatedSphere.textMesh);
-		this.artistProps.remove(relatedSphere);
+        Props.textContainer.remove(relatedSphere.textMesh);
+        Props.graphContainer.remove(relatedSphere);
 	}
 }
 

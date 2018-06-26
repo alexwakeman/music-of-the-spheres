@@ -101,12 +101,12 @@ export class MotionLab {
 
 	updateRotation() {
 		const artistPropsSetRotation = this.getNewArtistPropsRotation();
-		let related = Props.artistPropsSet[Props.sceneSetIndex].relatedArtistSpheres;
-		let main = Props.artistPropsSet[Props.sceneSetIndex].mainArtistSphere;
-		let artistProps = Props.artistPropsSet[Props.sceneSetIndex].artistProps;
-		artistProps.setRotationFromQuaternion(artistPropsSetRotation);
-		related.forEach((obj) => this.positionText(obj));
-		this.positionText(main);
+        Props.graphContainer.setRotationFromQuaternion(artistPropsSetRotation);
+        Props.graphContainer.children.forEach((obj) => {
+        	if (obj.textMesh) {
+                this.positionText(obj);
+            }
+        });
 		this.reduceSpeed(0.0005);
 	}
 	
@@ -148,7 +148,7 @@ export class MotionLab {
 		else if (!Props.mousePosXIncreased && xMoreThanYMouse) {
 			Props.artistSceneRotation.y += Props.speedY;
 		}
-		artistSceneQuaternionUpdate = SceneUtils.renormalizeQuaternion(Props.artistPropsSet[Props.sceneSetIndex].artistProps);
+		artistSceneQuaternionUpdate = SceneUtils.renormalizeQuaternion(Props.graphContainer);
 		artistSceneQuaternionUpdate.setFromEuler(Props.artistSceneRotation);
 		return artistSceneQuaternionUpdate;
 	}

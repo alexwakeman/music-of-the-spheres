@@ -124,6 +124,8 @@ class SceneUtils {
 			relatedArtistSphere.colours.selected = Colours.relatedArtistClicked;
 			relatedArtistSphere.index = i;
 			relatedArtistSphere.geometry.computeBoundingSphere();
+
+			// TODO fix this for explore
 			SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, direction);
 			SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
 			SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
@@ -136,7 +138,7 @@ class SceneUtils {
 		if (mainArtistSphere.exitPosition) {
 			return RELATED_POSITIONS.filter(pos => !isEqual(pos, mainArtistSphere.exitPosition));
 		} else {
-			return RELATED_POSITIONS;
+			return RELATED_POSITIONS.map((pos) => pos.clone());
 		}
 	}
 
@@ -148,8 +150,8 @@ class SceneUtils {
 		let material = new THREE.LineBasicMaterial({color: Colours.relatedLineJoin});
 		let geometry = new THREE.Geometry();
 		let line;
-		geometry.vertices.push(mainArtistSphere.position.clone());
-		geometry.vertices.push(relatedSphere.target.clone());
+		geometry.vertices.push(mainArtistSphere.position.clone().normalize());
+		geometry.vertices.push(relatedSphere.target.clone().normalize().multiplyScalar(relatedSphere.distance));
 		line = new THREE.Line(geometry, material);
 		line.type = CONNECTING_LINE;
 		mainArtistSphere.add(line);
