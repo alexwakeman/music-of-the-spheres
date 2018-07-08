@@ -4,6 +4,7 @@
  *
  * It aims to deal not with changes over time, only immediate changes in one frame.
  */
+import * as THREE from "three";
 import {SceneUtils} from "./scene-utils.class";
 import {MotionLab} from "./motion-lab.class";
 import {MusicDataService} from "../services/music-data.service";
@@ -171,16 +172,21 @@ export class SpheresScene {
 	}
 
 	exploreSelectedArtist() {
-		// remove the selectedSphere from the graph
-		// replace it with duplicate as 'mainArtistSphere',
-		// attach related artists to it (avoiding inverted direction norm)
-		MusicDataService.getArtist(this.selectedSphere.artistObj.id)
-			.then((artistObj) => {
-				let clonedExploredSphere = this.selectedSphere.clone();
-                Props.artistPropsSet[Props.sceneSetIndex].removeRelatedArtistFromScene(this.selectedSphere);
-				this.selectedSphere = {id: NaN};
-				this.composeScene(artistObj, clonedExploredSphere);
-			});
+        this.motionLab.moveOldSceneOut(() => {
+            MusicDataService.getArtist(this.selectedSphere.artistObj.id)
+                .then((artistObj) => {
+                    Props.scene.remove(Props.graphContainer);
+                    Props.scene.remove(Props.textContainer);
+                    Props.graphContainer = new THREE.Object3D();
+                    Props.textContainer = new THREE.Object3D();
+                    Props.scene.add(Props.graphContainer);
+                    Props.scene.add(Props.textContainer);
+                    Props.graphContainer.position.x = 0;
+                    let clonedExploredSphere = this.selectedSphere.clone();
+                    this.selectedSphere = {id: NaN};
+                    this.composeScene(artistObj, clonedExploredSphere);
+                });
+        });
 	}
 
 	clearGraph() {

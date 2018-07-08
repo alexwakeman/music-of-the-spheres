@@ -9,7 +9,6 @@ export class Statistics {
 		} else {
 			return artist.popularity * SIZE_SCALAR_SMALL;
 		}
-
     }
 
 	/**
@@ -32,7 +31,7 @@ export class Statistics {
 		unit = 1 / artistGenreCount;
 		unit = unit === 1 ? 0 : unit;
 		genreSimilarity = matches.length * unit;
-		relativeMinDistance = Statistics.getArtistSphereSize(artist) + Statistics.getArtistSphereSize(relatedArtist);
+		relativeMinDistance = Statistics.getArtistSphereSize(artist) + Statistics.getArtistSphereSize(relatedArtist) + 50;
 		return {
 			lineLength: (MAX_DISTANCE - (MAX_DISTANCE * genreSimilarity)) + relativeMinDistance,
 			genreSimilarity: Math.round(genreSimilarity * 100)

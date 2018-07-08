@@ -69,7 +69,7 @@ class SceneUtils {
 			-(event.clientY / Props.renderer.domElement.clientHeight) * 2 + 1);
 	}
 
-	static createMainArtistSphere(mainArtist, relatedArtistExplored = null) {
+	static createMainArtistSphere(mainArtist) {
 		let radius = Statistics.getArtistSphereSize(mainArtist);
 		let geometry = new THREE.SphereGeometry(radius, 35, 35);
 		let sphere = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
@@ -84,10 +84,6 @@ class SceneUtils {
 		sphere.colours.default = Colours.mainArtist;
 		sphere.colours.hover = Colours.mainArtistHover;
 		sphere.colours.selected = Colours.mainArtist;
-		if (relatedArtistExplored) {
-			sphere.position.copy(relatedArtistExplored.position);
-			sphere.exitPosition = SceneUtils.negateVector(relatedArtistExplored.userData.directionNorm);
-		}
 		SceneUtils.addText(mainArtist.name, MAIN_ARTIST_FONT_SIZE, sphere, MAIN_ARTIST_TEXT);
 		return sphere;
 	}

@@ -8,6 +8,7 @@ import * as THREE from "three";
 
 const TRACK_CAM_TO_OBJ = 'TRACK_CAM_TO_OBJ';
 const GROW_OUT_RELATED = 'GROW_OUT_RELATED';
+const MOVE_OLD_SCENE_OUT = 'MOVE_OLD_SCENE_OUT';
 const DEFAULT = 'DEFAULT';
 const nullJob = {
 	type: null
@@ -43,6 +44,9 @@ export class MotionLab {
 			case GROW_OUT_RELATED:
 				this.processJob();
 				break;
+            case MOVE_OLD_SCENE_OUT:
+                this.processJob();
+                break;
 			default:
 				// null job (on init)
 		}
@@ -91,12 +95,27 @@ export class MotionLab {
 		this.job.function = this.continueGrow.bind(this);
 	}
 
+	moveOldSceneOut(callback = () => {}) {
+        this.job = {};
+        this.job.type = MOVE_OLD_SCENE_OUT;
+        this.job.container = Props.graphContainer;
+        this.job.currentTime = 0.0;
+        this.job.callback = callback;
+        this.job.function = this.processMoveOut.bind(this);
+	}
+
 	continueGrow() {
     	this.job.related.forEach((relatedSphere) => {
     		relatedSphere.position.copy(relatedSphere.target.clone().multiplyScalar(this.job.currentTime));
     		this.positionText(relatedSphere);
 		});
 		this.job.currentTime += 0.01;
+	}
+
+    processMoveOut() {
+    	this.job.container.position.x += this.job.currentTime * 20;
+        this.job.currentTime += 0.01;
+        this.updateRotation();
 	}
 
 	updateRotation() {

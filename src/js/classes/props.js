@@ -21,7 +21,6 @@ export const Props = {
 	raycaster: new THREE.Raycaster(),
 	mouseVector: new THREE.Vector2(),
 
-	artistPropsSet: [new THREE.Object3D()], // array of ArtistScene instances
 	sceneSetIndex: 0
 };
 
@@ -37,8 +36,6 @@ export class ArtistProps {
             Props.graphContainer.add(related);
 			Props.textContainer.add(related.textMesh);
 		});
-		Props.artistPropsSet.push(this); // a set of 'scenes' encapsulating one search to rotate
-		Props.sceneSetIndex++;
 	}
 
 	static removeRelatedArtistFromScene(relatedSphere) {
