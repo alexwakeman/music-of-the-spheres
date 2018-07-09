@@ -112,7 +112,6 @@ class SpotifyRequests {
 					const data = JSON.parse(body);
 					if (data.artists.length) {
 						artist.related = data.artists;
-
 					}
 					return resolve(artist);
 				}

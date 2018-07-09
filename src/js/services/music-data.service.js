@@ -16,7 +16,8 @@ export class MusicDataService {
 		return window.fetch(artistURL, {
 			credentials: 'same-origin'
 		})
-		.then((data) => data.json());
+		.then((data) => data.json())
+        .then((json) => store.dispatch(displayArtist(json)));
 	}
 
 	static fetchDisplayAlbums(artist) {

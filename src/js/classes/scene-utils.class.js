@@ -94,10 +94,6 @@ class SceneUtils {
 		let limit = Math.min(TOTAL_RELATED, mainArtist.related.length);
 		let availablePositions = SceneUtils.getAvailableRelatedPositions(mainArtistSphere);
 
-		if (mainArtistSphere.exitPosition && limit === TOTAL_RELATED) {
-			limit -= 1;
-		}
-
 		for (let i = 0; i < limit; i++) {
 			relatedArtist = mainArtist.related[i];
 			let direction = availablePositions[i];

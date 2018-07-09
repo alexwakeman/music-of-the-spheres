@@ -100,6 +100,7 @@ export class MotionLab {
         this.job.type = MOVE_OLD_SCENE_OUT;
         this.job.container = Props.graphContainer;
         this.job.currentTime = 0.0;
+        this.job.outAmount = (window.innerWidth / 10);
         this.job.callback = callback;
         this.job.function = this.processMoveOut.bind(this);
 	}
@@ -109,11 +110,12 @@ export class MotionLab {
     		relatedSphere.position.copy(relatedSphere.target.clone().multiplyScalar(this.job.currentTime));
     		this.positionText(relatedSphere);
 		});
+        this.updateRotation();
 		this.job.currentTime += 0.01;
 	}
 
     processMoveOut() {
-    	this.job.container.position.x += this.job.currentTime * 20;
+    	this.job.container.position.x -= this.job.currentTime * this.job.outAmount;
         this.job.currentTime += 0.01;
         this.updateRotation();
 	}

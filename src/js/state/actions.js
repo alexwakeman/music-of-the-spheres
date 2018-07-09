@@ -2,7 +2,8 @@ export const ARTIST_DATA_AVAILABLE = 'ARTIST_DATA_AVAILABLE';
 export const UPDATE_DISPLAY_ARTIST = 'UPDATE_DISPLAY_ARTIST';
 export const SEARCH_TERM_UPDATE = 'SEARCH_TERM_UPDATE';
 export const RELATED_CLICK = 'RELATED_CLICK';
-export const SHOW_RELATED_INFO = 'SHOW_RELATED_INFO';
+export const SHOW_RELATED_INFO_HOVER = 'SHOW_RELATED_INFO_HOVER';
+export const SHOW_RELATED_INFO_CLICK = 'SHOW_RELATED_INFO_CLICK';
 export const HIDE_RELATED_INFO = 'HIDE_RELATED_INFO';
 export const CLEAR_SESSION = 'CLEAR_SESSION';
 export const LOAD_ALBUM = 'LOAD_ALBUM';
@@ -37,9 +38,16 @@ export function relatedClick(relatedArtist) {
 
 export function showRelated(relatedArtist) {
 	return {
-		type: SHOW_RELATED_INFO,
+		type: SHOW_RELATED_INFO_HOVER,
 		data: relatedArtist
 	}
+}
+
+export function showRelatedClick(relatedArtist) {
+    return {
+        type: SHOW_RELATED_INFO_CLICK,
+        data: relatedArtist
+    }
 }
 
 export function hideRelated() {

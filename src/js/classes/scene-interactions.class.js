@@ -12,7 +12,7 @@ import {
 	MAIN_ARTIST_SPHERE, MAIN_ARTIST_TEXT, Props, RELATED_ARTIST_SPHERE, RELATED_ARTIST_TEXT,
 } from './props';
 import {store} from '../state/store';
-import {hideRelated, showRelated} from "../state/actions";
+import {hideRelated, showRelated, showRelatedClick} from "../state/actions";
 
 export class SpheresScene {
 	constructor(container) {
@@ -44,11 +44,13 @@ export class SpheresScene {
 	}
 
 	composeScene(artist, relatedArtistSphere = null) {
-		window.location.hash = encodeURIComponent(artist.id);
-		const mainArtist = SceneUtils.createMainArtistSphere(artist, relatedArtistSphere);
-		const relatedArtists = SceneUtils.createRelatedSpheres(artist, mainArtist);
-		SceneUtils.appendObjectsToScene(mainArtist, relatedArtists);
-		this.motionLab.startGrowOut(relatedArtists);
+	    if (artist && artist.id) {
+            window.location.hash = encodeURIComponent(artist.id);
+            const mainArtist = SceneUtils.createMainArtistSphere(artist, relatedArtistSphere);
+            const relatedArtists = SceneUtils.createRelatedSpheres(artist, mainArtist);
+            SceneUtils.appendObjectsToScene(mainArtist, relatedArtists);
+            this.motionLab.startGrowOut(relatedArtists);
+        }
 	}
 
 	onSceneMouseHover(event) {
@@ -119,13 +121,13 @@ export class SpheresScene {
 					this.resetClickedSphere();
 					this.selectedSphere = selected;
 					this.setupClickedSphere();
-					store.dispatch(showRelated(this.selectedSphere.artistObj));
+					store.dispatch(showRelatedClick(this.selectedSphere.artistObj));
 					break;
 				case RELATED_ARTIST_TEXT:
 					this.resetClickedSphere();
 					this.selectedSphere = selected.parentSphere;
 					this.setupClickedSphere();
-					store.dispatch(showRelated(this.selectedSphere.artistObj));
+					store.dispatch(showRelatedClick(this.selectedSphere.artistObj));
 					break;
 				case MAIN_ARTIST_SPHERE:
 					this.resetClickedSphere();
@@ -148,7 +150,6 @@ export class SpheresScene {
 
 	setupClickedSphere() {
 		this.selectedSphere.material.color.setHex(this.selectedSphere.colours.selected);
-		MusicDataService.fetchDisplayAlbums(this.selectedSphere.artistObj);
 	}
 
 	resetClickedSphere() {
@@ -175,24 +176,21 @@ export class SpheresScene {
         this.motionLab.moveOldSceneOut(() => {
             MusicDataService.getArtist(this.selectedSphere.artistObj.id)
                 .then((artistObj) => {
-                    Props.scene.remove(Props.graphContainer);
-                    Props.scene.remove(Props.textContainer);
-                    Props.graphContainer = new THREE.Object3D();
-                    Props.textContainer = new THREE.Object3D();
-                    Props.scene.add(Props.graphContainer);
-                    Props.scene.add(Props.textContainer);
-                    Props.graphContainer.position.x = 0;
                     let clonedExploredSphere = this.selectedSphere.clone();
                     this.selectedSphere = {id: NaN};
-                    this.composeScene(artistObj, clonedExploredSphere);
+                    this.clearGraph();
+                    this.composeScene(artistObj.data, clonedExploredSphere);
                 });
         });
 	}
 
 	clearGraph() {
-		Props.artistPropsSet.forEach(artistProps => Props.graphContainer.remove(artistProps));
-		Props.artistPropsSet = [];
-		Props.sceneSetIndex = -1;
+        Props.scene.remove(Props.graphContainer);
+        Props.scene.remove(Props.textContainer);
+        Props.graphContainer = new THREE.Object3D();
+        Props.textContainer = new THREE.Object3D();
+        Props.scene.add(Props.graphContainer);
+        Props.scene.add(Props.textContainer);
 	}
 
 	clearAddress() {
