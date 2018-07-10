@@ -21,7 +21,8 @@ export const Props = {
 	raycaster: new THREE.Raycaster(),
 	mouseVector: new THREE.Vector2(),
 
-	sceneSetIndex: 0
+	sceneSetIndex: 0,
+    prevSceneList: []
 };
 
 // a way of encapsulating the non-connected spheres and text meshes.

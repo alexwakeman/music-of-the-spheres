@@ -173,18 +173,26 @@ export class SpheresScene {
 	}
 
 	exploreSelectedArtist() {
-        this.motionLab.moveOldSceneOut(() => {
+        this.motionLab.moveScene('DIRECTION_OUT', () => {
             MusicDataService.getArtist(this.selectedSphere.artistObj.id)
                 .then((artistObj) => {
                     let clonedExploredSphere = this.selectedSphere.clone();
                     this.selectedSphere = {id: NaN};
-                    this.clearGraph();
+                    this.clearGraph(true);
                     this.composeScene(artistObj.data, clonedExploredSphere);
                 });
         });
 	}
 
-	clearGraph() {
+	clearGraph(isNavigation) {
+	    if (isNavigation) {
+            let sceneObj = {
+                graphContainer: Props.graphContainer.clone(),
+                textContainer: Props.textContainer.clone()
+            };
+            Props.prevSceneList.push(sceneObj);
+        }
+
         Props.scene.remove(Props.graphContainer);
         Props.scene.remove(Props.textContainer);
         Props.graphContainer = new THREE.Object3D();

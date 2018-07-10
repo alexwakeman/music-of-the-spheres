@@ -2,7 +2,7 @@
  * MotionLab deals with controlling each tick of the animation frame sequence
  * It's aim is to isolate code that happens over a number of frames (i.e. motion)
  */
-import {Props, MAIN_ARTIST_TEXT, RELATED_ARTIST_TEXT, RELATED_ARTIST_SPHERE} from './props';
+import {Props} from './props';
 import {SceneUtils} from "./scene-utils.class";
 import * as THREE from "three";
 
@@ -10,6 +10,9 @@ const TRACK_CAM_TO_OBJ = 'TRACK_CAM_TO_OBJ';
 const GROW_OUT_RELATED = 'GROW_OUT_RELATED';
 const MOVE_OLD_SCENE_OUT = 'MOVE_OLD_SCENE_OUT';
 const DEFAULT = 'DEFAULT';
+const DIRECTION_IN = 'DIRECTION_IN';
+const DIRECTION_OUT = 'DIRECTION_OUT';
+
 const nullJob = {
 	type: null
 };
@@ -95,12 +98,15 @@ export class MotionLab {
 		this.job.function = this.continueGrow.bind(this);
 	}
 
-	moveOldSceneOut(callback = () => {}) {
+	moveScene(direction = DIRECTION_OUT, callback = () => {}) {
         this.job = {};
         this.job.type = MOVE_OLD_SCENE_OUT;
         this.job.container = Props.graphContainer;
         this.job.currentTime = 0.0;
         this.job.outAmount = (window.innerWidth / 10);
+        if (direction === DIRECTION_OUT) {
+        	this.job.outAmount = -this.job.outAmount;
+		}
         this.job.callback = callback;
         this.job.function = this.processMoveOut.bind(this);
 	}
@@ -115,7 +121,7 @@ export class MotionLab {
 	}
 
     processMoveOut() {
-    	this.job.container.position.x -= this.job.currentTime * this.job.outAmount;
+    	this.job.container.position.x += this.job.currentTime * this.job.outAmount;
         this.job.currentTime += 0.01;
         this.updateRotation();
 	}
