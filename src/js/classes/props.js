@@ -22,7 +22,8 @@ export const Props = {
 	mouseVector: new THREE.Vector2(),
 
 	sceneSetIndex: 0,
-    prevSceneList: []
+    backNavList: [],
+    forwardNavList: []
 };
 
 // a way of encapsulating the non-connected spheres and text meshes.
@@ -32,6 +33,7 @@ export class ArtistProps {
 		this.mainArtistSphere = mainArtistSphere;
 		this.relatedArtistSpheres = relatedArtistSpheres;
         Props.graphContainer.add(this.mainArtistSphere);
+        Props.graphContainer.userData = mainArtistSphere.artistObj;
 		Props.textContainer.add(this.mainArtistSphere.textMesh);
 		this.relatedArtistSpheres.forEach(related => {
             Props.graphContainer.add(related);

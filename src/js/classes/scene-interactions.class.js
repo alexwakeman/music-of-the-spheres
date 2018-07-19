@@ -173,26 +173,66 @@ export class SpheresScene {
 	}
 
 	exploreSelectedArtist() {
-        this.motionLab.moveScene('DIRECTION_OUT', () => {
+        this.addSceneToBackList();
+        this.motionLab.moveScene('DIRECTION_LEFT_OUT', () => {
             MusicDataService.getArtist(this.selectedSphere.artistObj.id)
                 .then((artistObj) => {
                     let clonedExploredSphere = this.selectedSphere.clone();
                     this.selectedSphere = {id: NaN};
-                    this.clearGraph(true);
+                    this.clearGraph();
                     this.composeScene(artistObj.data, clonedExploredSphere);
                 });
         });
 	}
 
-	clearGraph(isNavigation) {
-	    if (isNavigation) {
-            let sceneObj = {
-                graphContainer: Props.graphContainer.clone(),
-                textContainer: Props.textContainer.clone()
-            };
-            Props.prevSceneList.push(sceneObj);
-        }
+	navigateBack() {
+	    // remove from artist list too
+	    const backSceneObj = Props.backNavList.pop();
+        this.motionLab.moveScene('DIRECTION_RIGHT_OUT', () => {
+            this.addSceneToForwardList();
+            Props.graphContainer = backSceneObj.graphContainer;
+            Props.textContainer = backSceneObj.textContainer;
+            Props.scene.add(Props.graphContainer);
+            Props.scene.add(Props.textContainer);
+            this.motionLab.moveScene('DIRECTION_LEFT_IN');
+        });
+    }
 
+    navigateBackFromList(artistId) {
+	    let artistIndex;
+	    Props.forwardNavList = [];
+        const artistSceneObj = Props.backNavList.find((sceneObj, index) => {
+            artistIndex = index;
+            return sceneObj.graphContainer.userData.id === artistId;
+        });
+        this.motionLab.moveScene('DIRECTION_RIGHT_OUT', () => {
+            Props.scene.remove(Props.graphContainer);
+            Props.scene.remove(Props.textContainer);
+            Props.graphContainer = artistSceneObj.graphContainer;
+            Props.textContainer = artistSceneObj.textContainer;
+            Props.scene.add(Props.graphContainer);
+            Props.scene.add(Props.textContainer);
+            this.motionLab.moveScene('DIRECTION_LEFT_IN');
+        });
+    }
+
+    addSceneToBackList() {
+        const sceneObj = {
+            graphContainer: Props.graphContainer.clone(),
+            textContainer: Props.textContainer.clone()
+        };
+        Props.backNavList.push(sceneObj);
+    }
+
+    addSceneToForwardList() {
+        const sceneObj = {
+            graphContainer: Props.graphContainer.clone(),
+            textContainer: Props.textContainer.clone()
+        };
+        Props.forwardNavList.push(sceneObj);
+    }
+
+	clearGraph() {
         Props.scene.remove(Props.graphContainer);
         Props.scene.remove(Props.textContainer);
         Props.graphContainer = new THREE.Object3D();

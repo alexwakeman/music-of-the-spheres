@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {MusicDataService} from "../services/music-data.service";
+import {Props} from '../classes/props';
 
 export class ArtistListComponent extends React.Component {
 	constructor() {
@@ -8,7 +8,7 @@ export class ArtistListComponent extends React.Component {
 
 	handleGetArtist(evt, artistId) {
 		evt.preventDefault();
-		MusicDataService.getArtist(artistId);
+        Props.sceneInst.navigateBackFromList(artistId);
 	}
 
 	render() {
