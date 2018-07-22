@@ -16,12 +16,12 @@ export class AppComponent extends React.Component {
     render() {
         return (
             <div className="app-container">
-				<SearchContainer />
-                <SceneContainer />
-                <SpotifyPlayerContainer />
-                <RelatedArtistInfoContainer />
-                <ArtistInfoContainer />
-                <ArtistListContainer />
+                <SearchContainer/>
+                <SceneContainer/>
+                <SpotifyPlayerContainer/>
+                <RelatedArtistInfoContainer/>
+                <ArtistInfoContainer/>
+                <ArtistListContainer/>
             </div>
         )
     }

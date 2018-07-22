@@ -9,38 +9,38 @@ export const CLEAR_SESSION = 'CLEAR_SESSION';
 export const LOAD_ALBUM = 'LOAD_ALBUM';
 
 export function artistDataAvailable(data) {
-	return {
-		type: ARTIST_DATA_AVAILABLE,
-		data: data
-	}
+    return {
+        type: ARTIST_DATA_AVAILABLE,
+        data: data
+    }
 }
 
 export function displayArtist(data) {
-	return {
-		type: UPDATE_DISPLAY_ARTIST,
-		data: data
-	}
+    return {
+        type: UPDATE_DISPLAY_ARTIST,
+        data: data
+    }
 }
 
 export function updateSearchTerm(searchTerm) {
-	return {
-		type: SEARCH_TERM_UPDATE,
-		searchTerm: searchTerm
-	}
+    return {
+        type: SEARCH_TERM_UPDATE,
+        searchTerm: searchTerm
+    }
 }
 
 export function relatedClick(relatedArtist) {
-	return {
-		type: RELATED_CLICK,
-		data: relatedArtist
-	}
+    return {
+        type: RELATED_CLICK,
+        data: relatedArtist
+    }
 }
 
 export function showRelated(relatedArtist) {
-	return {
-		type: SHOW_RELATED_INFO_HOVER,
-		data: relatedArtist
-	}
+    return {
+        type: SHOW_RELATED_INFO_HOVER,
+        data: relatedArtist
+    }
 }
 
 export function showRelatedClick(relatedArtist) {
@@ -51,21 +51,21 @@ export function showRelatedClick(relatedArtist) {
 }
 
 export function hideRelated() {
-	return {
-		type: HIDE_RELATED_INFO,
-		data: null
-	}
+    return {
+        type: HIDE_RELATED_INFO,
+        data: null
+    }
 }
 
 export function clearSession() {
-	return {
-		type: CLEAR_SESSION
-	}
+    return {
+        type: CLEAR_SESSION
+    }
 }
 
 export function loadAlbum(albumId) {
-	return {
-		type: LOAD_ALBUM,
-		data: albumId
-	}
+    return {
+        type: LOAD_ALBUM,
+        data: albumId
+    }
 }
