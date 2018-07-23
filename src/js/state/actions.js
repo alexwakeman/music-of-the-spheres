@@ -7,6 +7,14 @@ export const SHOW_RELATED_INFO_CLICK = 'SHOW_RELATED_INFO_CLICK';
 export const HIDE_RELATED_INFO = 'HIDE_RELATED_INFO';
 export const CLEAR_SESSION = 'CLEAR_SESSION';
 export const LOAD_ALBUM = 'LOAD_ALBUM';
+export const SLICE_EXPLORED_ARTISTS = 'SLICE_EXPLORED_ARTISTS';
+
+export function sliceExploredArtists(data) {
+    return {
+        type: SLICE_EXPLORED_ARTISTS,
+        data: data
+    }
+}
 
 export function artistDataAvailable(data) {
     return {

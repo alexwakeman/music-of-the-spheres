@@ -195,13 +195,12 @@ export class SpheresScene {
 
     navigateBack() {
         // remove from artist list too
-        const backSceneObj = Props.backNavList.pop();
+        const backParent = Props.backNavList.pop();
+        Props.forwardNavList.push(Props.parent);
         this.motionLab.moveScene('DIRECTION_RIGHT_OUT', () => {
-            this.addSceneToForwardList();
-            Props.graphContainer = backSceneObj.graphContainer;
-            Props.textContainer = backSceneObj.textContainer;
-            Props.scene.add(Props.graphContainer);
-            Props.scene.add(Props.textContainer);
+            this.clearGraph();
+            Props.parent = backParent;
+            Props.scene.add(Props.parent);
             this.motionLab.moveScene('DIRECTION_LEFT_IN', () => {
                 console.log('Move in done!');
                 this.motionLab.setDefaultJob();

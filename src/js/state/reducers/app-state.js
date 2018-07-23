@@ -6,7 +6,7 @@ import {
     SHOW_RELATED_INFO_HOVER,
     SHOW_RELATED_INFO_CLICK,
     HIDE_RELATED_INFO,
-    LOAD_ALBUM
+    LOAD_ALBUM, SLICE_EXPLORED_ARTISTS
 } from '../actions'
 
 let initialState = sessionStorage.getItem('state');
@@ -42,6 +42,15 @@ if (!initialState) {
 const appState = (state = initialState, action) => {
     let newState;
     switch (action.type) {
+        case SLICE_EXPLORED_ARTISTS:
+            const slicedVisitedArtists = state.visitedArtists.slice(0, action.data + 1);
+            newState = {
+                ...state,
+                visitedArtists: [
+                    ...slicedVisitedArtists,
+                ],
+            };
+            break;
         case SEARCH_TERM_UPDATE:
             newState = {
                 ...state,
