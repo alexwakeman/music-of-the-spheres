@@ -10,7 +10,6 @@
     "connect-mongo": "^2.0.3",
     "express": "^4.15.2",
     "express-session": "^1.15.3",
-    "express-session-mongo": "^0.1.0",
     "lodash": "^4.17.4",
     "path": "^0.12.7",
     "prop-types": "^15.5.10",
