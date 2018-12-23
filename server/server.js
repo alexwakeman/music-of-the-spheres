@@ -3,7 +3,7 @@ const express = require('express'),
 	router = express.Router(),
 	path = require('path'),
 	session = require('express-session'),
-	MongoStore = require('express-session-mongo'),
+	MongoStore = require('connect-mongo')(session),
 	SpotifyRequests = require('./spotify-api-request'),
 	auth = require('./oauth')();
 
@@ -12,7 +12,7 @@ app.use(session({
 	resave: true,
 	saveUninitialized: true,
 	cookie: { secure: false },
-	store: new MongoStore()
+	store: new MongoStore({url: 'mongodb://localhost:27017/spheres-session'})
 }));
 app.use('/', express.static(path.join(__dirname, '../dist/login/')));
 app.use('/app/', express.static(path.join(__dirname, '../dist/')));

@@ -118,7 +118,7 @@ class SceneUtils {
 
             // TODO fix this for explore
             SceneUtils.positionRelatedArtist(mainArtistSphere, relatedArtistSphere, direction);
-            SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
+            // SceneUtils.joinRelatedArtistSphereToMain(mainArtistSphere, relatedArtistSphere);
             SceneUtils.addText(relatedArtist.name, RELATED_ARTIST_FONT_SIZE, relatedArtistSphere, RELATED_ARTIST_TEXT);
             relatedArtistsSphereArray.push(relatedArtistSphere);
         }
