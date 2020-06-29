@@ -44,6 +44,7 @@ export class SpheresScene {
 	}
 
 	composeScene(artist, relatedArtistSphere = null) {
+		this.clearGraph();
 	    if (artist && artist.id) {
             window.location.hash = encodeURIComponent(artist.id);
             const mainArtist = SceneUtils.createMainArtistSphere(artist, relatedArtistSphere);

@@ -1,12 +1,100 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+module.exports = _assertThisInitialized;
+},{}],2:[function(require,module,exports){
+function _extends() {
+  module.exports = _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+module.exports = _extends;
+},{}],3:[function(require,module,exports){
+function _inheritsLoose(subClass, superClass) {
+  subClass.prototype = Object.create(superClass.prototype);
+  subClass.prototype.constructor = subClass;
+  subClass.__proto__ = superClass;
+}
+
+module.exports = _inheritsLoose;
+},{}],4:[function(require,module,exports){
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    default: obj
+  };
+}
+
+module.exports = _interopRequireDefault;
+},{}],5:[function(require,module,exports){
+function _interopRequireWildcard(obj) {
+  if (obj && obj.__esModule) {
+    return obj;
+  } else {
+    var newObj = {};
+
+    if (obj != null) {
+      for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};
+
+          if (desc.get || desc.set) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+    }
+
+    newObj.default = obj;
+    return newObj;
+  }
+}
+
+module.exports = _interopRequireWildcard;
+},{}],6:[function(require,module,exports){
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+module.exports = _objectWithoutPropertiesLoose;
+},{}],7:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -274,6 +362,27 @@ function factory(ReactComponent, isValidElement, ReactNoopUpdateQueue) {
      */
     componentWillUnmount: 'DEFINE_MANY',
 
+    /**
+     * Replacement for (deprecated) `componentWillMount`.
+     *
+     * @optional
+     */
+    UNSAFE_componentWillMount: 'DEFINE_MANY',
+
+    /**
+     * Replacement for (deprecated) `componentWillReceiveProps`.
+     *
+     * @optional
+     */
+    UNSAFE_componentWillReceiveProps: 'DEFINE_MANY',
+
+    /**
+     * Replacement for (deprecated) `componentWillUpdate`.
+     *
+     * @optional
+     */
+    UNSAFE_componentWillUpdate: 'DEFINE_MANY',
+
     // ==== Advanced methods ====
 
     /**
@@ -287,6 +396,23 @@ function factory(ReactComponent, isValidElement, ReactNoopUpdateQueue) {
      * @overridable
      */
     updateComponent: 'OVERRIDE_BASE'
+  };
+
+  /**
+   * Similar to ReactClassInterface but for static methods.
+   */
+  var ReactClassStaticInterface = {
+    /**
+     * This method is invoked after a component is instantiated and when it
+     * receives new props. Return an object to update state in response to
+     * prop changes. Return null to indicate no change to state.
+     *
+     * If an object is returned, its keys will be merged into the existing state.
+     *
+     * @return {object || null}
+     * @optional
+     */
+    getDerivedStateFromProps: 'DEFINE_MANY_MERGED'
   };
 
   /**
@@ -523,6 +649,7 @@ function factory(ReactComponent, isValidElement, ReactNoopUpdateQueue) {
     if (!statics) {
       return;
     }
+
     for (var name in statics) {
       var property = statics[name];
       if (!statics.hasOwnProperty(name)) {
@@ -539,14 +666,25 @@ function factory(ReactComponent, isValidElement, ReactNoopUpdateQueue) {
         name
       );
 
-      var isInherited = name in Constructor;
-      _invariant(
-        !isInherited,
-        'ReactClass: You are attempting to define ' +
-          '`%s` on your component more than once. This conflict may be ' +
-          'due to a mixin.',
-        name
-      );
+      var isAlreadyDefined = name in Constructor;
+      if (isAlreadyDefined) {
+        var specPolicy = ReactClassStaticInterface.hasOwnProperty(name)
+          ? ReactClassStaticInterface[name]
+          : null;
+
+        _invariant(
+          specPolicy === 'DEFINE_MANY_MERGED',
+          'ReactClass: You are attempting to define ' +
+            '`%s` on your component more than once. This conflict may be ' +
+            'due to a mixin.',
+          name
+        );
+
+        Constructor[name] = createMergedResultFunction(Constructor[name], property);
+
+        return;
+      }
+
       Constructor[name] = property;
     }
   }
@@ -856,6 +994,12 @@ function factory(ReactComponent, isValidElement, ReactNoopUpdateQueue) {
           'componentWillRecieveProps(). Did you mean componentWillReceiveProps()?',
         spec.displayName || 'A component'
       );
+      warning(
+        !Constructor.prototype.UNSAFE_componentWillRecieveProps,
+        '%s has a method called UNSAFE_componentWillRecieveProps(). ' +
+          'Did you mean UNSAFE_componentWillReceiveProps()?',
+        spec.displayName || 'A component'
+      );
     }
 
     // Reduce time spent doing lookups by setting these on the prototype.
@@ -874,24 +1018,15 @@ function factory(ReactComponent, isValidElement, ReactNoopUpdateQueue) {
 module.exports = factory;
 
 }).call(this,require('_process'))
-},{"_process":27,"fbjs/lib/emptyObject":10,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"object-assign":26}],2:[function(require,module,exports){
+},{"_process":44,"fbjs/lib/emptyObject":16,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"object-assign":43}],8:[function(require,module,exports){
 (function (process){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -960,14 +1095,12 @@ var EventListener = {
 
 module.exports = EventListener;
 }).call(this,require('_process'))
-},{"./emptyFunction":9,"_process":27}],3:[function(require,module,exports){
+},{"./emptyFunction":15,"_process":44}],9:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -996,16 +1129,14 @@ var ExecutionEnvironment = {
 };
 
 module.exports = ExecutionEnvironment;
-},{}],4:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1028,14 +1159,12 @@ function camelize(string) {
 }
 
 module.exports = camelize;
-},{}],5:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1068,16 +1197,14 @@ function camelizeStyleName(string) {
 }
 
 module.exports = camelizeStyleName;
-},{"./camelize":4}],6:[function(require,module,exports){
+},{"./camelize":10}],12:[function(require,module,exports){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -1108,17 +1235,15 @@ function containsNode(outerNode, innerNode) {
 }
 
 module.exports = containsNode;
-},{"./isTextNode":19}],7:[function(require,module,exports){
+},{"./isTextNode":25}],13:[function(require,module,exports){
 (function (process){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1237,17 +1362,15 @@ function createArrayFromMixed(obj) {
 
 module.exports = createArrayFromMixed;
 }).call(this,require('_process'))
-},{"./invariant":17,"_process":27}],8:[function(require,module,exports){
+},{"./invariant":23,"_process":44}],14:[function(require,module,exports){
 (function (process){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1323,16 +1446,14 @@ function createNodesFromMarkup(markup, handleScript) {
 
 module.exports = createNodesFromMarkup;
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":3,"./createArrayFromMixed":7,"./getMarkupWrap":13,"./invariant":17,"_process":27}],9:[function(require,module,exports){
+},{"./ExecutionEnvironment":9,"./createArrayFromMixed":13,"./getMarkupWrap":19,"./invariant":23,"_process":44}],15:[function(require,module,exports){
 "use strict";
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -1362,15 +1483,13 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 module.exports = emptyFunction;
-},{}],10:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -1384,14 +1503,12 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = emptyObject;
 }).call(this,require('_process'))
-},{"_process":27}],11:[function(require,module,exports){
+},{"_process":44}],17:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -1411,16 +1528,14 @@ function focusNode(node) {
 }
 
 module.exports = focusNode;
-},{}],12:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1450,17 +1565,15 @@ function getActiveElement(doc) /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
-},{}],13:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (process){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -1547,14 +1660,12 @@ function getMarkupWrap(nodeName) {
 
 module.exports = getMarkupWrap;
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":3,"./invariant":17,"_process":27}],14:[function(require,module,exports){
+},{"./ExecutionEnvironment":9,"./invariant":23,"_process":44}],20:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1586,16 +1697,14 @@ function getUnboundedScrollPosition(scrollable) {
 }
 
 module.exports = getUnboundedScrollPosition;
-},{}],15:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1619,14 +1728,12 @@ function hyphenate(string) {
 }
 
 module.exports = hyphenate;
-},{}],16:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1658,15 +1765,13 @@ function hyphenateStyleName(string) {
 }
 
 module.exports = hyphenateStyleName;
-},{"./hyphenate":15}],17:[function(require,module,exports){
+},{"./hyphenate":21}],23:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -1716,16 +1821,14 @@ function invariant(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":27}],18:[function(require,module,exports){
+},{"_process":44}],24:[function(require,module,exports){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1741,16 +1844,14 @@ function isNode(object) {
 }
 
 module.exports = isNode;
-},{}],19:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1766,14 +1867,12 @@ function isTextNode(object) {
 }
 
 module.exports = isTextNode;
-},{"./isNode":18}],20:[function(require,module,exports){
+},{"./isNode":24}],26:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  * @typechecks static-only
@@ -1796,14 +1895,12 @@ function memoizeStringOnly(callback) {
 }
 
 module.exports = memoizeStringOnly;
-},{}],21:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1819,16 +1916,14 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = performance || {};
-},{"./ExecutionEnvironment":3}],22:[function(require,module,exports){
+},{"./ExecutionEnvironment":9}],28:[function(require,module,exports){
 'use strict';
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  */
@@ -1853,14 +1948,12 @@ if (performance.now) {
 }
 
 module.exports = performanceNow;
-},{"./performance":21}],23:[function(require,module,exports){
+},{"./performance":27}],29:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
  * 
@@ -1921,15 +2014,13 @@ function shallowEqual(objA, objB) {
 }
 
 module.exports = shallowEqual;
-},{}],24:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -1947,58 +2038,143 @@ var emptyFunction = require('./emptyFunction');
 var warning = emptyFunction;
 
 if (process.env.NODE_ENV !== 'production') {
-  (function () {
-    var printWarning = function printWarning(format) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
+  var printWarning = function printWarning(format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    var argIndex = 0;
+    var message = 'Warning: ' + format.replace(/%s/g, function () {
+      return args[argIndex++];
+    });
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+
+  warning = function warning(condition, format) {
+    if (format === undefined) {
+      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+
+    if (format.indexOf('Failed Composite propType: ') === 0) {
+      return; // Ignore CompositeComponent proptype check.
+    }
+
+    if (!condition) {
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
       }
 
-      var argIndex = 0;
-      var message = 'Warning: ' + format.replace(/%s/g, function () {
-        return args[argIndex++];
-      });
-      if (typeof console !== 'undefined') {
-        console.error(message);
-      }
-      try {
-        // --- Welcome to debugging React ---
-        // This error was thrown as a convenience so that you can use this stack
-        // to find the callsite that caused this warning to fire.
-        throw new Error(message);
-      } catch (x) {}
-    };
-
-    warning = function warning(condition, format) {
-      if (format === undefined) {
-        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-      }
-
-      if (format.indexOf('Failed Composite propType: ') === 0) {
-        return; // Ignore CompositeComponent proptype check.
-      }
-
-      if (!condition) {
-        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-          args[_key2 - 2] = arguments[_key2];
-        }
-
-        printWarning.apply(undefined, [format].concat(args));
-      }
-    };
-  })();
+      printWarning.apply(undefined, [format].concat(args));
+    }
+  };
 }
 
 module.exports = warning;
 }).call(this,require('_process'))
-},{"./emptyFunction":9,"_process":27}],25:[function(require,module,exports){
+},{"./emptyFunction":15,"_process":44}],31:[function(require,module,exports){
+'use strict';
+
+/**
+ * Copyright 2015, Yahoo! Inc.
+ * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+ */
+var ReactIs = require('react-is');
+var REACT_STATICS = {
+    childContextTypes: true,
+    contextType: true,
+    contextTypes: true,
+    defaultProps: true,
+    displayName: true,
+    getDefaultProps: true,
+    getDerivedStateFromError: true,
+    getDerivedStateFromProps: true,
+    mixins: true,
+    propTypes: true,
+    type: true
+};
+
+var KNOWN_STATICS = {
+    name: true,
+    length: true,
+    prototype: true,
+    caller: true,
+    callee: true,
+    arguments: true,
+    arity: true
+};
+
+var FORWARD_REF_STATICS = {
+    '$$typeof': true,
+    render: true,
+    defaultProps: true,
+    displayName: true,
+    propTypes: true
+};
+
+var TYPE_STATICS = {};
+TYPE_STATICS[ReactIs.ForwardRef] = FORWARD_REF_STATICS;
+
+var defineProperty = Object.defineProperty;
+var getOwnPropertyNames = Object.getOwnPropertyNames;
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var getPrototypeOf = Object.getPrototypeOf;
+var objectPrototype = Object.prototype;
+
+function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
+    if (typeof sourceComponent !== 'string') {
+        // don't hoist over string (html) components
+
+        if (objectPrototype) {
+            var inheritedComponent = getPrototypeOf(sourceComponent);
+            if (inheritedComponent && inheritedComponent !== objectPrototype) {
+                hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
+            }
+        }
+
+        var keys = getOwnPropertyNames(sourceComponent);
+
+        if (getOwnPropertySymbols) {
+            keys = keys.concat(getOwnPropertySymbols(sourceComponent));
+        }
+
+        var targetStatics = TYPE_STATICS[targetComponent['$$typeof']] || REACT_STATICS;
+        var sourceStatics = TYPE_STATICS[sourceComponent['$$typeof']] || REACT_STATICS;
+
+        for (var i = 0; i < keys.length; ++i) {
+            var key = keys[i];
+            if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
+                var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
+                try {
+                    // Avoid failures from read-only properties
+                    defineProperty(targetComponent, key, descriptor);
+                } catch (e) {}
+            }
+        }
+
+        return targetComponent;
+    }
+
+    return targetComponent;
+}
+
+module.exports = hoistNonReactStatics;
+
+},{"react-is":178}],32:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
@@ -2045,7 +2221,256 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require('_process'))
-},{"_process":27}],26:[function(require,module,exports){
+},{"_process":44}],33:[function(require,module,exports){
+var root = require('./_root');
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
+
+},{"./_root":40}],34:[function(require,module,exports){
+var Symbol = require('./_Symbol'),
+    getRawTag = require('./_getRawTag'),
+    objectToString = require('./_objectToString');
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+},{"./_Symbol":33,"./_getRawTag":37,"./_objectToString":38}],35:[function(require,module,exports){
+(function (global){
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+module.exports = freeGlobal;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],36:[function(require,module,exports){
+var overArg = require('./_overArg');
+
+/** Built-in value references. */
+var getPrototype = overArg(Object.getPrototypeOf, Object);
+
+module.exports = getPrototype;
+
+},{"./_overArg":39}],37:[function(require,module,exports){
+var Symbol = require('./_Symbol');
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+module.exports = getRawTag;
+
+},{"./_Symbol":33}],38:[function(require,module,exports){
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
+},{}],39:[function(require,module,exports){
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+module.exports = overArg;
+
+},{}],40:[function(require,module,exports){
+var freeGlobal = require('./_freeGlobal');
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+},{"./_freeGlobal":35}],41:[function(require,module,exports){
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+},{}],42:[function(require,module,exports){
+var baseGetTag = require('./_baseGetTag'),
+    getPrototype = require('./_getPrototype'),
+    isObjectLike = require('./isObjectLike');
+
+/** `Object#toString` result references. */
+var objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to infer the `Object` constructor. */
+var objectCtorString = funcToString.call(Object);
+
+/**
+ * Checks if `value` is a plain object, that is, an object created by the
+ * `Object` constructor or one with a `[[Prototype]]` of `null`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.8.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * _.isPlainObject(new Foo);
+ * // => false
+ *
+ * _.isPlainObject([1, 2, 3]);
+ * // => false
+ *
+ * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * // => true
+ *
+ * _.isPlainObject(Object.create(null));
+ * // => true
+ */
+function isPlainObject(value) {
+  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
+    return false;
+  }
+  var proto = getPrototype(value);
+  if (proto === null) {
+    return true;
+  }
+  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
+    funcToString.call(Ctor) == objectCtorString;
+}
+
+module.exports = isPlainObject;
+
+},{"./_baseGetTag":34,"./_getPrototype":36,"./isObjectLike":41}],43:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -2137,7 +2562,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],27:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2323,24 +2748,35 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],28:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
 
+var printWarning = function() {};
+
 if (process.env.NODE_ENV !== 'production') {
-  var invariant = require('fbjs/lib/invariant');
-  var warning = require('fbjs/lib/warning');
   var ReactPropTypesSecret = require('./lib/ReactPropTypesSecret');
   var loggedTypeFailures = {};
+
+  printWarning = function(text) {
+    var message = 'Warning: ' + text;
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
 }
 
 /**
@@ -2365,12 +2801,29 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
         try {
           // This is intentionally an invariant that gets caught. It's the same
           // behavior as without this statement except with a better message.
-          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+          if (typeof typeSpecs[typeSpecName] !== 'function') {
+            var err = Error(
+              (componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' +
+              'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.'
+            );
+            err.name = 'Invariant Violation';
+            throw err;
+          }
           error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
         } catch (ex) {
           error = ex;
         }
-        warning(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
+        if (error && !(error instanceof Error)) {
+          printWarning(
+            (componentName || 'React class') + ': type specification of ' +
+            location + ' `' + typeSpecName + '` is invalid; the type checker ' +
+            'function must return `null` or an `Error` but returned a ' + typeof error + '. ' +
+            'You may have forgotten to pass an argument to the type checker ' +
+            'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' +
+            'shape all require an argument).'
+          )
+
+        }
         if (error instanceof Error && !(error.message in loggedTypeFailures)) {
           // Only monitor this failure once because there tends to be a lot of the
           // same error.
@@ -2378,7 +2831,9 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
           var stack = getStack ? getStack() : '';
 
-          warning(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+          printWarning(
+            'Failed ' + location + ' type: ' + error.message + (stack != null ? stack : '')
+          );
         }
       }
     }
@@ -2388,14 +2843,12 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":32,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24}],29:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":49,"_process":44}],46:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
@@ -2411,21 +2864,19 @@ module.exports = function(isValidElement) {
   return factory(isValidElement, throwOnDirectAccess);
 };
 
-},{"./factoryWithTypeCheckers":31}],30:[function(require,module,exports){
+},{"./factoryWithTypeCheckers":48}],47:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
 
-var emptyFunction = require('fbjs/lib/emptyFunction');
-var invariant = require('fbjs/lib/invariant');
 var ReactPropTypesSecret = require('./lib/ReactPropTypesSecret');
+
+function emptyFunction() {}
 
 module.exports = function() {
   function shim(props, propName, componentName, location, propFullName, secret) {
@@ -2433,12 +2884,13 @@ module.exports = function() {
       // It is still safe when called from React.
       return;
     }
-    invariant(
-      false,
+    var err = new Error(
       'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
       'Use PropTypes.checkPropTypes() to call them. ' +
       'Read more at http://fb.me/use-check-prop-types'
     );
+    err.name = 'Invariant Violation';
+    throw err;
   };
   shim.isRequired = shim;
   function getShim() {
@@ -2463,7 +2915,8 @@ module.exports = function() {
     objectOf: getShim,
     oneOf: getShim,
     oneOfType: getShim,
-    shape: getShim
+    shape: getShim,
+    exact: getShim
   };
 
   ReactPropTypes.checkPropTypes = emptyFunction;
@@ -2472,25 +2925,42 @@ module.exports = function() {
   return ReactPropTypes;
 };
 
-},{"./lib/ReactPropTypesSecret":32,"fbjs/lib/emptyFunction":9,"fbjs/lib/invariant":17}],31:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":49}],48:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
 
-var emptyFunction = require('fbjs/lib/emptyFunction');
-var invariant = require('fbjs/lib/invariant');
-var warning = require('fbjs/lib/warning');
+var assign = require('object-assign');
 
 var ReactPropTypesSecret = require('./lib/ReactPropTypesSecret');
 var checkPropTypes = require('./checkPropTypes');
+
+var printWarning = function() {};
+
+if (process.env.NODE_ENV !== 'production') {
+  printWarning = function(text) {
+    var message = 'Warning: ' + text;
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+}
+
+function emptyFunctionThatReturnsNull() {
+  return null;
+}
 
 module.exports = function(isValidElement, throwOnDirectAccess) {
   /* global Symbol */
@@ -2586,7 +3056,8 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
     objectOf: createObjectOfTypeChecker,
     oneOf: createEnumTypeChecker,
     oneOfType: createUnionTypeChecker,
-    shape: createShapeTypeChecker
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker,
   };
 
   /**
@@ -2633,12 +3104,13 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       if (secret !== ReactPropTypesSecret) {
         if (throwOnDirectAccess) {
           // New behavior only for users of `prop-types` package
-          invariant(
-            false,
+          var err = new Error(
             'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
             'Use `PropTypes.checkPropTypes()` to call them. ' +
             'Read more at http://fb.me/use-check-prop-types'
           );
+          err.name = 'Invariant Violation';
+          throw err;
         } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
           // Old behavior for people using React.PropTypes
           var cacheKey = componentName + ':' + propName;
@@ -2647,15 +3119,12 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
             // Avoid spamming the console because they are often not actionable except for lib authors
             manualPropTypeWarningCount < 3
           ) {
-            warning(
-              false,
+            printWarning(
               'You are manually calling a React.PropTypes validation ' +
-              'function for the `%s` prop on `%s`. This is deprecated ' +
+              'function for the `' + propFullName + '` prop on `' + componentName  + '`. This is deprecated ' +
               'and will throw in the standalone `prop-types` package. ' +
               'You may be seeing this warning due to a third-party PropTypes ' +
-              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.',
-              propFullName,
-              componentName
+              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.'
             );
             manualPropTypeCallCache[cacheKey] = true;
             manualPropTypeWarningCount++;
@@ -2699,7 +3168,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   }
 
   function createAnyTypeChecker() {
-    return createChainableTypeChecker(emptyFunction.thatReturnsNull);
+    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
   }
 
   function createArrayOfTypeChecker(typeChecker) {
@@ -2749,8 +3218,8 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
   function createEnumTypeChecker(expectedValues) {
     if (!Array.isArray(expectedValues)) {
-      process.env.NODE_ENV !== 'production' ? warning(false, 'Invalid argument supplied to oneOf, expected an instance of array.') : void 0;
-      return emptyFunction.thatReturnsNull;
+      process.env.NODE_ENV !== 'production' ? printWarning('Invalid argument supplied to oneOf, expected an instance of array.') : void 0;
+      return emptyFunctionThatReturnsNull;
     }
 
     function validate(props, propName, componentName, location, propFullName) {
@@ -2792,21 +3261,18 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
   function createUnionTypeChecker(arrayOfTypeCheckers) {
     if (!Array.isArray(arrayOfTypeCheckers)) {
-      process.env.NODE_ENV !== 'production' ? warning(false, 'Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
-      return emptyFunction.thatReturnsNull;
+      process.env.NODE_ENV !== 'production' ? printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+      return emptyFunctionThatReturnsNull;
     }
 
     for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
       var checker = arrayOfTypeCheckers[i];
       if (typeof checker !== 'function') {
-        warning(
-          false,
-          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
-          'received %s at index %s.',
-          getPostfixForTypeWarning(checker),
-          i
+        printWarning(
+          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
+          'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.'
         );
-        return emptyFunction.thatReturnsNull;
+        return emptyFunctionThatReturnsNull;
       }
     }
 
@@ -2852,6 +3318,36 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       }
       return null;
     }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      // We need to check all keys in case some are required but missing from
+      // props.
+      var allKeys = assign({}, props[propName], shapeTypes);
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          return new PropTypeError(
+            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+          );
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+
     return createChainableTypeChecker(validate);
   }
 
@@ -2988,14 +3484,12 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 };
 
 }).call(this,require('_process'))
-},{"./checkPropTypes":28,"./lib/ReactPropTypesSecret":32,"_process":27,"fbjs/lib/emptyFunction":9,"fbjs/lib/invariant":17,"fbjs/lib/warning":24}],32:[function(require,module,exports){
+},{"./checkPropTypes":45,"./lib/ReactPropTypesSecret":49,"_process":44,"object-assign":43}],49:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
@@ -3004,14 +3498,12 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],33:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -3078,14 +3570,12 @@ var ARIADOMPropertyConfig = {
 };
 
 module.exports = ARIADOMPropertyConfig;
-},{}],34:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -3102,14 +3592,12 @@ var AutoFocusUtils = {
 };
 
 module.exports = AutoFocusUtils;
-},{"./ReactDOMComponentTree":65,"fbjs/lib/focusNode":11}],35:[function(require,module,exports){
+},{"./ReactDOMComponentTree":82,"fbjs/lib/focusNode":17}],52:[function(require,module,exports){
 /**
- * Copyright 2013-present Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -3486,14 +3974,12 @@ var BeforeInputEventPlugin = {
 };
 
 module.exports = BeforeInputEventPlugin;
-},{"./EventPropagators":51,"./FallbackCompositionState":52,"./SyntheticCompositionEvent":116,"./SyntheticInputEvent":120,"fbjs/lib/ExecutionEnvironment":3}],36:[function(require,module,exports){
+},{"./EventPropagators":68,"./FallbackCompositionState":69,"./SyntheticCompositionEvent":133,"./SyntheticInputEvent":137,"fbjs/lib/ExecutionEnvironment":9}],53:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -3512,6 +3998,7 @@ var isUnitlessNumber = {
   boxFlexGroup: true,
   boxOrdinalGroup: true,
   columnCount: true,
+  columns: true,
   flex: true,
   flexGrow: true,
   flexPositive: true,
@@ -3640,15 +4127,13 @@ var CSSProperty = {
 };
 
 module.exports = CSSProperty;
-},{}],37:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -3747,10 +4232,6 @@ if (process.env.NODE_ENV !== 'production') {
    * @param {ReactDOMComponent} component
    */
   var warnValidStyle = function (name, value, component) {
-    // Don't warn for CSS variables
-    if (name.indexOf('--') === 0) {
-      return;
-    }
     var owner;
     if (component) {
       owner = component._currentElement._owner;
@@ -3792,13 +4273,16 @@ var CSSPropertyOperations = {
       if (!styles.hasOwnProperty(styleName)) {
         continue;
       }
+      var isCustomProperty = styleName.indexOf('--') === 0;
       var styleValue = styles[styleName];
       if (process.env.NODE_ENV !== 'production') {
-        warnValidStyle(styleName, styleValue, component);
+        if (!isCustomProperty) {
+          warnValidStyle(styleName, styleValue, component);
+        }
       }
       if (styleValue != null) {
         serialized += processStyleName(styleName) + ':';
-        serialized += dangerousStyleValue(styleName, styleValue, component) + ';';
+        serialized += dangerousStyleValue(styleName, styleValue, component, isCustomProperty) + ';';
       }
     }
     return serialized || null;
@@ -3826,14 +4310,17 @@ var CSSPropertyOperations = {
       if (!styles.hasOwnProperty(styleName)) {
         continue;
       }
+      var isCustomProperty = styleName.indexOf('--') === 0;
       if (process.env.NODE_ENV !== 'production') {
-        warnValidStyle(styleName, styles[styleName], component);
+        if (!isCustomProperty) {
+          warnValidStyle(styleName, styles[styleName], component);
+        }
       }
-      var styleValue = dangerousStyleValue(styleName, styles[styleName], component);
+      var styleValue = dangerousStyleValue(styleName, styles[styleName], component, isCustomProperty);
       if (styleName === 'float' || styleName === 'cssFloat') {
         styleName = styleFloatAccessor;
       }
-      if (styleName.indexOf('--') === 0) {
+      if (isCustomProperty) {
         style.setProperty(styleName, styleValue);
       } else if (styleValue) {
         style[styleName] = styleValue;
@@ -3855,15 +4342,13 @@ var CSSPropertyOperations = {
 
 module.exports = CSSPropertyOperations;
 }).call(this,require('_process'))
-},{"./CSSProperty":36,"./ReactInstrumentation":94,"./dangerousStyleValue":133,"_process":27,"fbjs/lib/ExecutionEnvironment":3,"fbjs/lib/camelizeStyleName":5,"fbjs/lib/hyphenateStyleName":16,"fbjs/lib/memoizeStringOnly":20,"fbjs/lib/warning":24}],38:[function(require,module,exports){
+},{"./CSSProperty":53,"./ReactInstrumentation":111,"./dangerousStyleValue":150,"_process":44,"fbjs/lib/ExecutionEnvironment":9,"fbjs/lib/camelizeStyleName":11,"fbjs/lib/hyphenateStyleName":22,"fbjs/lib/memoizeStringOnly":26,"fbjs/lib/warning":30}],55:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -3976,14 +4461,12 @@ var CallbackQueue = function () {
 
 module.exports = PooledClass.addPoolingTo(CallbackQueue);
 }).call(this,require('_process'))
-},{"./PooledClass":56,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],39:[function(require,module,exports){
+},{"./PooledClass":73,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],56:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -4108,7 +4591,7 @@ if (ExecutionEnvironment.canUseDOM) {
   // IE9 claims to support the input event but fails to trigger it when
   // deleting text, so we ignore its input events.
 
-  isInputEventSupported = isEventSupported('input') && (!('documentMode' in document) || document.documentMode > 9);
+  isInputEventSupported = isEventSupported('input') && (!document.documentMode || document.documentMode > 9);
 }
 
 /**
@@ -4288,15 +4771,13 @@ var ChangeEventPlugin = {
 };
 
 module.exports = ChangeEventPlugin;
-},{"./EventPluginHub":48,"./EventPropagators":51,"./ReactDOMComponentTree":65,"./ReactUpdates":109,"./SyntheticEvent":118,"./getEventTarget":141,"./inputValueTracking":147,"./isEventSupported":149,"./isTextInputElement":150,"fbjs/lib/ExecutionEnvironment":3}],40:[function(require,module,exports){
+},{"./EventPluginHub":65,"./EventPropagators":68,"./ReactDOMComponentTree":82,"./ReactUpdates":126,"./SyntheticEvent":135,"./getEventTarget":158,"./inputValueTracking":164,"./isEventSupported":166,"./isTextInputElement":167,"fbjs/lib/ExecutionEnvironment":9}],57:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -4516,14 +4997,12 @@ var DOMChildrenOperations = {
 
 module.exports = DOMChildrenOperations;
 }).call(this,require('_process'))
-},{"./DOMLazyTree":41,"./Danger":45,"./ReactDOMComponentTree":65,"./ReactInstrumentation":94,"./createMicrosoftUnsafeLocalFunction":132,"./setInnerHTML":154,"./setTextContent":155,"_process":27}],41:[function(require,module,exports){
+},{"./DOMLazyTree":58,"./Danger":62,"./ReactDOMComponentTree":82,"./ReactInstrumentation":111,"./createMicrosoftUnsafeLocalFunction":149,"./setInnerHTML":171,"./setTextContent":172,"_process":44}],58:[function(require,module,exports){
 /**
- * Copyright 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -4634,14 +5113,12 @@ DOMLazyTree.queueHTML = queueHTML;
 DOMLazyTree.queueText = queueText;
 
 module.exports = DOMLazyTree;
-},{"./DOMNamespaces":42,"./createMicrosoftUnsafeLocalFunction":132,"./setInnerHTML":154,"./setTextContent":155}],42:[function(require,module,exports){
+},{"./DOMNamespaces":59,"./createMicrosoftUnsafeLocalFunction":149,"./setInnerHTML":171,"./setTextContent":172}],59:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -4654,15 +5131,13 @@ var DOMNamespaces = {
 };
 
 module.exports = DOMNamespaces;
-},{}],43:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -4865,15 +5340,13 @@ var DOMProperty = {
 
 module.exports = DOMProperty;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],44:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],61:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -5102,15 +5575,13 @@ var DOMPropertyOperations = {
 
 module.exports = DOMPropertyOperations;
 }).call(this,require('_process'))
-},{"./DOMProperty":43,"./ReactDOMComponentTree":65,"./ReactInstrumentation":94,"./quoteAttributeValueForBrowser":151,"_process":27,"fbjs/lib/warning":24}],45:[function(require,module,exports){
+},{"./DOMProperty":60,"./ReactDOMComponentTree":82,"./ReactInstrumentation":111,"./quoteAttributeValueForBrowser":168,"_process":44,"fbjs/lib/warning":30}],62:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -5150,14 +5621,12 @@ var Danger = {
 
 module.exports = Danger;
 }).call(this,require('_process'))
-},{"./DOMLazyTree":41,"./reactProdInvariant":152,"_process":27,"fbjs/lib/ExecutionEnvironment":3,"fbjs/lib/createNodesFromMarkup":8,"fbjs/lib/emptyFunction":9,"fbjs/lib/invariant":17}],46:[function(require,module,exports){
+},{"./DOMLazyTree":58,"./reactProdInvariant":169,"_process":44,"fbjs/lib/ExecutionEnvironment":9,"fbjs/lib/createNodesFromMarkup":14,"fbjs/lib/emptyFunction":15,"fbjs/lib/invariant":23}],63:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -5176,14 +5645,12 @@ module.exports = Danger;
 var DefaultEventPluginOrder = ['ResponderEventPlugin', 'SimpleEventPlugin', 'TapEventPlugin', 'EnterLeaveEventPlugin', 'ChangeEventPlugin', 'SelectEventPlugin', 'BeforeInputEventPlugin'];
 
 module.exports = DefaultEventPluginOrder;
-},{}],47:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -5274,15 +5741,13 @@ var EnterLeaveEventPlugin = {
 };
 
 module.exports = EnterLeaveEventPlugin;
-},{"./EventPropagators":51,"./ReactDOMComponentTree":65,"./SyntheticMouseEvent":122}],48:[function(require,module,exports){
+},{"./EventPropagators":68,"./ReactDOMComponentTree":82,"./SyntheticMouseEvent":139}],65:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -5550,15 +6015,13 @@ var EventPluginHub = {
 
 module.exports = EventPluginHub;
 }).call(this,require('_process'))
-},{"./EventPluginRegistry":49,"./EventPluginUtils":50,"./ReactErrorUtils":85,"./accumulateInto":129,"./forEachAccumulated":137,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],49:[function(require,module,exports){
+},{"./EventPluginRegistry":66,"./EventPluginUtils":67,"./ReactErrorUtils":102,"./accumulateInto":146,"./forEachAccumulated":154,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],66:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -5805,15 +6268,13 @@ var EventPluginRegistry = {
 
 module.exports = EventPluginRegistry;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],50:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],67:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -6033,15 +6494,13 @@ var EventPluginUtils = {
 
 module.exports = EventPluginUtils;
 }).call(this,require('_process'))
-},{"./ReactErrorUtils":85,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24}],51:[function(require,module,exports){
+},{"./ReactErrorUtils":102,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30}],68:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -6169,14 +6628,12 @@ var EventPropagators = {
 
 module.exports = EventPropagators;
 }).call(this,require('_process'))
-},{"./EventPluginHub":48,"./EventPluginUtils":50,"./accumulateInto":129,"./forEachAccumulated":137,"_process":27,"fbjs/lib/warning":24}],52:[function(require,module,exports){
+},{"./EventPluginHub":65,"./EventPluginUtils":67,"./accumulateInto":146,"./forEachAccumulated":154,"_process":44,"fbjs/lib/warning":30}],69:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -6264,14 +6721,12 @@ _assign(FallbackCompositionState.prototype, {
 PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
-},{"./PooledClass":56,"./getTextContentAccessor":145,"object-assign":26}],53:[function(require,module,exports){
+},{"./PooledClass":73,"./getTextContentAccessor":162,"object-assign":43}],70:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -6320,6 +6775,7 @@ var HTMLDOMPropertyConfig = {
     contentEditable: 0,
     contextMenu: 0,
     controls: HAS_BOOLEAN_VALUE,
+    controlsList: 0,
     coords: 0,
     crossOrigin: 0,
     data: 0, // For `<object />` acts as `src`.
@@ -6500,14 +6956,12 @@ var HTMLDOMPropertyConfig = {
 };
 
 module.exports = HTMLDOMPropertyConfig;
-},{"./DOMProperty":43}],54:[function(require,module,exports){
+},{"./DOMProperty":60}],71:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -6559,15 +7013,13 @@ var KeyEscapeUtils = {
 };
 
 module.exports = KeyEscapeUtils;
-},{}],55:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -6699,15 +7151,13 @@ var LinkedValueUtils = {
 
 module.exports = LinkedValueUtils;
 }).call(this,require('_process'))
-},{"./ReactPropTypesSecret":102,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"prop-types/factory":29,"react/lib/React":186}],56:[function(require,module,exports){
+},{"./ReactPropTypesSecret":119,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"prop-types/factory":46,"react/lib/React":196}],73:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -6813,14 +7263,12 @@ var PooledClass = {
 
 module.exports = PooledClass;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],57:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],74:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -7137,15 +7585,13 @@ var ReactBrowserEventEmitter = _assign({}, ReactEventEmitterMixin, {
 });
 
 module.exports = ReactBrowserEventEmitter;
-},{"./EventPluginRegistry":49,"./ReactEventEmitterMixin":86,"./ViewportMetrics":128,"./getVendorPrefixedEventName":146,"./isEventSupported":149,"object-assign":26}],58:[function(require,module,exports){
+},{"./EventPluginRegistry":66,"./ReactEventEmitterMixin":103,"./ViewportMetrics":145,"./getVendorPrefixedEventName":163,"./isEventSupported":166,"object-assign":43}],75:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -7292,14 +7738,12 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 }).call(this,require('_process'))
-},{"./KeyEscapeUtils":54,"./ReactReconciler":104,"./instantiateReactComponent":148,"./shouldUpdateReactComponent":156,"./traverseAllChildren":157,"_process":27,"fbjs/lib/warning":24,"react/lib/ReactComponentTreeHook":189}],59:[function(require,module,exports){
+},{"./KeyEscapeUtils":71,"./ReactReconciler":121,"./instantiateReactComponent":165,"./shouldUpdateReactComponent":173,"./traverseAllChildren":174,"_process":44,"fbjs/lib/warning":30,"react/lib/ReactComponentTreeHook":199}],76:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -7320,15 +7764,13 @@ var ReactComponentBrowserEnvironment = {
 };
 
 module.exports = ReactComponentBrowserEnvironment;
-},{"./DOMChildrenOperations":40,"./ReactDOMIDOperations":69}],60:[function(require,module,exports){
+},{"./DOMChildrenOperations":57,"./ReactDOMIDOperations":86}],77:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -7366,15 +7808,13 @@ var ReactComponentEnvironment = {
 
 module.exports = ReactComponentEnvironment;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],61:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],78:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -7643,7 +8083,7 @@ var ReactCompositeComponent = {
   },
 
   _constructComponent: function (doConstruct, publicProps, publicContext, updateQueue) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && !doConstruct) {
       ReactCurrentOwner.current = this;
       try {
         return this._constructComponentWithoutOwner(doConstruct, publicProps, publicContext, updateQueue);
@@ -8268,15 +8708,13 @@ var ReactCompositeComponent = {
 
 module.exports = ReactCompositeComponent;
 }).call(this,require('_process'))
-},{"./ReactComponentEnvironment":60,"./ReactErrorUtils":85,"./ReactInstanceMap":93,"./ReactInstrumentation":94,"./ReactNodeTypes":99,"./ReactReconciler":104,"./checkReactTypeSpec":131,"./reactProdInvariant":152,"./shouldUpdateReactComponent":156,"_process":27,"fbjs/lib/emptyObject":10,"fbjs/lib/invariant":17,"fbjs/lib/shallowEqual":23,"fbjs/lib/warning":24,"object-assign":26,"react/lib/React":186,"react/lib/ReactCurrentOwner":190}],62:[function(require,module,exports){
+},{"./ReactComponentEnvironment":77,"./ReactErrorUtils":102,"./ReactInstanceMap":110,"./ReactInstrumentation":111,"./ReactNodeTypes":116,"./ReactReconciler":121,"./checkReactTypeSpec":148,"./reactProdInvariant":169,"./shouldUpdateReactComponent":173,"_process":44,"fbjs/lib/emptyObject":16,"fbjs/lib/invariant":23,"fbjs/lib/shallowEqual":29,"fbjs/lib/warning":30,"object-assign":43,"react/lib/React":196,"react/lib/ReactCurrentOwner":200}],79:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -8381,15 +8819,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactDOM;
 }).call(this,require('_process'))
-},{"./ReactDOMComponentTree":65,"./ReactDOMInvalidARIAHook":71,"./ReactDOMNullInputValuePropHook":72,"./ReactDOMUnknownPropertyHook":79,"./ReactDefaultInjection":82,"./ReactInstrumentation":94,"./ReactMount":97,"./ReactReconciler":104,"./ReactUpdates":109,"./ReactVersion":110,"./findDOMNode":135,"./getHostComponentFromComposite":142,"./renderSubtreeIntoContainer":153,"_process":27,"fbjs/lib/ExecutionEnvironment":3,"fbjs/lib/warning":24}],63:[function(require,module,exports){
+},{"./ReactDOMComponentTree":82,"./ReactDOMInvalidARIAHook":88,"./ReactDOMNullInputValuePropHook":89,"./ReactDOMUnknownPropertyHook":96,"./ReactDefaultInjection":99,"./ReactInstrumentation":111,"./ReactMount":114,"./ReactReconciler":121,"./ReactUpdates":126,"./ReactVersion":127,"./findDOMNode":152,"./getHostComponentFromComposite":159,"./renderSubtreeIntoContainer":170,"_process":44,"fbjs/lib/ExecutionEnvironment":9,"fbjs/lib/warning":30}],80:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -9150,6 +9586,10 @@ ReactDOMComponent.Mixin = {
         // happen after `_updateDOMProperties`. Otherwise HTML5 input validations
         // raise warnings and prevent the new value from being assigned.
         ReactDOMInput.updateWrapper(this);
+
+        // We also check that we haven't missed a value update, such as a
+        // Radio group shifting the checked value to another named radio input.
+        inputValueTracking.updateValueIfChanged(this);
         break;
       case 'textarea':
         ReactDOMTextarea.updateWrapper(this);
@@ -9393,14 +9833,12 @@ _assign(ReactDOMComponent.prototype, ReactDOMComponent.Mixin, ReactMultiChild.Mi
 
 module.exports = ReactDOMComponent;
 }).call(this,require('_process'))
-},{"./AutoFocusUtils":34,"./CSSPropertyOperations":37,"./DOMLazyTree":41,"./DOMNamespaces":42,"./DOMProperty":43,"./DOMPropertyOperations":44,"./EventPluginHub":48,"./EventPluginRegistry":49,"./ReactBrowserEventEmitter":57,"./ReactDOMComponentFlags":64,"./ReactDOMComponentTree":65,"./ReactDOMInput":70,"./ReactDOMOption":73,"./ReactDOMSelect":74,"./ReactDOMTextarea":77,"./ReactInstrumentation":94,"./ReactMultiChild":98,"./ReactServerRenderingTransaction":106,"./escapeTextContentForBrowser":134,"./inputValueTracking":147,"./isEventSupported":149,"./reactProdInvariant":152,"./validateDOMNesting":158,"_process":27,"fbjs/lib/emptyFunction":9,"fbjs/lib/invariant":17,"fbjs/lib/shallowEqual":23,"fbjs/lib/warning":24,"object-assign":26}],64:[function(require,module,exports){
+},{"./AutoFocusUtils":51,"./CSSPropertyOperations":54,"./DOMLazyTree":58,"./DOMNamespaces":59,"./DOMProperty":60,"./DOMPropertyOperations":61,"./EventPluginHub":65,"./EventPluginRegistry":66,"./ReactBrowserEventEmitter":74,"./ReactDOMComponentFlags":81,"./ReactDOMComponentTree":82,"./ReactDOMInput":87,"./ReactDOMOption":90,"./ReactDOMSelect":91,"./ReactDOMTextarea":94,"./ReactInstrumentation":111,"./ReactMultiChild":115,"./ReactServerRenderingTransaction":123,"./escapeTextContentForBrowser":151,"./inputValueTracking":164,"./isEventSupported":166,"./reactProdInvariant":169,"./validateDOMNesting":175,"_process":44,"fbjs/lib/emptyFunction":15,"fbjs/lib/invariant":23,"fbjs/lib/shallowEqual":29,"fbjs/lib/warning":30,"object-assign":43}],81:[function(require,module,exports){
 /**
- * Copyright 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -9411,15 +9849,13 @@ var ReactDOMComponentFlags = {
 };
 
 module.exports = ReactDOMComponentFlags;
-},{}],65:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -9608,15 +10044,13 @@ var ReactDOMComponentTree = {
 
 module.exports = ReactDOMComponentTree;
 }).call(this,require('_process'))
-},{"./DOMProperty":43,"./ReactDOMComponentFlags":64,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],66:[function(require,module,exports){
+},{"./DOMProperty":60,"./ReactDOMComponentFlags":81,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],83:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -9643,14 +10077,12 @@ function ReactDOMContainerInfo(topLevelWrapper, node) {
 
 module.exports = ReactDOMContainerInfo;
 }).call(this,require('_process'))
-},{"./validateDOMNesting":158,"_process":27}],67:[function(require,module,exports){
+},{"./validateDOMNesting":175,"_process":44}],84:[function(require,module,exports){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -9703,14 +10135,12 @@ _assign(ReactDOMEmptyComponent.prototype, {
 });
 
 module.exports = ReactDOMEmptyComponent;
-},{"./DOMLazyTree":41,"./ReactDOMComponentTree":65,"object-assign":26}],68:[function(require,module,exports){
+},{"./DOMLazyTree":58,"./ReactDOMComponentTree":82,"object-assign":43}],85:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -9722,14 +10152,12 @@ var ReactDOMFeatureFlags = {
 };
 
 module.exports = ReactDOMFeatureFlags;
-},{}],69:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -9755,15 +10183,13 @@ var ReactDOMIDOperations = {
 };
 
 module.exports = ReactDOMIDOperations;
-},{"./DOMChildrenOperations":40,"./ReactDOMComponentTree":65}],70:[function(require,module,exports){
+},{"./DOMChildrenOperations":57,"./ReactDOMComponentTree":82}],87:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -10044,15 +10470,13 @@ function _handleChange(event) {
 
 module.exports = ReactDOMInput;
 }).call(this,require('_process'))
-},{"./DOMPropertyOperations":44,"./LinkedValueUtils":55,"./ReactDOMComponentTree":65,"./ReactUpdates":109,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"object-assign":26}],71:[function(require,module,exports){
+},{"./DOMPropertyOperations":61,"./LinkedValueUtils":72,"./ReactDOMComponentTree":82,"./ReactUpdates":126,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"object-assign":43}],88:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -10139,15 +10563,13 @@ var ReactDOMInvalidARIAHook = {
 
 module.exports = ReactDOMInvalidARIAHook;
 }).call(this,require('_process'))
-},{"./DOMProperty":43,"_process":27,"fbjs/lib/warning":24,"react/lib/ReactComponentTreeHook":189}],72:[function(require,module,exports){
+},{"./DOMProperty":60,"_process":44,"fbjs/lib/warning":30,"react/lib/ReactComponentTreeHook":199}],89:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -10184,15 +10606,13 @@ var ReactDOMNullInputValuePropHook = {
 
 module.exports = ReactDOMNullInputValuePropHook;
 }).call(this,require('_process'))
-},{"_process":27,"fbjs/lib/warning":24,"react/lib/ReactComponentTreeHook":189}],73:[function(require,module,exports){
+},{"_process":44,"fbjs/lib/warning":30,"react/lib/ReactComponentTreeHook":199}],90:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -10308,15 +10728,13 @@ var ReactDOMOption = {
 
 module.exports = ReactDOMOption;
 }).call(this,require('_process'))
-},{"./ReactDOMComponentTree":65,"./ReactDOMSelect":74,"_process":27,"fbjs/lib/warning":24,"object-assign":26,"react/lib/React":186}],74:[function(require,module,exports){
+},{"./ReactDOMComponentTree":82,"./ReactDOMSelect":91,"_process":44,"fbjs/lib/warning":30,"object-assign":43,"react/lib/React":196}],91:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -10510,14 +10928,12 @@ function _handleChange(event) {
 
 module.exports = ReactDOMSelect;
 }).call(this,require('_process'))
-},{"./LinkedValueUtils":55,"./ReactDOMComponentTree":65,"./ReactUpdates":109,"_process":27,"fbjs/lib/warning":24,"object-assign":26}],75:[function(require,module,exports){
+},{"./LinkedValueUtils":72,"./ReactDOMComponentTree":82,"./ReactUpdates":126,"_process":44,"fbjs/lib/warning":30,"object-assign":43}],92:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -10722,15 +11138,13 @@ var ReactDOMSelection = {
 };
 
 module.exports = ReactDOMSelection;
-},{"./getNodeForCharacterOffset":144,"./getTextContentAccessor":145,"fbjs/lib/ExecutionEnvironment":3}],76:[function(require,module,exports){
+},{"./getNodeForCharacterOffset":161,"./getTextContentAccessor":162,"fbjs/lib/ExecutionEnvironment":9}],93:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -10886,15 +11300,13 @@ _assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 }).call(this,require('_process'))
-},{"./DOMChildrenOperations":40,"./DOMLazyTree":41,"./ReactDOMComponentTree":65,"./escapeTextContentForBrowser":134,"./reactProdInvariant":152,"./validateDOMNesting":158,"_process":27,"fbjs/lib/invariant":17,"object-assign":26}],77:[function(require,module,exports){
+},{"./DOMChildrenOperations":57,"./DOMLazyTree":58,"./ReactDOMComponentTree":82,"./escapeTextContentForBrowser":151,"./reactProdInvariant":169,"./validateDOMNesting":175,"_process":44,"fbjs/lib/invariant":23,"object-assign":43}],94:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -11048,15 +11460,13 @@ function _handleChange(event) {
 
 module.exports = ReactDOMTextarea;
 }).call(this,require('_process'))
-},{"./LinkedValueUtils":55,"./ReactDOMComponentTree":65,"./ReactUpdates":109,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"object-assign":26}],78:[function(require,module,exports){
+},{"./LinkedValueUtils":72,"./ReactDOMComponentTree":82,"./ReactUpdates":126,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"object-assign":43}],95:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -11186,15 +11596,13 @@ module.exports = {
   traverseEnterLeave: traverseEnterLeave
 };
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],79:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],96:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -11300,15 +11708,13 @@ var ReactDOMUnknownPropertyHook = {
 
 module.exports = ReactDOMUnknownPropertyHook;
 }).call(this,require('_process'))
-},{"./DOMProperty":43,"./EventPluginRegistry":49,"_process":27,"fbjs/lib/warning":24,"react/lib/ReactComponentTreeHook":189}],80:[function(require,module,exports){
+},{"./DOMProperty":60,"./EventPluginRegistry":66,"_process":44,"fbjs/lib/warning":30,"react/lib/ReactComponentTreeHook":199}],97:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2016-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2016-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -11663,14 +12069,12 @@ if (/[?&]react_perf\b/.test(url)) {
 
 module.exports = ReactDebugTool;
 }).call(this,require('_process'))
-},{"./ReactHostOperationHistoryHook":90,"./ReactInvalidSetStateWarningHook":95,"_process":27,"fbjs/lib/ExecutionEnvironment":3,"fbjs/lib/performanceNow":22,"fbjs/lib/warning":24,"react/lib/ReactComponentTreeHook":189}],81:[function(require,module,exports){
+},{"./ReactHostOperationHistoryHook":107,"./ReactInvalidSetStateWarningHook":112,"_process":44,"fbjs/lib/ExecutionEnvironment":9,"fbjs/lib/performanceNow":28,"fbjs/lib/warning":30,"react/lib/ReactComponentTreeHook":199}],98:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -11731,14 +12135,12 @@ var ReactDefaultBatchingStrategy = {
 };
 
 module.exports = ReactDefaultBatchingStrategy;
-},{"./ReactUpdates":109,"./Transaction":127,"fbjs/lib/emptyFunction":9,"object-assign":26}],82:[function(require,module,exports){
+},{"./ReactUpdates":126,"./Transaction":144,"fbjs/lib/emptyFunction":15,"object-assign":43}],99:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -11817,14 +12219,12 @@ function inject() {
 module.exports = {
   inject: inject
 };
-},{"./ARIADOMPropertyConfig":33,"./BeforeInputEventPlugin":35,"./ChangeEventPlugin":39,"./DefaultEventPluginOrder":46,"./EnterLeaveEventPlugin":47,"./HTMLDOMPropertyConfig":53,"./ReactComponentBrowserEnvironment":59,"./ReactDOMComponent":63,"./ReactDOMComponentTree":65,"./ReactDOMEmptyComponent":67,"./ReactDOMTextComponent":76,"./ReactDOMTreeTraversal":78,"./ReactDefaultBatchingStrategy":81,"./ReactEventListener":87,"./ReactInjection":91,"./ReactReconcileTransaction":103,"./SVGDOMPropertyConfig":111,"./SelectEventPlugin":112,"./SimpleEventPlugin":113}],83:[function(require,module,exports){
+},{"./ARIADOMPropertyConfig":50,"./BeforeInputEventPlugin":52,"./ChangeEventPlugin":56,"./DefaultEventPluginOrder":63,"./EnterLeaveEventPlugin":64,"./HTMLDOMPropertyConfig":70,"./ReactComponentBrowserEnvironment":76,"./ReactDOMComponent":80,"./ReactDOMComponentTree":82,"./ReactDOMEmptyComponent":84,"./ReactDOMTextComponent":93,"./ReactDOMTreeTraversal":95,"./ReactDefaultBatchingStrategy":98,"./ReactEventListener":104,"./ReactInjection":108,"./ReactReconcileTransaction":120,"./SVGDOMPropertyConfig":128,"./SelectEventPlugin":129,"./SimpleEventPlugin":130}],100:[function(require,module,exports){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -11837,14 +12237,12 @@ module.exports = {
 var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol['for']('react.element') || 0xeac7;
 
 module.exports = REACT_ELEMENT_TYPE;
-},{}],84:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -11867,15 +12265,13 @@ var ReactEmptyComponent = {
 ReactEmptyComponent.injection = ReactEmptyComponentInjection;
 
 module.exports = ReactEmptyComponent;
-},{}],85:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -11932,7 +12328,9 @@ if (process.env.NODE_ENV !== 'production') {
   if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function' && typeof document !== 'undefined' && typeof document.createEvent === 'function') {
     var fakeNode = document.createElement('react');
     ReactErrorUtils.invokeGuardedCallback = function (name, func, a) {
-      var boundFunc = func.bind(null, a);
+      var boundFunc = function () {
+        func(a);
+      };
       var evtType = 'react-' + name;
       fakeNode.addEventListener(evtType, boundFunc, false);
       var evt = document.createEvent('Event');
@@ -11945,14 +12343,12 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactErrorUtils;
 }).call(this,require('_process'))
-},{"_process":27}],86:[function(require,module,exports){
+},{"_process":44}],103:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -11977,14 +12373,12 @@ var ReactEventEmitterMixin = {
 };
 
 module.exports = ReactEventEmitterMixin;
-},{"./EventPluginHub":48}],87:[function(require,module,exports){
+},{"./EventPluginHub":65}],104:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -12132,14 +12526,12 @@ var ReactEventListener = {
 };
 
 module.exports = ReactEventListener;
-},{"./PooledClass":56,"./ReactDOMComponentTree":65,"./ReactUpdates":109,"./getEventTarget":141,"fbjs/lib/EventListener":2,"fbjs/lib/ExecutionEnvironment":3,"fbjs/lib/getUnboundedScrollPosition":14,"object-assign":26}],88:[function(require,module,exports){
+},{"./PooledClass":73,"./ReactDOMComponentTree":82,"./ReactUpdates":126,"./getEventTarget":158,"fbjs/lib/EventListener":8,"fbjs/lib/ExecutionEnvironment":9,"fbjs/lib/getUnboundedScrollPosition":20,"object-assign":43}],105:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -12154,15 +12546,13 @@ var ReactFeatureFlags = {
 };
 
 module.exports = ReactFeatureFlags;
-},{}],89:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -12224,14 +12614,12 @@ var ReactHostComponent = {
 
 module.exports = ReactHostComponent;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],90:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],107:[function(require,module,exports){
 /**
- * Copyright 2016-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2016-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -12258,14 +12646,12 @@ var ReactHostOperationHistoryHook = {
 };
 
 module.exports = ReactHostOperationHistoryHook;
-},{}],91:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -12292,14 +12678,12 @@ var ReactInjection = {
 };
 
 module.exports = ReactInjection;
-},{"./DOMProperty":43,"./EventPluginHub":48,"./EventPluginUtils":50,"./ReactBrowserEventEmitter":57,"./ReactComponentEnvironment":60,"./ReactEmptyComponent":84,"./ReactHostComponent":89,"./ReactUpdates":109}],92:[function(require,module,exports){
+},{"./DOMProperty":60,"./EventPluginHub":65,"./EventPluginUtils":67,"./ReactBrowserEventEmitter":74,"./ReactComponentEnvironment":77,"./ReactEmptyComponent":101,"./ReactHostComponent":106,"./ReactUpdates":126}],109:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -12415,14 +12799,12 @@ var ReactInputSelection = {
 };
 
 module.exports = ReactInputSelection;
-},{"./ReactDOMSelection":75,"fbjs/lib/containsNode":6,"fbjs/lib/focusNode":11,"fbjs/lib/getActiveElement":12}],93:[function(require,module,exports){
+},{"./ReactDOMSelection":92,"fbjs/lib/containsNode":12,"fbjs/lib/focusNode":17,"fbjs/lib/getActiveElement":18}],110:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -12461,15 +12843,13 @@ var ReactInstanceMap = {
 };
 
 module.exports = ReactInstanceMap;
-},{}],94:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2016-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2016-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -12487,15 +12867,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = { debugTool: debugTool };
 }).call(this,require('_process'))
-},{"./ReactDebugTool":80,"_process":27}],95:[function(require,module,exports){
+},{"./ReactDebugTool":97,"_process":44}],112:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2016-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2016-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -12526,14 +12904,12 @@ var ReactInvalidSetStateWarningHook = {
 
 module.exports = ReactInvalidSetStateWarningHook;
 }).call(this,require('_process'))
-},{"_process":27,"fbjs/lib/warning":24}],96:[function(require,module,exports){
+},{"_process":44,"fbjs/lib/warning":30}],113:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -12576,15 +12952,13 @@ var ReactMarkupChecksum = {
 };
 
 module.exports = ReactMarkupChecksum;
-},{"./adler32":130}],97:[function(require,module,exports){
+},{"./adler32":147}],114:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -13116,15 +13490,13 @@ var ReactMount = {
 
 module.exports = ReactMount;
 }).call(this,require('_process'))
-},{"./DOMLazyTree":41,"./DOMProperty":43,"./ReactBrowserEventEmitter":57,"./ReactDOMComponentTree":65,"./ReactDOMContainerInfo":66,"./ReactDOMFeatureFlags":68,"./ReactFeatureFlags":88,"./ReactInstanceMap":93,"./ReactInstrumentation":94,"./ReactMarkupChecksum":96,"./ReactReconciler":104,"./ReactUpdateQueue":108,"./ReactUpdates":109,"./instantiateReactComponent":148,"./reactProdInvariant":152,"./setInnerHTML":154,"./shouldUpdateReactComponent":156,"_process":27,"fbjs/lib/emptyObject":10,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"react/lib/React":186,"react/lib/ReactCurrentOwner":190}],98:[function(require,module,exports){
+},{"./DOMLazyTree":58,"./DOMProperty":60,"./ReactBrowserEventEmitter":74,"./ReactDOMComponentTree":82,"./ReactDOMContainerInfo":83,"./ReactDOMFeatureFlags":85,"./ReactFeatureFlags":105,"./ReactInstanceMap":110,"./ReactInstrumentation":111,"./ReactMarkupChecksum":113,"./ReactReconciler":121,"./ReactUpdateQueue":125,"./ReactUpdates":126,"./instantiateReactComponent":165,"./reactProdInvariant":169,"./setInnerHTML":171,"./shouldUpdateReactComponent":173,"_process":44,"fbjs/lib/emptyObject":16,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"react/lib/React":196,"react/lib/ReactCurrentOwner":200}],115:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -13564,15 +13936,13 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 }).call(this,require('_process'))
-},{"./ReactChildReconciler":58,"./ReactComponentEnvironment":60,"./ReactInstanceMap":93,"./ReactInstrumentation":94,"./ReactReconciler":104,"./flattenChildren":136,"./reactProdInvariant":152,"_process":27,"fbjs/lib/emptyFunction":9,"fbjs/lib/invariant":17,"react/lib/ReactCurrentOwner":190}],99:[function(require,module,exports){
+},{"./ReactChildReconciler":75,"./ReactComponentEnvironment":77,"./ReactInstanceMap":110,"./ReactInstrumentation":111,"./ReactReconciler":121,"./flattenChildren":153,"./reactProdInvariant":169,"_process":44,"fbjs/lib/emptyFunction":15,"fbjs/lib/invariant":23,"react/lib/ReactCurrentOwner":200}],116:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -13606,15 +13976,13 @@ var ReactNodeTypes = {
 
 module.exports = ReactNodeTypes;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"react/lib/React":186}],100:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"react/lib/React":196}],117:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -13701,15 +14069,13 @@ var ReactOwner = {
 
 module.exports = ReactOwner;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],101:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],118:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -13728,14 +14094,12 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactPropTypeLocationNames;
 }).call(this,require('_process'))
-},{"_process":27}],102:[function(require,module,exports){
+},{"_process":44}],119:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -13745,15 +14109,13 @@ module.exports = ReactPropTypeLocationNames;
 var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
-},{}],103:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -13925,15 +14287,13 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 }).call(this,require('_process'))
-},{"./CallbackQueue":38,"./PooledClass":56,"./ReactBrowserEventEmitter":57,"./ReactInputSelection":92,"./ReactInstrumentation":94,"./ReactUpdateQueue":108,"./Transaction":127,"_process":27,"object-assign":26}],104:[function(require,module,exports){
+},{"./CallbackQueue":55,"./PooledClass":73,"./ReactBrowserEventEmitter":74,"./ReactInputSelection":109,"./ReactInstrumentation":111,"./ReactUpdateQueue":125,"./Transaction":144,"_process":44,"object-assign":43}],121:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -14093,14 +14453,12 @@ var ReactReconciler = {
 
 module.exports = ReactReconciler;
 }).call(this,require('_process'))
-},{"./ReactInstrumentation":94,"./ReactRef":105,"_process":27,"fbjs/lib/warning":24}],105:[function(require,module,exports){
+},{"./ReactInstrumentation":111,"./ReactRef":122,"_process":44,"fbjs/lib/warning":30}],122:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -14182,15 +14540,13 @@ ReactRef.detachRefs = function (instance, element) {
 };
 
 module.exports = ReactRef;
-},{"./ReactOwner":100}],106:[function(require,module,exports){
+},{"./ReactOwner":117}],123:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -14274,15 +14630,13 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 }).call(this,require('_process'))
-},{"./PooledClass":56,"./ReactInstrumentation":94,"./ReactServerUpdateQueue":107,"./Transaction":127,"_process":27,"object-assign":26}],107:[function(require,module,exports){
+},{"./PooledClass":73,"./ReactInstrumentation":111,"./ReactServerUpdateQueue":124,"./Transaction":144,"_process":44,"object-assign":43}],124:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -14415,15 +14769,13 @@ var ReactServerUpdateQueue = function () {
 
 module.exports = ReactServerUpdateQueue;
 }).call(this,require('_process'))
-},{"./ReactUpdateQueue":108,"_process":27,"fbjs/lib/warning":24}],108:[function(require,module,exports){
+},{"./ReactUpdateQueue":125,"_process":44,"fbjs/lib/warning":30}],125:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -14651,15 +15003,13 @@ var ReactUpdateQueue = {
 
 module.exports = ReactUpdateQueue;
 }).call(this,require('_process'))
-},{"./ReactInstanceMap":93,"./ReactInstrumentation":94,"./ReactUpdates":109,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"react/lib/ReactCurrentOwner":190}],109:[function(require,module,exports){
+},{"./ReactInstanceMap":110,"./ReactInstrumentation":111,"./ReactUpdates":126,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"react/lib/ReactCurrentOwner":200}],126:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -14867,7 +15217,7 @@ function enqueueUpdate(component) {
  * if no updates are currently being performed.
  */
 function asap(callback, context) {
-  !batchingStrategy.isBatchingUpdates ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates.asap: Can\'t enqueue an asap callback in a context whereupdates are not being batched.') : _prodInvariant('125') : void 0;
+  invariant(batchingStrategy.isBatchingUpdates, "ReactUpdates.asap: Can't enqueue an asap callback in a context where" + 'updates are not being batched.');
   asapCallbackQueue.enqueue(callback, context);
   asapEnqueued = true;
 }
@@ -14904,28 +15254,24 @@ var ReactUpdates = {
 
 module.exports = ReactUpdates;
 }).call(this,require('_process'))
-},{"./CallbackQueue":38,"./PooledClass":56,"./ReactFeatureFlags":88,"./ReactReconciler":104,"./Transaction":127,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"object-assign":26}],110:[function(require,module,exports){
+},{"./CallbackQueue":55,"./PooledClass":73,"./ReactFeatureFlags":105,"./ReactReconciler":121,"./Transaction":144,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"object-assign":43}],127:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
 'use strict';
 
-module.exports = '15.6.0';
-},{}],111:[function(require,module,exports){
+module.exports = '15.6.2';
+},{}],128:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -15220,14 +15566,12 @@ Object.keys(ATTRS).forEach(function (key) {
 });
 
 module.exports = SVGDOMPropertyConfig;
-},{}],112:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -15408,15 +15752,13 @@ var SelectEventPlugin = {
 };
 
 module.exports = SelectEventPlugin;
-},{"./EventPropagators":51,"./ReactDOMComponentTree":65,"./ReactInputSelection":92,"./SyntheticEvent":118,"./isTextInputElement":150,"fbjs/lib/ExecutionEnvironment":3,"fbjs/lib/getActiveElement":12,"fbjs/lib/shallowEqual":23}],113:[function(require,module,exports){
+},{"./EventPropagators":68,"./ReactDOMComponentTree":82,"./ReactInputSelection":109,"./SyntheticEvent":135,"./isTextInputElement":167,"fbjs/lib/ExecutionEnvironment":9,"fbjs/lib/getActiveElement":18,"fbjs/lib/shallowEqual":29}],130:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -15636,14 +15978,12 @@ var SimpleEventPlugin = {
 
 module.exports = SimpleEventPlugin;
 }).call(this,require('_process'))
-},{"./EventPropagators":51,"./ReactDOMComponentTree":65,"./SyntheticAnimationEvent":114,"./SyntheticClipboardEvent":115,"./SyntheticDragEvent":117,"./SyntheticEvent":118,"./SyntheticFocusEvent":119,"./SyntheticKeyboardEvent":121,"./SyntheticMouseEvent":122,"./SyntheticTouchEvent":123,"./SyntheticTransitionEvent":124,"./SyntheticUIEvent":125,"./SyntheticWheelEvent":126,"./getEventCharCode":138,"./reactProdInvariant":152,"_process":27,"fbjs/lib/EventListener":2,"fbjs/lib/emptyFunction":9,"fbjs/lib/invariant":17}],114:[function(require,module,exports){
+},{"./EventPropagators":68,"./ReactDOMComponentTree":82,"./SyntheticAnimationEvent":131,"./SyntheticClipboardEvent":132,"./SyntheticDragEvent":134,"./SyntheticEvent":135,"./SyntheticFocusEvent":136,"./SyntheticKeyboardEvent":138,"./SyntheticMouseEvent":139,"./SyntheticTouchEvent":140,"./SyntheticTransitionEvent":141,"./SyntheticUIEvent":142,"./SyntheticWheelEvent":143,"./getEventCharCode":155,"./reactProdInvariant":169,"_process":44,"fbjs/lib/EventListener":8,"fbjs/lib/emptyFunction":15,"fbjs/lib/invariant":23}],131:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -15675,14 +16015,12 @@ function SyntheticAnimationEvent(dispatchConfig, dispatchMarker, nativeEvent, na
 SyntheticEvent.augmentClass(SyntheticAnimationEvent, AnimationEventInterface);
 
 module.exports = SyntheticAnimationEvent;
-},{"./SyntheticEvent":118}],115:[function(require,module,exports){
+},{"./SyntheticEvent":135}],132:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -15713,14 +16051,12 @@ function SyntheticClipboardEvent(dispatchConfig, dispatchMarker, nativeEvent, na
 SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
-},{"./SyntheticEvent":118}],116:[function(require,module,exports){
+},{"./SyntheticEvent":135}],133:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -15749,14 +16085,12 @@ function SyntheticCompositionEvent(dispatchConfig, dispatchMarker, nativeEvent, 
 SyntheticEvent.augmentClass(SyntheticCompositionEvent, CompositionEventInterface);
 
 module.exports = SyntheticCompositionEvent;
-},{"./SyntheticEvent":118}],117:[function(require,module,exports){
+},{"./SyntheticEvent":135}],134:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -15785,15 +16119,13 @@ function SyntheticDragEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeE
 SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
-},{"./SyntheticMouseEvent":122}],118:[function(require,module,exports){
+},{"./SyntheticMouseEvent":139}],135:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -15969,6 +16301,33 @@ _assign(SyntheticEvent.prototype, {
 
 SyntheticEvent.Interface = EventInterface;
 
+/**
+ * Helper to reduce boilerplate when creating subclasses.
+ *
+ * @param {function} Class
+ * @param {?object} Interface
+ */
+SyntheticEvent.augmentClass = function (Class, Interface) {
+  var Super = this;
+
+  var E = function () {};
+  E.prototype = Super.prototype;
+  var prototype = new E();
+
+  _assign(prototype, Class.prototype);
+  Class.prototype = prototype;
+  Class.prototype.constructor = Class;
+
+  Class.Interface = _assign({}, Super.Interface, Interface);
+  Class.augmentClass = Super.augmentClass;
+
+  PooledClass.addPoolingTo(Class, PooledClass.fourArgumentPooler);
+};
+
+/** Proxying after everything set on SyntheticEvent
+  * to resolve Proxy issue on some WebKit browsers
+  * in which some Event properties are set to undefined (GH#10010)
+  */
 if (process.env.NODE_ENV !== 'production') {
   if (isProxySupported) {
     /*eslint-disable no-func-assign */
@@ -15992,28 +16351,6 @@ if (process.env.NODE_ENV !== 'production') {
     /*eslint-enable no-func-assign */
   }
 }
-/**
- * Helper to reduce boilerplate when creating subclasses.
- *
- * @param {function} Class
- * @param {?object} Interface
- */
-SyntheticEvent.augmentClass = function (Class, Interface) {
-  var Super = this;
-
-  var E = function () {};
-  E.prototype = Super.prototype;
-  var prototype = new E();
-
-  _assign(prototype, Class.prototype);
-  Class.prototype = prototype;
-  Class.prototype.constructor = Class;
-
-  Class.Interface = _assign({}, Super.Interface, Interface);
-  Class.augmentClass = Super.augmentClass;
-
-  PooledClass.addPoolingTo(Class, PooledClass.fourArgumentPooler);
-};
 
 PooledClass.addPoolingTo(SyntheticEvent, PooledClass.fourArgumentPooler);
 
@@ -16053,14 +16390,12 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
   }
 }
 }).call(this,require('_process'))
-},{"./PooledClass":56,"_process":27,"fbjs/lib/emptyFunction":9,"fbjs/lib/warning":24,"object-assign":26}],119:[function(require,module,exports){
+},{"./PooledClass":73,"_process":44,"fbjs/lib/emptyFunction":15,"fbjs/lib/warning":30,"object-assign":43}],136:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16089,14 +16424,12 @@ function SyntheticFocusEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
-},{"./SyntheticUIEvent":125}],120:[function(require,module,exports){
+},{"./SyntheticUIEvent":142}],137:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16126,14 +16459,12 @@ function SyntheticInputEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticEvent.augmentClass(SyntheticInputEvent, InputEventInterface);
 
 module.exports = SyntheticInputEvent;
-},{"./SyntheticEvent":118}],121:[function(require,module,exports){
+},{"./SyntheticEvent":135}],138:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16210,14 +16541,12 @@ function SyntheticKeyboardEvent(dispatchConfig, dispatchMarker, nativeEvent, nat
 SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
-},{"./SyntheticUIEvent":125,"./getEventCharCode":138,"./getEventKey":139,"./getEventModifierState":140}],122:[function(require,module,exports){
+},{"./SyntheticUIEvent":142,"./getEventCharCode":155,"./getEventKey":156,"./getEventModifierState":157}],139:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16282,14 +16611,12 @@ function SyntheticMouseEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
-},{"./SyntheticUIEvent":125,"./ViewportMetrics":128,"./getEventModifierState":140}],123:[function(require,module,exports){
+},{"./SyntheticUIEvent":142,"./ViewportMetrics":145,"./getEventModifierState":157}],140:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16327,14 +16654,12 @@ function SyntheticTouchEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
-},{"./SyntheticUIEvent":125,"./getEventModifierState":140}],124:[function(require,module,exports){
+},{"./SyntheticUIEvent":142,"./getEventModifierState":157}],141:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16366,14 +16691,12 @@ function SyntheticTransitionEvent(dispatchConfig, dispatchMarker, nativeEvent, n
 SyntheticEvent.augmentClass(SyntheticTransitionEvent, TransitionEventInterface);
 
 module.exports = SyntheticTransitionEvent;
-},{"./SyntheticEvent":118}],125:[function(require,module,exports){
+},{"./SyntheticEvent":135}],142:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16425,14 +16748,12 @@ function SyntheticUIEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEve
 SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
-},{"./SyntheticEvent":118,"./getEventTarget":141}],126:[function(require,module,exports){
+},{"./SyntheticEvent":135,"./getEventTarget":158}],143:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16476,15 +16797,13 @@ function SyntheticWheelEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
-},{"./SyntheticMouseEvent":122}],127:[function(require,module,exports){
+},{"./SyntheticMouseEvent":139}],144:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -16706,14 +17025,12 @@ var TransactionImpl = {
 
 module.exports = TransactionImpl;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],128:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],145:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16731,15 +17048,13 @@ var ViewportMetrics = {
 };
 
 module.exports = ViewportMetrics;
-},{}],129:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -16791,14 +17106,12 @@ function accumulateInto(current, next) {
 
 module.exports = accumulateInto;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17}],130:[function(require,module,exports){
+},{"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23}],147:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -16835,15 +17148,13 @@ function adler32(data) {
 }
 
 module.exports = adler32;
-},{}],131:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16924,14 +17235,12 @@ function checkReactTypeSpec(typeSpecs, values, location, componentName, element,
 
 module.exports = checkReactTypeSpec;
 }).call(this,require('_process'))
-},{"./ReactPropTypeLocationNames":101,"./ReactPropTypesSecret":102,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"react/lib/ReactComponentTreeHook":189}],132:[function(require,module,exports){
+},{"./ReactPropTypeLocationNames":118,"./ReactPropTypesSecret":119,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"react/lib/ReactComponentTreeHook":199}],149:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16956,15 +17265,13 @@ var createMicrosoftUnsafeLocalFunction = function (func) {
 };
 
 module.exports = createMicrosoftUnsafeLocalFunction;
-},{}],133:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -16986,7 +17293,7 @@ var styleWarnings = {};
  * @param {ReactDOMComponent} component
  * @return {string} Normalized style value with dimensions applied.
  */
-function dangerousStyleValue(name, value, component) {
+function dangerousStyleValue(name, value, component, isCustomProperty) {
   // Note that we've removed escapeTextForBrowser() calls here since the
   // whole string will be escaped when the attribute is injected into
   // the markup. If you provide unsafe user data here they can inject
@@ -17003,7 +17310,7 @@ function dangerousStyleValue(name, value, component) {
   }
 
   var isNonNumeric = isNaN(value);
-  if (isNonNumeric || value === 0 || isUnitlessNumber.hasOwnProperty(name) && isUnitlessNumber[name]) {
+  if (isCustomProperty || isNonNumeric || value === 0 || isUnitlessNumber.hasOwnProperty(name) && isUnitlessNumber[name]) {
     return '' + value; // cast to string
   }
 
@@ -17037,14 +17344,12 @@ function dangerousStyleValue(name, value, component) {
 
 module.exports = dangerousStyleValue;
 }).call(this,require('_process'))
-},{"./CSSProperty":36,"_process":27,"fbjs/lib/warning":24}],134:[function(require,module,exports){
+},{"./CSSProperty":53,"_process":44,"fbjs/lib/warning":30}],151:[function(require,module,exports){
 /**
- * Copyright 2016-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2016-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * Based on the escape-html library, which is used under the MIT License below:
  *
@@ -17159,15 +17464,13 @@ function escapeTextContentForBrowser(text) {
 }
 
 module.exports = escapeTextContentForBrowser;
-},{}],135:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17221,15 +17524,13 @@ function findDOMNode(componentOrElement) {
 
 module.exports = findDOMNode;
 }).call(this,require('_process'))
-},{"./ReactDOMComponentTree":65,"./ReactInstanceMap":93,"./getHostComponentFromComposite":142,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"react/lib/ReactCurrentOwner":190}],136:[function(require,module,exports){
+},{"./ReactDOMComponentTree":82,"./ReactInstanceMap":110,"./getHostComponentFromComposite":159,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"react/lib/ReactCurrentOwner":200}],153:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -17299,14 +17600,12 @@ function flattenChildren(children, selfDebugID) {
 
 module.exports = flattenChildren;
 }).call(this,require('_process'))
-},{"./KeyEscapeUtils":54,"./traverseAllChildren":157,"_process":27,"fbjs/lib/warning":24,"react/lib/ReactComponentTreeHook":189}],137:[function(require,module,exports){
+},{"./KeyEscapeUtils":71,"./traverseAllChildren":174,"_process":44,"fbjs/lib/warning":30,"react/lib/ReactComponentTreeHook":199}],154:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -17330,14 +17629,12 @@ function forEachAccumulated(arr, cb, scope) {
 }
 
 module.exports = forEachAccumulated;
-},{}],138:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17380,14 +17677,12 @@ function getEventCharCode(nativeEvent) {
 }
 
 module.exports = getEventCharCode;
-},{}],139:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17492,14 +17787,12 @@ function getEventKey(nativeEvent) {
 }
 
 module.exports = getEventKey;
-},{"./getEventCharCode":138}],140:[function(require,module,exports){
+},{"./getEventCharCode":155}],157:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17535,14 +17828,12 @@ function getEventModifierState(nativeEvent) {
 }
 
 module.exports = getEventModifierState;
-},{}],141:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17570,14 +17861,12 @@ function getEventTarget(nativeEvent) {
 }
 
 module.exports = getEventTarget;
-},{}],142:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17600,14 +17889,12 @@ function getHostComponentFromComposite(inst) {
 }
 
 module.exports = getHostComponentFromComposite;
-},{"./ReactNodeTypes":99}],143:[function(require,module,exports){
+},{"./ReactNodeTypes":116}],160:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -17641,14 +17928,12 @@ function getIteratorFn(maybeIterable) {
 }
 
 module.exports = getIteratorFn;
-},{}],144:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17715,14 +18000,12 @@ function getNodeForCharacterOffset(root, offset) {
 }
 
 module.exports = getNodeForCharacterOffset;
-},{}],145:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17748,14 +18031,12 @@ function getTextContentAccessor() {
 }
 
 module.exports = getTextContentAccessor;
-},{"fbjs/lib/ExecutionEnvironment":3}],146:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":9}],163:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17849,14 +18130,12 @@ function getVendorPrefixedEventName(eventName) {
 }
 
 module.exports = getVendorPrefixedEventName;
-},{"fbjs/lib/ExecutionEnvironment":3}],147:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":9}],164:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -17879,7 +18158,7 @@ function attachTracker(inst, tracker) {
 }
 
 function detachTracker(inst) {
-  delete inst._wrapperState.valueTracker;
+  inst._wrapperState.valueTracker = null;
 }
 
 function getValueFromNode(node) {
@@ -17908,10 +18187,11 @@ var inputValueTracking = {
 
     var currentValue = '' + node[valueField];
 
-    // if someone has already defined a value bail and don't track value
-    // will cause over reporting of changes, but it's better then a hard failure
-    // (needed for certain tests that spyOn input values)
-    if (node.hasOwnProperty(valueField)) {
+    // if someone has already defined a value or Safari, then bail
+    // and don't track value will cause over reporting of changes,
+    // but it's better then a hard failure
+    // (needed for certain tests that spyOn input values and Safari)
+    if (node.hasOwnProperty(valueField) || typeof descriptor.get !== 'function' || typeof descriptor.set !== 'function') {
       return;
     }
 
@@ -17971,15 +18251,13 @@ var inputValueTracking = {
 };
 
 module.exports = inputValueTracking;
-},{"./ReactDOMComponentTree":65}],148:[function(require,module,exports){
+},{"./ReactDOMComponentTree":82}],165:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -18102,14 +18380,12 @@ _assign(ReactCompositeComponentWrapper.prototype, ReactCompositeComponent, {
 
 module.exports = instantiateReactComponent;
 }).call(this,require('_process'))
-},{"./ReactCompositeComponent":61,"./ReactEmptyComponent":84,"./ReactHostComponent":89,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"object-assign":26,"react/lib/getNextDebugID":204}],149:[function(require,module,exports){
+},{"./ReactCompositeComponent":78,"./ReactEmptyComponent":101,"./ReactHostComponent":106,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"object-assign":43,"react/lib/getNextDebugID":214}],166:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -18162,14 +18438,12 @@ function isEventSupported(eventNameSuffix, capture) {
 }
 
 module.exports = isEventSupported;
-},{"fbjs/lib/ExecutionEnvironment":3}],150:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":9}],167:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -18213,14 +18487,12 @@ function isTextInputElement(elem) {
 }
 
 module.exports = isTextInputElement;
-},{}],151:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -18239,14 +18511,12 @@ function quoteAttributeValueForBrowser(value) {
 }
 
 module.exports = quoteAttributeValueForBrowser;
-},{"./escapeTextContentForBrowser":134}],152:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":151}],169:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -18278,14 +18548,12 @@ function reactProdInvariant(code) {
 }
 
 module.exports = reactProdInvariant;
-},{}],153:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -18294,14 +18562,12 @@ module.exports = reactProdInvariant;
 var ReactMount = require('./ReactMount');
 
 module.exports = ReactMount.renderSubtreeIntoContainer;
-},{"./ReactMount":97}],154:[function(require,module,exports){
+},{"./ReactMount":114}],171:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -18392,14 +18658,12 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = setInnerHTML;
-},{"./DOMNamespaces":42,"./createMicrosoftUnsafeLocalFunction":132,"fbjs/lib/ExecutionEnvironment":3}],155:[function(require,module,exports){
+},{"./DOMNamespaces":59,"./createMicrosoftUnsafeLocalFunction":149,"fbjs/lib/ExecutionEnvironment":9}],172:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -18444,14 +18708,12 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = setTextContent;
-},{"./escapeTextContentForBrowser":134,"./setInnerHTML":154,"fbjs/lib/ExecutionEnvironment":3}],156:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":151,"./setInnerHTML":171,"fbjs/lib/ExecutionEnvironment":9}],173:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -18486,15 +18748,13 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 }
 
 module.exports = shouldUpdateReactComponent;
-},{}],157:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -18664,15 +18924,13 @@ function traverseAllChildren(children, callback, traverseContext) {
 
 module.exports = traverseAllChildren;
 }).call(this,require('_process'))
-},{"./KeyEscapeUtils":54,"./ReactElementSymbol":83,"./getIteratorFn":143,"./reactProdInvariant":152,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24,"react/lib/ReactCurrentOwner":190}],158:[function(require,module,exports){
+},{"./KeyEscapeUtils":71,"./ReactElementSymbol":100,"./getIteratorFn":160,"./reactProdInvariant":169,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30,"react/lib/ReactCurrentOwner":200}],175:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -19037,70 +19295,326 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = validateDOMNesting;
 }).call(this,require('_process'))
-},{"_process":27,"fbjs/lib/emptyFunction":9,"fbjs/lib/warning":24,"object-assign":26}],159:[function(require,module,exports){
+},{"_process":44,"fbjs/lib/emptyFunction":15,"fbjs/lib/warning":30,"object-assign":43}],176:[function(require,module,exports){
+(function (process){
+/** @license React v16.7.0
+ * react-is.development.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+'use strict';
+
+
+
+if (process.env.NODE_ENV !== "production") {
+  (function() {
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+// nor polyfill, then a plain number is used for performance.
+var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+
+var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace;
+var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
+var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+
+function isValidElementType(type) {
+  return typeof type === 'string' || typeof type === 'function' ||
+  // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+  type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE);
+}
+
+/**
+ * Forked from fbjs/warning:
+ * https://github.com/facebook/fbjs/blob/e66ba20ad5be433eb54423f2b097d829324d9de6/packages/fbjs/src/__forks__/warning.js
+ *
+ * Only change is we use console.warn instead of console.error,
+ * and do nothing when 'console' is not supported.
+ * This really simplifies the code.
+ * ---
+ * Similar to invariant but only logs a warning if the condition is not met.
+ * This can be used to log issues in development environments in critical
+ * paths. Removing the logging code for production environments will keep the
+ * same logic and follow the same code paths.
+ */
+
+var lowPriorityWarning = function () {};
+
+{
+  var printWarning = function (format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    var argIndex = 0;
+    var message = 'Warning: ' + format.replace(/%s/g, function () {
+      return args[argIndex++];
+    });
+    if (typeof console !== 'undefined') {
+      console.warn(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+
+  lowPriorityWarning = function (condition, format) {
+    if (format === undefined) {
+      throw new Error('`lowPriorityWarning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+    if (!condition) {
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
+      }
+
+      printWarning.apply(undefined, [format].concat(args));
+    }
+  };
+}
+
+var lowPriorityWarning$1 = lowPriorityWarning;
+
+function typeOf(object) {
+  if (typeof object === 'object' && object !== null) {
+    var $$typeof = object.$$typeof;
+    switch ($$typeof) {
+      case REACT_ELEMENT_TYPE:
+        var type = object.type;
+
+        switch (type) {
+          case REACT_ASYNC_MODE_TYPE:
+          case REACT_CONCURRENT_MODE_TYPE:
+          case REACT_FRAGMENT_TYPE:
+          case REACT_PROFILER_TYPE:
+          case REACT_STRICT_MODE_TYPE:
+          case REACT_SUSPENSE_TYPE:
+            return type;
+          default:
+            var $$typeofType = type && type.$$typeof;
+
+            switch ($$typeofType) {
+              case REACT_CONTEXT_TYPE:
+              case REACT_FORWARD_REF_TYPE:
+              case REACT_PROVIDER_TYPE:
+                return $$typeofType;
+              default:
+                return $$typeof;
+            }
+        }
+      case REACT_LAZY_TYPE:
+      case REACT_MEMO_TYPE:
+      case REACT_PORTAL_TYPE:
+        return $$typeof;
+    }
+  }
+
+  return undefined;
+}
+
+// AsyncMode is deprecated along with isAsyncMode
+var AsyncMode = REACT_ASYNC_MODE_TYPE;
+var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
+var ContextConsumer = REACT_CONTEXT_TYPE;
+var ContextProvider = REACT_PROVIDER_TYPE;
+var Element = REACT_ELEMENT_TYPE;
+var ForwardRef = REACT_FORWARD_REF_TYPE;
+var Fragment = REACT_FRAGMENT_TYPE;
+var Lazy = REACT_LAZY_TYPE;
+var Memo = REACT_MEMO_TYPE;
+var Portal = REACT_PORTAL_TYPE;
+var Profiler = REACT_PROFILER_TYPE;
+var StrictMode = REACT_STRICT_MODE_TYPE;
+var Suspense = REACT_SUSPENSE_TYPE;
+
+var hasWarnedAboutDeprecatedIsAsyncMode = false;
+
+// AsyncMode should be deprecated
+function isAsyncMode(object) {
+  {
+    if (!hasWarnedAboutDeprecatedIsAsyncMode) {
+      hasWarnedAboutDeprecatedIsAsyncMode = true;
+      lowPriorityWarning$1(false, 'The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
+    }
+  }
+  return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
+}
+function isConcurrentMode(object) {
+  return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
+}
+function isContextConsumer(object) {
+  return typeOf(object) === REACT_CONTEXT_TYPE;
+}
+function isContextProvider(object) {
+  return typeOf(object) === REACT_PROVIDER_TYPE;
+}
+function isElement(object) {
+  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+}
+function isForwardRef(object) {
+  return typeOf(object) === REACT_FORWARD_REF_TYPE;
+}
+function isFragment(object) {
+  return typeOf(object) === REACT_FRAGMENT_TYPE;
+}
+function isLazy(object) {
+  return typeOf(object) === REACT_LAZY_TYPE;
+}
+function isMemo(object) {
+  return typeOf(object) === REACT_MEMO_TYPE;
+}
+function isPortal(object) {
+  return typeOf(object) === REACT_PORTAL_TYPE;
+}
+function isProfiler(object) {
+  return typeOf(object) === REACT_PROFILER_TYPE;
+}
+function isStrictMode(object) {
+  return typeOf(object) === REACT_STRICT_MODE_TYPE;
+}
+function isSuspense(object) {
+  return typeOf(object) === REACT_SUSPENSE_TYPE;
+}
+
+exports.typeOf = typeOf;
+exports.AsyncMode = AsyncMode;
+exports.ConcurrentMode = ConcurrentMode;
+exports.ContextConsumer = ContextConsumer;
+exports.ContextProvider = ContextProvider;
+exports.Element = Element;
+exports.ForwardRef = ForwardRef;
+exports.Fragment = Fragment;
+exports.Lazy = Lazy;
+exports.Memo = Memo;
+exports.Portal = Portal;
+exports.Profiler = Profiler;
+exports.StrictMode = StrictMode;
+exports.Suspense = Suspense;
+exports.isValidElementType = isValidElementType;
+exports.isAsyncMode = isAsyncMode;
+exports.isConcurrentMode = isConcurrentMode;
+exports.isContextConsumer = isContextConsumer;
+exports.isContextProvider = isContextProvider;
+exports.isElement = isElement;
+exports.isForwardRef = isForwardRef;
+exports.isFragment = isFragment;
+exports.isLazy = isLazy;
+exports.isMemo = isMemo;
+exports.isPortal = isPortal;
+exports.isProfiler = isProfiler;
+exports.isStrictMode = isStrictMode;
+exports.isSuspense = isSuspense;
+  })();
+}
+
+}).call(this,require('_process'))
+},{"_process":44}],177:[function(require,module,exports){
+/** @license React v16.7.0
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+'use strict';Object.defineProperty(exports,"__esModule",{value:!0});
+var b="function"===typeof Symbol&&Symbol.for,c=b?Symbol.for("react.element"):60103,d=b?Symbol.for("react.portal"):60106,e=b?Symbol.for("react.fragment"):60107,f=b?Symbol.for("react.strict_mode"):60108,g=b?Symbol.for("react.profiler"):60114,h=b?Symbol.for("react.provider"):60109,k=b?Symbol.for("react.context"):60110,l=b?Symbol.for("react.async_mode"):60111,m=b?Symbol.for("react.concurrent_mode"):60111,n=b?Symbol.for("react.forward_ref"):60112,p=b?Symbol.for("react.suspense"):60113,q=b?Symbol.for("react.memo"):
+60115,r=b?Symbol.for("react.lazy"):60116;function t(a){if("object"===typeof a&&null!==a){var u=a.$$typeof;switch(u){case c:switch(a=a.type,a){case l:case m:case e:case g:case f:case p:return a;default:switch(a=a&&a.$$typeof,a){case k:case n:case h:return a;default:return u}}case r:case q:case d:return u}}}function v(a){return t(a)===m}exports.typeOf=t;exports.AsyncMode=l;exports.ConcurrentMode=m;exports.ContextConsumer=k;exports.ContextProvider=h;exports.Element=c;exports.ForwardRef=n;
+exports.Fragment=e;exports.Lazy=r;exports.Memo=q;exports.Portal=d;exports.Profiler=g;exports.StrictMode=f;exports.Suspense=p;exports.isValidElementType=function(a){return"string"===typeof a||"function"===typeof a||a===e||a===m||a===g||a===f||a===p||"object"===typeof a&&null!==a&&(a.$$typeof===r||a.$$typeof===q||a.$$typeof===h||a.$$typeof===k||a.$$typeof===n)};exports.isAsyncMode=function(a){return v(a)||t(a)===l};exports.isConcurrentMode=v;exports.isContextConsumer=function(a){return t(a)===k};
+exports.isContextProvider=function(a){return t(a)===h};exports.isElement=function(a){return"object"===typeof a&&null!==a&&a.$$typeof===c};exports.isForwardRef=function(a){return t(a)===n};exports.isFragment=function(a){return t(a)===e};exports.isLazy=function(a){return t(a)===r};exports.isMemo=function(a){return t(a)===q};exports.isPortal=function(a){return t(a)===d};exports.isProfiler=function(a){return t(a)===g};exports.isStrictMode=function(a){return t(a)===f};
+exports.isSuspense=function(a){return t(a)===p};
+
+},{}],178:[function(require,module,exports){
 (function (process){
 'use strict';
 
+if (process.env.NODE_ENV === 'production') {
+  module.exports = require('./cjs/react-is.production.min.js');
+} else {
+  module.exports = require('./cjs/react-is.development.js');
+}
+
+}).call(this,require('_process'))
+},{"./cjs/react-is.development.js":176,"./cjs/react-is.production.min.js":177,"_process":44}],179:[function(require,module,exports){
+(function (process){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 exports.__esModule = true;
 exports.createProvider = createProvider;
+exports.default = void 0;
 
-var _react = require('react');
+var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
 
-var _propTypes = require('prop-types');
+var _react = require("react");
 
-var _propTypes2 = _interopRequireDefault(_propTypes);
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _PropTypes = require('../utils/PropTypes');
+var _PropTypes = require("../utils/PropTypes");
 
-var _warning = require('../utils/warning');
-
-var _warning2 = _interopRequireDefault(_warning);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+var _warning = _interopRequireDefault(require("../utils/warning"));
 
 var didWarnAboutReceivingStore = false;
+
 function warnAboutReceivingStore() {
   if (didWarnAboutReceivingStore) {
     return;
   }
-  didWarnAboutReceivingStore = true;
 
-  (0, _warning2.default)('<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/reactjs/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
+  didWarnAboutReceivingStore = true;
+  (0, _warning.default)('<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/reduxjs/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
 }
 
-function createProvider() {
+function createProvider(storeKey) {
   var _Provider$childContex;
 
-  var storeKey = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'store';
-  var subKey = arguments[1];
+  if (storeKey === void 0) {
+    storeKey = 'store';
+  }
 
-  var subscriptionKey = subKey || storeKey + 'Subscription';
+  var subscriptionKey = storeKey + "Subscription";
 
-  var Provider = function (_Component) {
-    _inherits(Provider, _Component);
+  var Provider =
+  /*#__PURE__*/
+  function (_Component) {
+    (0, _inheritsLoose2.default)(Provider, _Component);
+    var _proto = Provider.prototype;
 
-    Provider.prototype.getChildContext = function getChildContext() {
+    _proto.getChildContext = function getChildContext() {
       var _ref;
 
       return _ref = {}, _ref[storeKey] = this[storeKey], _ref[subscriptionKey] = null, _ref;
     };
 
     function Provider(props, context) {
-      _classCallCheck(this, Provider);
+      var _this;
 
-      var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
-
+      _this = _Component.call(this, props, context) || this;
       _this[storeKey] = props.store;
       return _this;
     }
 
-    Provider.prototype.render = function render() {
+    _proto.render = function render() {
       return _react.Children.only(this.props.children);
     };
 
@@ -19117,61 +19631,57 @@ function createProvider() {
 
   Provider.propTypes = {
     store: _PropTypes.storeShape.isRequired,
-    children: _propTypes2.default.element.isRequired
+    children: _propTypes.default.element.isRequired
   };
   Provider.childContextTypes = (_Provider$childContex = {}, _Provider$childContex[storeKey] = _PropTypes.storeShape.isRequired, _Provider$childContex[subscriptionKey] = _PropTypes.subscriptionShape, _Provider$childContex);
-  Provider.displayName = 'Provider';
-
   return Provider;
 }
 
-exports.default = createProvider();
+var _default = createProvider();
+
+exports.default = _default;
 }).call(this,require('_process'))
-},{"../utils/PropTypes":168,"../utils/warning":172,"_process":27,"prop-types":"prop-types","react":"react"}],160:[function(require,module,exports){
+},{"../utils/PropTypes":188,"../utils/warning":193,"@babel/runtime/helpers/inheritsLoose":3,"@babel/runtime/helpers/interopRequireDefault":4,"_process":44,"prop-types":"prop-types","react":"react"}],180:[function(require,module,exports){
 (function (process){
-'use strict';
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 exports.default = connectAdvanced;
 
-var _hoistNonReactStatics = require('hoist-non-react-statics');
+var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
 
-var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
+var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
 
-var _invariant = require('invariant');
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
 
-var _invariant2 = _interopRequireDefault(_invariant);
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
 
-var _react = require('react');
+var _hoistNonReactStatics = _interopRequireDefault(require("hoist-non-react-statics"));
 
-var _Subscription = require('../utils/Subscription');
+var _invariant = _interopRequireDefault(require("invariant"));
 
-var _Subscription2 = _interopRequireDefault(_Subscription);
+var _react = require("react");
 
-var _PropTypes = require('../utils/PropTypes');
+var _reactIs = require("react-is");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _Subscription = _interopRequireDefault(require("../utils/Subscription"));
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+var _PropTypes = require("../utils/PropTypes");
 
 var hotReloadingVersion = 0;
 var dummyState = {};
+
 function noop() {}
+
 function makeSelectorStateful(sourceSelector, store) {
   // wrap the selector in an object that tracks its results between runs.
   var selector = {
     run: function runComponentSelector(props) {
       try {
         var nextProps = sourceSelector(store.getState(), props);
+
         if (nextProps !== selector.props || selector.error) {
           selector.shouldComponentUpdate = true;
           selector.props = nextProps;
@@ -19183,7 +19693,6 @@ function makeSelectorStateful(sourceSelector, store) {
       }
     }
   };
-
   return selector;
 }
 
@@ -19202,40 +19711,39 @@ function connectAdvanced(
   props. Do not use connectAdvanced directly without memoizing results between calls to your
   selector, otherwise the Connect component will re-render on every state or props change.
 */
-selectorFactory) {
+selectorFactory, // options object:
+_ref) {
   var _contextTypes, _childContextTypes;
 
-  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      _ref$getDisplayName = _ref.getDisplayName,
-      getDisplayName = _ref$getDisplayName === undefined ? function (name) {
-    return 'ConnectAdvanced(' + name + ')';
-  } : _ref$getDisplayName,
-      _ref$methodName = _ref.methodName,
-      methodName = _ref$methodName === undefined ? 'connectAdvanced' : _ref$methodName,
-      _ref$renderCountProp = _ref.renderCountProp,
-      renderCountProp = _ref$renderCountProp === undefined ? undefined : _ref$renderCountProp,
-      _ref$shouldHandleStat = _ref.shouldHandleStateChanges,
-      shouldHandleStateChanges = _ref$shouldHandleStat === undefined ? true : _ref$shouldHandleStat,
-      _ref$storeKey = _ref.storeKey,
-      storeKey = _ref$storeKey === undefined ? 'store' : _ref$storeKey,
-      _ref$withRef = _ref.withRef,
-      withRef = _ref$withRef === undefined ? false : _ref$withRef,
-      connectOptions = _objectWithoutProperties(_ref, ['getDisplayName', 'methodName', 'renderCountProp', 'shouldHandleStateChanges', 'storeKey', 'withRef']);
+  if (_ref === void 0) {
+    _ref = {};
+  }
 
+  var _ref2 = _ref,
+      _ref2$getDisplayName = _ref2.getDisplayName,
+      getDisplayName = _ref2$getDisplayName === void 0 ? function (name) {
+    return "ConnectAdvanced(" + name + ")";
+  } : _ref2$getDisplayName,
+      _ref2$methodName = _ref2.methodName,
+      methodName = _ref2$methodName === void 0 ? 'connectAdvanced' : _ref2$methodName,
+      _ref2$renderCountProp = _ref2.renderCountProp,
+      renderCountProp = _ref2$renderCountProp === void 0 ? undefined : _ref2$renderCountProp,
+      _ref2$shouldHandleSta = _ref2.shouldHandleStateChanges,
+      shouldHandleStateChanges = _ref2$shouldHandleSta === void 0 ? true : _ref2$shouldHandleSta,
+      _ref2$storeKey = _ref2.storeKey,
+      storeKey = _ref2$storeKey === void 0 ? 'store' : _ref2$storeKey,
+      _ref2$withRef = _ref2.withRef,
+      withRef = _ref2$withRef === void 0 ? false : _ref2$withRef,
+      connectOptions = (0, _objectWithoutPropertiesLoose2.default)(_ref2, ["getDisplayName", "methodName", "renderCountProp", "shouldHandleStateChanges", "storeKey", "withRef"]);
   var subscriptionKey = storeKey + 'Subscription';
   var version = hotReloadingVersion++;
-
   var contextTypes = (_contextTypes = {}, _contextTypes[storeKey] = _PropTypes.storeShape, _contextTypes[subscriptionKey] = _PropTypes.subscriptionShape, _contextTypes);
   var childContextTypes = (_childContextTypes = {}, _childContextTypes[subscriptionKey] = _PropTypes.subscriptionShape, _childContextTypes);
-
   return function wrapWithConnect(WrappedComponent) {
-    (0, _invariant2.default)(typeof WrappedComponent == 'function', 'You must pass a component to the function returned by ' + ('connect. Instead received ' + JSON.stringify(WrappedComponent)));
-
+    (0, _invariant.default)((0, _reactIs.isValidElementType)(WrappedComponent), "You must pass a component to the function returned by " + (methodName + ". Instead received " + JSON.stringify(WrappedComponent)));
     var wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
-
     var displayName = getDisplayName(wrappedComponentName);
-
-    var selectorFactoryOptions = _extends({}, connectOptions, {
+    var selectorFactoryOptions = (0, _extends2.default)({}, connectOptions, {
       getDisplayName: getDisplayName,
       methodName: methodName,
       renderCountProp: renderCountProp,
@@ -19244,65 +19752,71 @@ selectorFactory) {
       withRef: withRef,
       displayName: displayName,
       wrappedComponentName: wrappedComponentName,
-      WrappedComponent: WrappedComponent
+      WrappedComponent: WrappedComponent // TODO Actually fix our use of componentWillReceiveProps
+
+      /* eslint-disable react/no-deprecated */
+
     });
 
-    var Connect = function (_Component) {
-      _inherits(Connect, _Component);
+    var Connect =
+    /*#__PURE__*/
+    function (_Component) {
+      (0, _inheritsLoose2.default)(Connect, _Component);
 
       function Connect(props, context) {
-        _classCallCheck(this, Connect);
+        var _this;
 
-        var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
-
+        _this = _Component.call(this, props, context) || this;
         _this.version = version;
         _this.state = {};
         _this.renderCount = 0;
         _this.store = props[storeKey] || context[storeKey];
         _this.propsMode = Boolean(props[storeKey]);
-        _this.setWrappedInstance = _this.setWrappedInstance.bind(_this);
-
-        (0, _invariant2.default)(_this.store, 'Could not find "' + storeKey + '" in either the context or props of ' + ('"' + displayName + '". Either wrap the root component in a <Provider>, ') + ('or explicitly pass "' + storeKey + '" as a prop to "' + displayName + '".'));
+        _this.setWrappedInstance = _this.setWrappedInstance.bind((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)));
+        (0, _invariant.default)(_this.store, "Could not find \"" + storeKey + "\" in either the context or props of " + ("\"" + displayName + "\". Either wrap the root component in a <Provider>, ") + ("or explicitly pass \"" + storeKey + "\" as a prop to \"" + displayName + "\"."));
 
         _this.initSelector();
+
         _this.initSubscription();
+
         return _this;
       }
 
-      Connect.prototype.getChildContext = function getChildContext() {
-        var _ref2;
+      var _proto = Connect.prototype;
+
+      _proto.getChildContext = function getChildContext() {
+        var _ref3;
 
         // If this component received store from props, its subscription should be transparent
         // to any descendants receiving store+subscription from context; it passes along
         // subscription passed to it. Otherwise, it shadows the parent subscription, which allows
         // Connect to control ordering of notifications to flow top-down.
         var subscription = this.propsMode ? null : this.subscription;
-        return _ref2 = {}, _ref2[subscriptionKey] = subscription || this.context[subscriptionKey], _ref2;
+        return _ref3 = {}, _ref3[subscriptionKey] = subscription || this.context[subscriptionKey], _ref3;
       };
 
-      Connect.prototype.componentDidMount = function componentDidMount() {
-        if (!shouldHandleStateChanges) return;
-
-        // componentWillMount fires during server side rendering, but componentDidMount and
+      _proto.componentDidMount = function componentDidMount() {
+        if (!shouldHandleStateChanges) return; // componentWillMount fires during server side rendering, but componentDidMount and
         // componentWillUnmount do not. Because of this, trySubscribe happens during ...didMount.
         // Otherwise, unsubscription would never take place during SSR, causing a memory leak.
         // To handle the case where a child component may have triggered a state change by
         // dispatching an action in its componentWillMount, we have to re-run the select and maybe
         // re-render.
+
         this.subscription.trySubscribe();
         this.selector.run(this.props);
         if (this.selector.shouldComponentUpdate) this.forceUpdate();
       };
 
-      Connect.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+      _proto.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
         this.selector.run(nextProps);
       };
 
-      Connect.prototype.shouldComponentUpdate = function shouldComponentUpdate() {
+      _proto.shouldComponentUpdate = function shouldComponentUpdate() {
         return this.selector.shouldComponentUpdate;
       };
 
-      Connect.prototype.componentWillUnmount = function componentWillUnmount() {
+      _proto.componentWillUnmount = function componentWillUnmount() {
         if (this.subscription) this.subscription.tryUnsubscribe();
         this.subscription = null;
         this.notifyNestedSubs = noop;
@@ -19311,39 +19825,37 @@ selectorFactory) {
         this.selector.shouldComponentUpdate = false;
       };
 
-      Connect.prototype.getWrappedInstance = function getWrappedInstance() {
-        (0, _invariant2.default)(withRef, 'To access the wrapped instance, you need to specify ' + ('{ withRef: true } in the options argument of the ' + methodName + '() call.'));
+      _proto.getWrappedInstance = function getWrappedInstance() {
+        (0, _invariant.default)(withRef, "To access the wrapped instance, you need to specify " + ("{ withRef: true } in the options argument of the " + methodName + "() call."));
         return this.wrappedInstance;
       };
 
-      Connect.prototype.setWrappedInstance = function setWrappedInstance(ref) {
+      _proto.setWrappedInstance = function setWrappedInstance(ref) {
         this.wrappedInstance = ref;
       };
 
-      Connect.prototype.initSelector = function initSelector() {
+      _proto.initSelector = function initSelector() {
         var sourceSelector = selectorFactory(this.store.dispatch, selectorFactoryOptions);
         this.selector = makeSelectorStateful(sourceSelector, this.store);
         this.selector.run(this.props);
       };
 
-      Connect.prototype.initSubscription = function initSubscription() {
-        if (!shouldHandleStateChanges) return;
-
-        // parentSub's source should match where store came from: props vs. context. A component
+      _proto.initSubscription = function initSubscription() {
+        if (!shouldHandleStateChanges) return; // parentSub's source should match where store came from: props vs. context. A component
         // connected to the store via props shouldn't use subscription from context, or vice versa.
-        var parentSub = (this.propsMode ? this.props : this.context)[subscriptionKey];
-        this.subscription = new _Subscription2.default(this.store, parentSub, this.onStateChange.bind(this));
 
-        // `notifyNestedSubs` is duplicated to handle the case where the component is  unmounted in
+        var parentSub = (this.propsMode ? this.props : this.context)[subscriptionKey];
+        this.subscription = new _Subscription.default(this.store, parentSub, this.onStateChange.bind(this)); // `notifyNestedSubs` is duplicated to handle the case where the component is unmounted in
         // the middle of the notification loop, where `this.subscription` will then be null. An
         // extra null check every change can be avoided by copying the method onto `this` and then
         // replacing it with a no-op on unmount. This can probably be avoided if Subscription's
         // listeners logic is changed to not call listeners that have been unsubscribed in the
         // middle of the notification loop.
+
         this.notifyNestedSubs = this.subscription.notifyNestedSubs.bind(this.subscription);
       };
 
-      Connect.prototype.onStateChange = function onStateChange() {
+      _proto.onStateChange = function onStateChange() {
         this.selector.run(this.props);
 
         if (!this.selector.shouldComponentUpdate) {
@@ -19354,34 +19866,34 @@ selectorFactory) {
         }
       };
 
-      Connect.prototype.notifyNestedSubsOnComponentDidUpdate = function notifyNestedSubsOnComponentDidUpdate() {
+      _proto.notifyNestedSubsOnComponentDidUpdate = function notifyNestedSubsOnComponentDidUpdate() {
         // `componentDidUpdate` is conditionally implemented when `onStateChange` determines it
         // needs to notify nested subs. Once called, it unimplements itself until further state
-        // changes occur. Doing it this way vs having a permanent `componentDidMount` that does
+        // changes occur. Doing it this way vs having a permanent `componentDidUpdate` that does
         // a boolean check every time avoids an extra method call most of the time, resulting
         // in some perf boost.
         this.componentDidUpdate = undefined;
         this.notifyNestedSubs();
       };
 
-      Connect.prototype.isSubscribed = function isSubscribed() {
+      _proto.isSubscribed = function isSubscribed() {
         return Boolean(this.subscription) && this.subscription.isSubscribed();
       };
 
-      Connect.prototype.addExtraProps = function addExtraProps(props) {
-        if (!withRef && !renderCountProp && !(this.propsMode && this.subscription)) return props;
-        // make a shallow copy so that fields added don't leak to the original selector.
+      _proto.addExtraProps = function addExtraProps(props) {
+        if (!withRef && !renderCountProp && !(this.propsMode && this.subscription)) return props; // make a shallow copy so that fields added don't leak to the original selector.
         // this is especially important for 'ref' since that's a reference back to the component
         // instance. a singleton memoized selector would then be holding a reference to the
         // instance, preventing the instance from being garbage collected, and that would be bad
-        var withExtras = _extends({}, props);
+
+        var withExtras = (0, _extends2.default)({}, props);
         if (withRef) withExtras.ref = this.setWrappedInstance;
         if (renderCountProp) withExtras[renderCountProp] = this.renderCount++;
         if (this.propsMode && this.subscription) withExtras[subscriptionKey] = this.subscription;
         return withExtras;
       };
 
-      Connect.prototype.render = function render() {
+      _proto.render = function render() {
         var selector = this.selector;
         selector.shouldComponentUpdate = false;
 
@@ -19394,6 +19906,8 @@ selectorFactory) {
 
       return Connect;
     }(_react.Component);
+    /* eslint-enable react/no-deprecated */
+
 
     Connect.WrappedComponent = WrappedComponent;
     Connect.displayName = displayName;
@@ -19403,58 +19917,64 @@ selectorFactory) {
 
     if (process.env.NODE_ENV !== 'production') {
       Connect.prototype.componentWillUpdate = function componentWillUpdate() {
+        var _this2 = this;
+
         // We are hot reloading!
         if (this.version !== version) {
           this.version = version;
-          this.initSelector();
+          this.initSelector(); // If any connected descendants don't hot reload (and resubscribe in the process), their
+          // listeners will be lost when we unsubscribe. Unfortunately, by copying over all
+          // listeners, this does mean that the old versions of connected descendants will still be
+          // notified of state changes; however, their onStateChange function is a no-op so this
+          // isn't a huge deal.
 
-          if (this.subscription) this.subscription.tryUnsubscribe();
+          var oldListeners = [];
+
+          if (this.subscription) {
+            oldListeners = this.subscription.listeners.get();
+            this.subscription.tryUnsubscribe();
+          }
+
           this.initSubscription();
-          if (shouldHandleStateChanges) this.subscription.trySubscribe();
+
+          if (shouldHandleStateChanges) {
+            this.subscription.trySubscribe();
+            oldListeners.forEach(function (listener) {
+              return _this2.subscription.listeners.subscribe(listener);
+            });
+          }
         }
       };
     }
 
-    return (0, _hoistNonReactStatics2.default)(Connect, WrappedComponent);
+    return (0, _hoistNonReactStatics.default)(Connect, WrappedComponent);
   };
 }
 }).call(this,require('_process'))
-},{"../utils/PropTypes":168,"../utils/Subscription":169,"_process":27,"hoist-non-react-statics":173,"invariant":25,"react":"react"}],161:[function(require,module,exports){
-'use strict';
+},{"../utils/PropTypes":188,"../utils/Subscription":189,"@babel/runtime/helpers/assertThisInitialized":1,"@babel/runtime/helpers/extends":2,"@babel/runtime/helpers/inheritsLoose":3,"@babel/runtime/helpers/interopRequireDefault":4,"@babel/runtime/helpers/objectWithoutPropertiesLoose":6,"_process":44,"hoist-non-react-statics":31,"invariant":32,"react":"react","react-is":178}],181:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 exports.createConnect = createConnect;
+exports.default = void 0;
 
-var _connectAdvanced = require('../components/connectAdvanced');
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
 
-var _connectAdvanced2 = _interopRequireDefault(_connectAdvanced);
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
 
-var _shallowEqual = require('../utils/shallowEqual');
+var _connectAdvanced = _interopRequireDefault(require("../components/connectAdvanced"));
 
-var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
+var _shallowEqual = _interopRequireDefault(require("../utils/shallowEqual"));
 
-var _mapDispatchToProps = require('./mapDispatchToProps');
+var _mapDispatchToProps = _interopRequireDefault(require("./mapDispatchToProps"));
 
-var _mapDispatchToProps2 = _interopRequireDefault(_mapDispatchToProps);
+var _mapStateToProps = _interopRequireDefault(require("./mapStateToProps"));
 
-var _mapStateToProps = require('./mapStateToProps');
+var _mergeProps = _interopRequireDefault(require("./mergeProps"));
 
-var _mapStateToProps2 = _interopRequireDefault(_mapStateToProps);
-
-var _mergeProps = require('./mergeProps');
-
-var _mergeProps2 = _interopRequireDefault(_mergeProps);
-
-var _selectorFactory = require('./selectorFactory');
-
-var _selectorFactory2 = _interopRequireDefault(_selectorFactory);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+var _selectorFactory = _interopRequireDefault(require("./selectorFactory"));
 
 /*
   connect is a facade over connectAdvanced. It turns its args into a compatible
@@ -19472,7 +19992,6 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
   The resulting final props selector is called by the Connect component instance whenever
   it receives new props or store state.
  */
-
 function match(arg, factories, name) {
   for (var i = factories.length - 1; i >= 0; i--) {
     var result = factories[i](arg);
@@ -19480,59 +19999,58 @@ function match(arg, factories, name) {
   }
 
   return function (dispatch, options) {
-    throw new Error('Invalid value of type ' + typeof arg + ' for ' + name + ' argument when connecting component ' + options.wrappedComponentName + '.');
+    throw new Error("Invalid value of type " + typeof arg + " for " + name + " argument when connecting component " + options.wrappedComponentName + ".");
   };
 }
 
 function strictEqual(a, b) {
   return a === b;
-}
-
-// createConnect with default args builds the 'official' connect behavior. Calling it with
+} // createConnect with default args builds the 'official' connect behavior. Calling it with
 // different options opens up some testing and extensibility scenarios
-function createConnect() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+
+
+function createConnect(_temp) {
+  var _ref = _temp === void 0 ? {} : _temp,
       _ref$connectHOC = _ref.connectHOC,
-      connectHOC = _ref$connectHOC === undefined ? _connectAdvanced2.default : _ref$connectHOC,
+      connectHOC = _ref$connectHOC === void 0 ? _connectAdvanced.default : _ref$connectHOC,
       _ref$mapStateToPropsF = _ref.mapStateToPropsFactories,
-      mapStateToPropsFactories = _ref$mapStateToPropsF === undefined ? _mapStateToProps2.default : _ref$mapStateToPropsF,
+      mapStateToPropsFactories = _ref$mapStateToPropsF === void 0 ? _mapStateToProps.default : _ref$mapStateToPropsF,
       _ref$mapDispatchToPro = _ref.mapDispatchToPropsFactories,
-      mapDispatchToPropsFactories = _ref$mapDispatchToPro === undefined ? _mapDispatchToProps2.default : _ref$mapDispatchToPro,
+      mapDispatchToPropsFactories = _ref$mapDispatchToPro === void 0 ? _mapDispatchToProps.default : _ref$mapDispatchToPro,
       _ref$mergePropsFactor = _ref.mergePropsFactories,
-      mergePropsFactories = _ref$mergePropsFactor === undefined ? _mergeProps2.default : _ref$mergePropsFactor,
+      mergePropsFactories = _ref$mergePropsFactor === void 0 ? _mergeProps.default : _ref$mergePropsFactor,
       _ref$selectorFactory = _ref.selectorFactory,
-      selectorFactory = _ref$selectorFactory === undefined ? _selectorFactory2.default : _ref$selectorFactory;
+      selectorFactory = _ref$selectorFactory === void 0 ? _selectorFactory.default : _ref$selectorFactory;
 
-  return function connect(mapStateToProps, mapDispatchToProps, mergeProps) {
-    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-        _ref2$pure = _ref2.pure,
-        pure = _ref2$pure === undefined ? true : _ref2$pure,
-        _ref2$areStatesEqual = _ref2.areStatesEqual,
-        areStatesEqual = _ref2$areStatesEqual === undefined ? strictEqual : _ref2$areStatesEqual,
-        _ref2$areOwnPropsEqua = _ref2.areOwnPropsEqual,
-        areOwnPropsEqual = _ref2$areOwnPropsEqua === undefined ? _shallowEqual2.default : _ref2$areOwnPropsEqua,
-        _ref2$areStatePropsEq = _ref2.areStatePropsEqual,
-        areStatePropsEqual = _ref2$areStatePropsEq === undefined ? _shallowEqual2.default : _ref2$areStatePropsEq,
-        _ref2$areMergedPropsE = _ref2.areMergedPropsEqual,
-        areMergedPropsEqual = _ref2$areMergedPropsE === undefined ? _shallowEqual2.default : _ref2$areMergedPropsE,
-        extraOptions = _objectWithoutProperties(_ref2, ['pure', 'areStatesEqual', 'areOwnPropsEqual', 'areStatePropsEqual', 'areMergedPropsEqual']);
+  return function connect(mapStateToProps, mapDispatchToProps, mergeProps, _ref2) {
+    if (_ref2 === void 0) {
+      _ref2 = {};
+    }
 
+    var _ref3 = _ref2,
+        _ref3$pure = _ref3.pure,
+        pure = _ref3$pure === void 0 ? true : _ref3$pure,
+        _ref3$areStatesEqual = _ref3.areStatesEqual,
+        areStatesEqual = _ref3$areStatesEqual === void 0 ? strictEqual : _ref3$areStatesEqual,
+        _ref3$areOwnPropsEqua = _ref3.areOwnPropsEqual,
+        areOwnPropsEqual = _ref3$areOwnPropsEqua === void 0 ? _shallowEqual.default : _ref3$areOwnPropsEqua,
+        _ref3$areStatePropsEq = _ref3.areStatePropsEqual,
+        areStatePropsEqual = _ref3$areStatePropsEq === void 0 ? _shallowEqual.default : _ref3$areStatePropsEq,
+        _ref3$areMergedPropsE = _ref3.areMergedPropsEqual,
+        areMergedPropsEqual = _ref3$areMergedPropsE === void 0 ? _shallowEqual.default : _ref3$areMergedPropsE,
+        extraOptions = (0, _objectWithoutPropertiesLoose2.default)(_ref3, ["pure", "areStatesEqual", "areOwnPropsEqual", "areStatePropsEqual", "areMergedPropsEqual"]);
     var initMapStateToProps = match(mapStateToProps, mapStateToPropsFactories, 'mapStateToProps');
     var initMapDispatchToProps = match(mapDispatchToProps, mapDispatchToPropsFactories, 'mapDispatchToProps');
     var initMergeProps = match(mergeProps, mergePropsFactories, 'mergeProps');
-
-    return connectHOC(selectorFactory, _extends({
+    return connectHOC(selectorFactory, (0, _extends2.default)({
       // used in error messages
       methodName: 'connect',
-
       // used to compute Connect's displayName from the wrapped component's displayName.
       getDisplayName: function getDisplayName(name) {
-        return 'Connect(' + name + ')';
+        return "Connect(" + name + ")";
       },
-
       // if mapStateToProps is falsy, the Connect component doesn't subscribe to store state changes
       shouldHandleStateChanges: Boolean(mapStateToProps),
-
       // passed through to selectorFactory
       initMapStateToProps: initMapStateToProps,
       initMapDispatchToProps: initMapDispatchToProps,
@@ -19542,23 +20060,25 @@ function createConnect() {
       areOwnPropsEqual: areOwnPropsEqual,
       areStatePropsEqual: areStatePropsEqual,
       areMergedPropsEqual: areMergedPropsEqual
-
     }, extraOptions));
   };
 }
 
-exports.default = createConnect();
-},{"../components/connectAdvanced":160,"../utils/shallowEqual":170,"./mapDispatchToProps":162,"./mapStateToProps":163,"./mergeProps":164,"./selectorFactory":165}],162:[function(require,module,exports){
-'use strict';
+var _default = createConnect();
+
+exports.default = _default;
+},{"../components/connectAdvanced":180,"../utils/shallowEqual":191,"./mapDispatchToProps":182,"./mapStateToProps":183,"./mergeProps":184,"./selectorFactory":185,"@babel/runtime/helpers/extends":2,"@babel/runtime/helpers/interopRequireDefault":4,"@babel/runtime/helpers/objectWithoutPropertiesLoose":6}],182:[function(require,module,exports){
+"use strict";
 
 exports.__esModule = true;
 exports.whenMapDispatchToPropsIsFunction = whenMapDispatchToPropsIsFunction;
 exports.whenMapDispatchToPropsIsMissing = whenMapDispatchToPropsIsMissing;
 exports.whenMapDispatchToPropsIsObject = whenMapDispatchToPropsIsObject;
+exports.default = void 0;
 
-var _redux = require('redux');
+var _redux = require("redux");
 
-var _wrapMapToProps = require('./wrapMapToProps');
+var _wrapMapToProps = require("./wrapMapToProps");
 
 function whenMapDispatchToPropsIsFunction(mapDispatchToProps) {
   return typeof mapDispatchToProps === 'function' ? (0, _wrapMapToProps.wrapMapToPropsFunc)(mapDispatchToProps, 'mapDispatchToProps') : undefined;
@@ -19566,7 +20086,9 @@ function whenMapDispatchToPropsIsFunction(mapDispatchToProps) {
 
 function whenMapDispatchToPropsIsMissing(mapDispatchToProps) {
   return !mapDispatchToProps ? (0, _wrapMapToProps.wrapMapToPropsConstant)(function (dispatch) {
-    return { dispatch: dispatch };
+    return {
+      dispatch: dispatch
+    };
   }) : undefined;
 }
 
@@ -19576,15 +20098,17 @@ function whenMapDispatchToPropsIsObject(mapDispatchToProps) {
   }) : undefined;
 }
 
-exports.default = [whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject];
-},{"./wrapMapToProps":167,"redux":"redux"}],163:[function(require,module,exports){
-'use strict';
+var _default = [whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject];
+exports.default = _default;
+},{"./wrapMapToProps":187,"redux":"redux"}],183:[function(require,module,exports){
+"use strict";
 
 exports.__esModule = true;
 exports.whenMapStateToPropsIsFunction = whenMapStateToPropsIsFunction;
 exports.whenMapStateToPropsIsMissing = whenMapStateToPropsIsMissing;
+exports.default = void 0;
 
-var _wrapMapToProps = require('./wrapMapToProps');
+var _wrapMapToProps = require("./wrapMapToProps");
 
 function whenMapStateToPropsIsFunction(mapStateToProps) {
   return typeof mapStateToProps === 'function' ? (0, _wrapMapToProps.wrapMapToPropsFunc)(mapStateToProps, 'mapStateToProps') : undefined;
@@ -19596,28 +20120,27 @@ function whenMapStateToPropsIsMissing(mapStateToProps) {
   }) : undefined;
 }
 
-exports.default = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
-},{"./wrapMapToProps":167}],164:[function(require,module,exports){
+var _default = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
+exports.default = _default;
+},{"./wrapMapToProps":187}],184:[function(require,module,exports){
 (function (process){
-'use strict';
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 exports.defaultMergeProps = defaultMergeProps;
 exports.wrapMergePropsFunc = wrapMergePropsFunc;
 exports.whenMergePropsIsFunction = whenMergePropsIsFunction;
 exports.whenMergePropsIsOmitted = whenMergePropsIsOmitted;
+exports.default = void 0;
 
-var _verifyPlainObject = require('../utils/verifyPlainObject');
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
 
-var _verifyPlainObject2 = _interopRequireDefault(_verifyPlainObject);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _verifyPlainObject = _interopRequireDefault(require("../utils/verifyPlainObject"));
 
 function defaultMergeProps(stateProps, dispatchProps, ownProps) {
-  return _extends({}, ownProps, stateProps, dispatchProps);
+  return (0, _extends2.default)({}, ownProps, stateProps, dispatchProps);
 }
 
 function wrapMergePropsFunc(mergeProps) {
@@ -19625,10 +20148,8 @@ function wrapMergePropsFunc(mergeProps) {
     var displayName = _ref.displayName,
         pure = _ref.pure,
         areMergedPropsEqual = _ref.areMergedPropsEqual;
-
     var hasRunOnce = false;
-    var mergedProps = void 0;
-
+    var mergedProps;
     return function mergePropsProxy(stateProps, dispatchProps, ownProps) {
       var nextMergedProps = mergeProps(stateProps, dispatchProps, ownProps);
 
@@ -19637,8 +20158,7 @@ function wrapMergePropsFunc(mergeProps) {
       } else {
         hasRunOnce = true;
         mergedProps = nextMergedProps;
-
-        if (process.env.NODE_ENV !== 'production') (0, _verifyPlainObject2.default)(mergedProps, displayName, 'mergeProps');
+        if (process.env.NODE_ENV !== 'production') (0, _verifyPlainObject.default)(mergedProps, displayName, 'mergeProps');
       }
 
       return mergedProps;
@@ -19656,24 +20176,23 @@ function whenMergePropsIsOmitted(mergeProps) {
   } : undefined;
 }
 
-exports.default = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
+var _default = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
+exports.default = _default;
 }).call(this,require('_process'))
-},{"../utils/verifyPlainObject":171,"_process":27}],165:[function(require,module,exports){
+},{"../utils/verifyPlainObject":192,"@babel/runtime/helpers/extends":2,"@babel/runtime/helpers/interopRequireDefault":4,"_process":44}],185:[function(require,module,exports){
 (function (process){
-'use strict';
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 exports.__esModule = true;
 exports.impureFinalPropsSelectorFactory = impureFinalPropsSelectorFactory;
 exports.pureFinalPropsSelectorFactory = pureFinalPropsSelectorFactory;
 exports.default = finalPropsSelectorFactory;
 
-var _verifySubselectors = require('./verifySubselectors');
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
 
-var _verifySubselectors2 = _interopRequireDefault(_verifySubselectors);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+var _verifySubselectors = _interopRequireDefault(require("./verifySubselectors"));
 
 function impureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch) {
   return function impureFinalPropsSelector(state, ownProps) {
@@ -19685,13 +20204,12 @@ function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, merg
   var areStatesEqual = _ref.areStatesEqual,
       areOwnPropsEqual = _ref.areOwnPropsEqual,
       areStatePropsEqual = _ref.areStatePropsEqual;
-
   var hasRunAtLeastOnce = false;
-  var state = void 0;
-  var ownProps = void 0;
-  var stateProps = void 0;
-  var dispatchProps = void 0;
-  var mergedProps = void 0;
+  var state;
+  var ownProps;
+  var stateProps;
+  var dispatchProps;
+  var mergedProps;
 
   function handleFirstCall(firstState, firstOwnProps) {
     state = firstState;
@@ -19705,18 +20223,14 @@ function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, merg
 
   function handleNewPropsAndNewState() {
     stateProps = mapStateToProps(state, ownProps);
-
     if (mapDispatchToProps.dependsOnOwnProps) dispatchProps = mapDispatchToProps(dispatch, ownProps);
-
     mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
     return mergedProps;
   }
 
   function handleNewProps() {
     if (mapStateToProps.dependsOnOwnProps) stateProps = mapStateToProps(state, ownProps);
-
     if (mapDispatchToProps.dependsOnOwnProps) dispatchProps = mapDispatchToProps(dispatch, ownProps);
-
     mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
     return mergedProps;
   }
@@ -19725,9 +20239,7 @@ function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, merg
     var nextStateProps = mapStateToProps(state, ownProps);
     var statePropsChanged = !areStatePropsEqual(nextStateProps, stateProps);
     stateProps = nextStateProps;
-
     if (statePropsChanged) mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
-
     return mergedProps;
   }
 
@@ -19736,7 +20248,6 @@ function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, merg
     var stateChanged = !areStatesEqual(nextState, state);
     state = nextState;
     ownProps = nextOwnProps;
-
     if (propsChanged && stateChanged) return handleNewPropsAndNewState();
     if (propsChanged) return handleNewProps();
     if (stateChanged) return handleNewState();
@@ -19746,52 +20257,46 @@ function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, merg
   return function pureFinalPropsSelector(nextState, nextOwnProps) {
     return hasRunAtLeastOnce ? handleSubsequentCalls(nextState, nextOwnProps) : handleFirstCall(nextState, nextOwnProps);
   };
-}
-
-// TODO: Add more comments
-
+} // TODO: Add more comments
 // If pure is true, the selector returned by selectorFactory will memoize its results,
 // allowing connectAdvanced's shouldComponentUpdate to return false if final
 // props have not changed. If false, the selector will always return a new
 // object and shouldComponentUpdate will always return true.
 
+
 function finalPropsSelectorFactory(dispatch, _ref2) {
   var initMapStateToProps = _ref2.initMapStateToProps,
       initMapDispatchToProps = _ref2.initMapDispatchToProps,
       initMergeProps = _ref2.initMergeProps,
-      options = _objectWithoutProperties(_ref2, ['initMapStateToProps', 'initMapDispatchToProps', 'initMergeProps']);
-
+      options = (0, _objectWithoutPropertiesLoose2.default)(_ref2, ["initMapStateToProps", "initMapDispatchToProps", "initMergeProps"]);
   var mapStateToProps = initMapStateToProps(dispatch, options);
   var mapDispatchToProps = initMapDispatchToProps(dispatch, options);
   var mergeProps = initMergeProps(dispatch, options);
 
   if (process.env.NODE_ENV !== 'production') {
-    (0, _verifySubselectors2.default)(mapStateToProps, mapDispatchToProps, mergeProps, options.displayName);
+    (0, _verifySubselectors.default)(mapStateToProps, mapDispatchToProps, mergeProps, options.displayName);
   }
 
   var selectorFactory = options.pure ? pureFinalPropsSelectorFactory : impureFinalPropsSelectorFactory;
-
   return selectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, options);
 }
 }).call(this,require('_process'))
-},{"./verifySubselectors":166,"_process":27}],166:[function(require,module,exports){
-'use strict';
+},{"./verifySubselectors":186,"@babel/runtime/helpers/interopRequireDefault":4,"@babel/runtime/helpers/objectWithoutPropertiesLoose":6,"_process":44}],186:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 exports.__esModule = true;
 exports.default = verifySubselectors;
 
-var _warning = require('../utils/warning');
-
-var _warning2 = _interopRequireDefault(_warning);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _warning = _interopRequireDefault(require("../utils/warning"));
 
 function verify(selector, methodName, displayName) {
   if (!selector) {
-    throw new Error('Unexpected value for ' + methodName + ' in ' + displayName + '.');
+    throw new Error("Unexpected value for " + methodName + " in " + displayName + ".");
   } else if (methodName === 'mapStateToProps' || methodName === 'mapDispatchToProps') {
     if (!selector.hasOwnProperty('dependsOnOwnProps')) {
-      (0, _warning2.default)('The selector for ' + methodName + ' of ' + displayName + ' did not specify a value for dependsOnOwnProps.');
+      (0, _warning.default)("The selector for " + methodName + " of " + displayName + " did not specify a value for dependsOnOwnProps.");
     }
   }
 }
@@ -19801,20 +20306,18 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
   verify(mapDispatchToProps, 'mapDispatchToProps', displayName);
   verify(mergeProps, 'mergeProps', displayName);
 }
-},{"../utils/warning":172}],167:[function(require,module,exports){
+},{"../utils/warning":193,"@babel/runtime/helpers/interopRequireDefault":4}],187:[function(require,module,exports){
 (function (process){
-'use strict';
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 exports.__esModule = true;
 exports.wrapMapToPropsConstant = wrapMapToPropsConstant;
 exports.getDependsOnOwnProps = getDependsOnOwnProps;
 exports.wrapMapToPropsFunc = wrapMapToPropsFunc;
 
-var _verifyPlainObject = require('../utils/verifyPlainObject');
-
-var _verifyPlainObject2 = _interopRequireDefault(_verifyPlainObject);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _verifyPlainObject = _interopRequireDefault(require("../utils/verifyPlainObject"));
 
 function wrapMapToPropsConstant(getConstant) {
   return function initConstantSelector(dispatch, options) {
@@ -19823,23 +20326,22 @@ function wrapMapToPropsConstant(getConstant) {
     function constantSelector() {
       return constant;
     }
+
     constantSelector.dependsOnOwnProps = false;
     return constantSelector;
   };
-}
-
-// dependsOnOwnProps is used by createMapToPropsProxy to determine whether to pass props as args
+} // dependsOnOwnProps is used by createMapToPropsProxy to determine whether to pass props as args
 // to the mapToProps function being wrapped. It is also used by makePurePropsSelector to determine
 // whether mapToProps needs to be invoked when props have changed.
 // 
 // A length of one signals that mapToProps does not depend on props from the parent component.
 // A length of zero is assumed to mean mapToProps is getting args via arguments or ...args and
 // therefore not reporting its length accurately..
+
+
 function getDependsOnOwnProps(mapToProps) {
   return mapToProps.dependsOnOwnProps !== null && mapToProps.dependsOnOwnProps !== undefined ? Boolean(mapToProps.dependsOnOwnProps) : mapToProps.length !== 1;
-}
-
-// Used by whenMapStateToPropsIsFunction and whenMapDispatchToPropsIsFunction,
+} // Used by whenMapStateToPropsIsFunction and whenMapDispatchToPropsIsFunction,
 // this function wraps mapToProps in a proxy function which does several things:
 // 
 //  * Detects whether the mapToProps function being called depends on props, which
@@ -19851,15 +20353,17 @@ function getDependsOnOwnProps(mapToProps) {
 //  * On first call, verifies the first result is a plain object, in order to warn
 //    the developer that their mapToProps function is not returning a valid result.
 //    
+
+
 function wrapMapToPropsFunc(mapToProps, methodName) {
   return function initProxySelector(dispatch, _ref) {
     var displayName = _ref.displayName;
 
     var proxy = function mapToPropsProxy(stateOrDispatch, ownProps) {
       return proxy.dependsOnOwnProps ? proxy.mapToProps(stateOrDispatch, ownProps) : proxy.mapToProps(stateOrDispatch);
-    };
+    }; // allow detectFactoryAndVerify to get ownProps
 
-    // allow detectFactoryAndVerify to get ownProps
+
     proxy.dependsOnOwnProps = true;
 
     proxy.mapToProps = function detectFactoryAndVerify(stateOrDispatch, ownProps) {
@@ -19873,8 +20377,7 @@ function wrapMapToPropsFunc(mapToProps, methodName) {
         props = proxy(stateOrDispatch, ownProps);
       }
 
-      if (process.env.NODE_ENV !== 'production') (0, _verifyPlainObject2.default)(props, displayName, methodName);
-
+      if (process.env.NODE_ENV !== 'production') (0, _verifyPlainObject.default)(props, displayName, methodName);
       return props;
     };
 
@@ -19882,41 +20385,40 @@ function wrapMapToPropsFunc(mapToProps, methodName) {
   };
 }
 }).call(this,require('_process'))
-},{"../utils/verifyPlainObject":171,"_process":27}],168:[function(require,module,exports){
-'use strict';
+},{"../utils/verifyPlainObject":192,"@babel/runtime/helpers/interopRequireDefault":4,"_process":44}],188:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 exports.__esModule = true;
-exports.storeShape = exports.subscriptionShape = undefined;
+exports.storeShape = exports.subscriptionShape = void 0;
 
-var _propTypes = require('prop-types');
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var subscriptionShape = exports.subscriptionShape = _propTypes2.default.shape({
-  trySubscribe: _propTypes2.default.func.isRequired,
-  tryUnsubscribe: _propTypes2.default.func.isRequired,
-  notifyNestedSubs: _propTypes2.default.func.isRequired,
-  isSubscribed: _propTypes2.default.func.isRequired
+var subscriptionShape = _propTypes.default.shape({
+  trySubscribe: _propTypes.default.func.isRequired,
+  tryUnsubscribe: _propTypes.default.func.isRequired,
+  notifyNestedSubs: _propTypes.default.func.isRequired,
+  isSubscribed: _propTypes.default.func.isRequired
 });
 
-var storeShape = exports.storeShape = _propTypes2.default.shape({
-  subscribe: _propTypes2.default.func.isRequired,
-  dispatch: _propTypes2.default.func.isRequired,
-  getState: _propTypes2.default.func.isRequired
+exports.subscriptionShape = subscriptionShape;
+
+var storeShape = _propTypes.default.shape({
+  subscribe: _propTypes.default.func.isRequired,
+  dispatch: _propTypes.default.func.isRequired,
+  getState: _propTypes.default.func.isRequired
 });
-},{"prop-types":"prop-types"}],169:[function(require,module,exports){
+
+exports.storeShape = storeShape;
+},{"@babel/runtime/helpers/interopRequireDefault":4,"prop-types":"prop-types"}],189:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
+exports.default = void 0;
 // encapsulates the subscription logic for connecting a component to the redux store, as
 // well as nesting subscriptions of descendant components, so that we can ensure the
 // ancestor components re-render before descendants
-
 var CLEARED = null;
 var nullListeners = {
   notify: function notify() {}
@@ -19927,7 +20429,6 @@ function createListenerCollection() {
   // TODO: refactor+expose that code to be reusable here?
   var current = [];
   var next = [];
-
   return {
     clear: function clear() {
       next = CLEARED;
@@ -19935,19 +20436,21 @@ function createListenerCollection() {
     },
     notify: function notify() {
       var listeners = current = next;
+
       for (var i = 0; i < listeners.length; i++) {
         listeners[i]();
       }
+    },
+    get: function get() {
+      return next;
     },
     subscribe: function subscribe(listener) {
       var isSubscribed = true;
       if (next === current) next = current.slice();
       next.push(listener);
-
       return function unsubscribe() {
         if (!isSubscribed || current === CLEARED) return;
         isSubscribed = false;
-
         if (next === current) next = current.slice();
         next.splice(next.indexOf(listener), 1);
       };
@@ -19955,10 +20458,10 @@ function createListenerCollection() {
   };
 }
 
-var Subscription = function () {
+var Subscription =
+/*#__PURE__*/
+function () {
   function Subscription(store, parentSub, onStateChange) {
-    _classCallCheck(this, Subscription);
-
     this.store = store;
     this.parentSub = parentSub;
     this.onStateChange = onStateChange;
@@ -19966,28 +20469,29 @@ var Subscription = function () {
     this.listeners = nullListeners;
   }
 
-  Subscription.prototype.addNestedSub = function addNestedSub(listener) {
+  var _proto = Subscription.prototype;
+
+  _proto.addNestedSub = function addNestedSub(listener) {
     this.trySubscribe();
     return this.listeners.subscribe(listener);
   };
 
-  Subscription.prototype.notifyNestedSubs = function notifyNestedSubs() {
+  _proto.notifyNestedSubs = function notifyNestedSubs() {
     this.listeners.notify();
   };
 
-  Subscription.prototype.isSubscribed = function isSubscribed() {
+  _proto.isSubscribed = function isSubscribed() {
     return Boolean(this.unsubscribe);
   };
 
-  Subscription.prototype.trySubscribe = function trySubscribe() {
+  _proto.trySubscribe = function trySubscribe() {
     if (!this.unsubscribe) {
       this.unsubscribe = this.parentSub ? this.parentSub.addNestedSub(this.onStateChange) : this.store.subscribe(this.onStateChange);
-
       this.listeners = createListenerCollection();
     }
   };
 
-  Subscription.prototype.tryUnsubscribe = function tryUnsubscribe() {
+  _proto.tryUnsubscribe = function tryUnsubscribe() {
     if (this.unsubscribe) {
       this.unsubscribe();
       this.unsubscribe = null;
@@ -20000,8 +20504,30 @@ var Subscription = function () {
 }();
 
 exports.default = Subscription;
-},{}],170:[function(require,module,exports){
-'use strict';
+},{}],190:[function(require,module,exports){
+"use strict";
+
+exports.__esModule = true;
+exports.default = isPlainObject;
+
+/**
+ * @param {any} obj The object to inspect.
+ * @returns {boolean} True if the argument appears to be a plain object.
+ */
+function isPlainObject(obj) {
+  if (typeof obj !== 'object' || obj === null) return false;
+  var proto = Object.getPrototypeOf(obj);
+  if (proto === null) return true;
+  var baseProto = proto;
+
+  while (Object.getPrototypeOf(baseProto) !== null) {
+    baseProto = Object.getPrototypeOf(baseProto);
+  }
+
+  return proto === baseProto;
+}
+},{}],191:[function(require,module,exports){
+"use strict";
 
 exports.__esModule = true;
 exports.default = shallowEqual;
@@ -20024,7 +20550,6 @@ function shallowEqual(objA, objB) {
 
   var keysA = Object.keys(objA);
   var keysB = Object.keys(objB);
-
   if (keysA.length !== keysB.length) return false;
 
   for (var i = 0; i < keysA.length; i++) {
@@ -20035,32 +20560,29 @@ function shallowEqual(objA, objB) {
 
   return true;
 }
-},{}],171:[function(require,module,exports){
-'use strict';
+},{}],192:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 exports.__esModule = true;
 exports.default = verifyPlainObject;
 
-var _isPlainObject = require('lodash/isPlainObject');
+var _isPlainObject = _interopRequireDefault(require("./isPlainObject"));
 
-var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
-
-var _warning = require('./warning');
-
-var _warning2 = _interopRequireDefault(_warning);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _warning = _interopRequireDefault(require("./warning"));
 
 function verifyPlainObject(value, displayName, methodName) {
-  if (!(0, _isPlainObject2.default)(value)) {
-    (0, _warning2.default)(methodName + '() in ' + displayName + ' must return a plain object. Instead received ' + value + '.');
+  if (!(0, _isPlainObject.default)(value)) {
+    (0, _warning.default)(methodName + "() in " + displayName + " must return a plain object. Instead received " + value + ".");
   }
 }
-},{"./warning":172,"lodash/isPlainObject":183}],172:[function(require,module,exports){
-'use strict';
+},{"./isPlainObject":190,"./warning":193,"@babel/runtime/helpers/interopRequireDefault":4}],193:[function(require,module,exports){
+"use strict";
 
 exports.__esModule = true;
 exports.default = warning;
+
 /**
  * Prints a warning in the console if it exists.
  *
@@ -20073,6 +20595,8 @@ function warning(message) {
     console.error(message);
   }
   /* eslint-enable no-console */
+
+
   try {
     // This error was thrown as a convenience so that if you enable
     // "break on all exceptions" in your console,
@@ -20081,321 +20605,19 @@ function warning(message) {
     /* eslint-disable no-empty */
   } catch (e) {}
   /* eslint-enable no-empty */
+
 }
-},{}],173:[function(require,module,exports){
-/**
- * Copyright 2015, Yahoo! Inc.
- * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
-'use strict';
-
-var REACT_STATICS = {
-    childContextTypes: true,
-    contextTypes: true,
-    defaultProps: true,
-    displayName: true,
-    getDefaultProps: true,
-    mixins: true,
-    propTypes: true,
-    type: true
-};
-
-var KNOWN_STATICS = {
-    name: true,
-    length: true,
-    prototype: true,
-    caller: true,
-    arguments: true,
-    arity: true
-};
-
-var isGetOwnPropertySymbolsAvailable = typeof Object.getOwnPropertySymbols === 'function';
-
-module.exports = function hoistNonReactStatics(targetComponent, sourceComponent, customStatics) {
-    if (typeof sourceComponent !== 'string') { // don't hoist over string (html) components
-        var keys = Object.getOwnPropertyNames(sourceComponent);
-
-        /* istanbul ignore else */
-        if (isGetOwnPropertySymbolsAvailable) {
-            keys = keys.concat(Object.getOwnPropertySymbols(sourceComponent));
-        }
-
-        for (var i = 0; i < keys.length; ++i) {
-            if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]] && (!customStatics || !customStatics[keys[i]])) {
-                try {
-                    targetComponent[keys[i]] = sourceComponent[keys[i]];
-                } catch (error) {
-
-                }
-            }
-        }
-    }
-
-    return targetComponent;
-};
-
-},{}],174:[function(require,module,exports){
-var root = require('./_root');
-
-/** Built-in value references. */
-var Symbol = root.Symbol;
-
-module.exports = Symbol;
-
-},{"./_root":181}],175:[function(require,module,exports){
-var Symbol = require('./_Symbol'),
-    getRawTag = require('./_getRawTag'),
-    objectToString = require('./_objectToString');
-
-/** `Object#toString` result references. */
-var nullTag = '[object Null]',
-    undefinedTag = '[object Undefined]';
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * The base implementation of `getTag` without fallbacks for buggy environments.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the `toStringTag`.
- */
-function baseGetTag(value) {
-  if (value == null) {
-    return value === undefined ? undefinedTag : nullTag;
-  }
-  return (symToStringTag && symToStringTag in Object(value))
-    ? getRawTag(value)
-    : objectToString(value);
-}
-
-module.exports = baseGetTag;
-
-},{"./_Symbol":174,"./_getRawTag":178,"./_objectToString":179}],176:[function(require,module,exports){
-(function (global){
-/** Detect free variable `global` from Node.js. */
-var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
-
-module.exports = freeGlobal;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],177:[function(require,module,exports){
-var overArg = require('./_overArg');
-
-/** Built-in value references. */
-var getPrototype = overArg(Object.getPrototypeOf, Object);
-
-module.exports = getPrototype;
-
-},{"./_overArg":180}],178:[function(require,module,exports){
-var Symbol = require('./_Symbol');
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var nativeObjectToString = objectProto.toString;
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the raw `toStringTag`.
- */
-function getRawTag(value) {
-  var isOwn = hasOwnProperty.call(value, symToStringTag),
-      tag = value[symToStringTag];
-
-  try {
-    value[symToStringTag] = undefined;
-    var unmasked = true;
-  } catch (e) {}
-
-  var result = nativeObjectToString.call(value);
-  if (unmasked) {
-    if (isOwn) {
-      value[symToStringTag] = tag;
-    } else {
-      delete value[symToStringTag];
-    }
-  }
-  return result;
-}
-
-module.exports = getRawTag;
-
-},{"./_Symbol":174}],179:[function(require,module,exports){
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var nativeObjectToString = objectProto.toString;
-
-/**
- * Converts `value` to a string using `Object.prototype.toString`.
- *
- * @private
- * @param {*} value The value to convert.
- * @returns {string} Returns the converted string.
- */
-function objectToString(value) {
-  return nativeObjectToString.call(value);
-}
-
-module.exports = objectToString;
-
-},{}],180:[function(require,module,exports){
-/**
- * Creates a unary function that invokes `func` with its argument transformed.
- *
- * @private
- * @param {Function} func The function to wrap.
- * @param {Function} transform The argument transform.
- * @returns {Function} Returns the new function.
- */
-function overArg(func, transform) {
-  return function(arg) {
-    return func(transform(arg));
-  };
-}
-
-module.exports = overArg;
-
-},{}],181:[function(require,module,exports){
-var freeGlobal = require('./_freeGlobal');
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
-
-module.exports = root;
-
-},{"./_freeGlobal":176}],182:[function(require,module,exports){
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return value != null && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-},{}],183:[function(require,module,exports){
-var baseGetTag = require('./_baseGetTag'),
-    getPrototype = require('./_getPrototype'),
-    isObjectLike = require('./isObjectLike');
-
-/** `Object#toString` result references. */
-var objectTag = '[object Object]';
-
-/** Used for built-in method references. */
-var funcProto = Function.prototype,
-    objectProto = Object.prototype;
-
-/** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/** Used to infer the `Object` constructor. */
-var objectCtorString = funcToString.call(Object);
-
-/**
- * Checks if `value` is a plain object, that is, an object created by the
- * `Object` constructor or one with a `[[Prototype]]` of `null`.
- *
- * @static
- * @memberOf _
- * @since 0.8.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
- * @example
- *
- * function Foo() {
- *   this.a = 1;
- * }
- *
- * _.isPlainObject(new Foo);
- * // => false
- *
- * _.isPlainObject([1, 2, 3]);
- * // => false
- *
- * _.isPlainObject({ 'x': 0, 'y': 0 });
- * // => true
- *
- * _.isPlainObject(Object.create(null));
- * // => true
- */
-function isPlainObject(value) {
-  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
-    return false;
-  }
-  var proto = getPrototype(value);
-  if (proto === null) {
-    return true;
-  }
-  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
-    funcToString.call(Ctor) == objectCtorString;
-}
-
-module.exports = isPlainObject;
-
-},{"./_baseGetTag":175,"./_getPrototype":177,"./isObjectLike":182}],184:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],185:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"./reactProdInvariant":207,"_process":27,"dup":56,"fbjs/lib/invariant":17}],186:[function(require,module,exports){
+},{}],194:[function(require,module,exports){
+arguments[4][71][0].apply(exports,arguments)
+},{"dup":71}],195:[function(require,module,exports){
+arguments[4][73][0].apply(exports,arguments)
+},{"./reactProdInvariant":217,"_process":44,"dup":73,"fbjs/lib/invariant":23}],196:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -20521,15 +20743,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = React;
 }).call(this,require('_process'))
-},{"./ReactBaseClasses":187,"./ReactChildren":188,"./ReactDOMFactories":191,"./ReactElement":192,"./ReactElementValidator":194,"./ReactPropTypes":197,"./ReactVersion":199,"./canDefineProperty":200,"./createClass":202,"./lowPriorityWarning":205,"./onlyChild":206,"_process":27,"object-assign":26}],187:[function(require,module,exports){
+},{"./ReactBaseClasses":197,"./ReactChildren":198,"./ReactDOMFactories":201,"./ReactElement":202,"./ReactElementValidator":204,"./ReactPropTypes":207,"./ReactVersion":209,"./canDefineProperty":210,"./createClass":212,"./lowPriorityWarning":215,"./onlyChild":216,"_process":44,"object-assign":43}],197:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -20666,14 +20886,12 @@ module.exports = {
   PureComponent: ReactPureComponent
 };
 }).call(this,require('_process'))
-},{"./ReactNoopUpdateQueue":195,"./canDefineProperty":200,"./lowPriorityWarning":205,"./reactProdInvariant":207,"_process":27,"fbjs/lib/emptyObject":10,"fbjs/lib/invariant":17,"object-assign":26}],188:[function(require,module,exports){
+},{"./ReactNoopUpdateQueue":205,"./canDefineProperty":210,"./lowPriorityWarning":215,"./reactProdInvariant":217,"_process":44,"fbjs/lib/emptyObject":16,"fbjs/lib/invariant":23,"object-assign":43}],198:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -20857,15 +21075,13 @@ var ReactChildren = {
 };
 
 module.exports = ReactChildren;
-},{"./PooledClass":185,"./ReactElement":192,"./traverseAllChildren":208,"fbjs/lib/emptyFunction":9}],189:[function(require,module,exports){
+},{"./PooledClass":195,"./ReactElement":202,"./traverseAllChildren":218,"fbjs/lib/emptyFunction":15}],199:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2016-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2016-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -21238,14 +21454,12 @@ var ReactComponentTreeHook = {
 
 module.exports = ReactComponentTreeHook;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":190,"./reactProdInvariant":207,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24}],190:[function(require,module,exports){
+},{"./ReactCurrentOwner":200,"./reactProdInvariant":217,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30}],200:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -21267,15 +21481,13 @@ var ReactCurrentOwner = {
 };
 
 module.exports = ReactCurrentOwner;
-},{}],191:[function(require,module,exports){
+},{}],201:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -21438,15 +21650,13 @@ var ReactDOMFactories = {
 
 module.exports = ReactDOMFactories;
 }).call(this,require('_process'))
-},{"./ReactElement":192,"./ReactElementValidator":194,"_process":27}],192:[function(require,module,exports){
+},{"./ReactElement":202,"./ReactElementValidator":204,"_process":44}],202:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -21781,17 +21991,15 @@ ReactElement.isValidElement = function (object) {
 
 module.exports = ReactElement;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":190,"./ReactElementSymbol":193,"./canDefineProperty":200,"_process":27,"fbjs/lib/warning":24,"object-assign":26}],193:[function(require,module,exports){
-arguments[4][83][0].apply(exports,arguments)
-},{"dup":83}],194:[function(require,module,exports){
+},{"./ReactCurrentOwner":200,"./ReactElementSymbol":203,"./canDefineProperty":210,"_process":44,"fbjs/lib/warning":30,"object-assign":43}],203:[function(require,module,exports){
+arguments[4][100][0].apply(exports,arguments)
+},{"dup":100}],204:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -22040,15 +22248,13 @@ var ReactElementValidator = {
 
 module.exports = ReactElementValidator;
 }).call(this,require('_process'))
-},{"./ReactComponentTreeHook":189,"./ReactCurrentOwner":190,"./ReactElement":192,"./canDefineProperty":200,"./checkReactTypeSpec":201,"./getIteratorFn":203,"./lowPriorityWarning":205,"_process":27,"fbjs/lib/warning":24}],195:[function(require,module,exports){
+},{"./ReactComponentTreeHook":199,"./ReactCurrentOwner":200,"./ReactElement":202,"./canDefineProperty":210,"./checkReactTypeSpec":211,"./getIteratorFn":213,"./lowPriorityWarning":215,"_process":44,"fbjs/lib/warning":30}],205:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -22137,16 +22343,14 @@ var ReactNoopUpdateQueue = {
 
 module.exports = ReactNoopUpdateQueue;
 }).call(this,require('_process'))
-},{"_process":27,"fbjs/lib/warning":24}],196:[function(require,module,exports){
-arguments[4][101][0].apply(exports,arguments)
-},{"_process":27,"dup":101}],197:[function(require,module,exports){
+},{"_process":44,"fbjs/lib/warning":30}],206:[function(require,module,exports){
+arguments[4][118][0].apply(exports,arguments)
+},{"_process":44,"dup":118}],207:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -22158,19 +22362,17 @@ var _require = require('./ReactElement'),
 var factory = require('prop-types/factory');
 
 module.exports = factory(isValidElement);
-},{"./ReactElement":192,"prop-types/factory":29}],198:[function(require,module,exports){
-arguments[4][102][0].apply(exports,arguments)
-},{"dup":102}],199:[function(require,module,exports){
-arguments[4][110][0].apply(exports,arguments)
-},{"dup":110}],200:[function(require,module,exports){
+},{"./ReactElement":202,"prop-types/factory":46}],208:[function(require,module,exports){
+arguments[4][119][0].apply(exports,arguments)
+},{"dup":119}],209:[function(require,module,exports){
+arguments[4][127][0].apply(exports,arguments)
+},{"dup":127}],210:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -22190,15 +22392,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = canDefineProperty;
 }).call(this,require('_process'))
-},{"_process":27}],201:[function(require,module,exports){
+},{"_process":44}],211:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -22279,14 +22479,12 @@ function checkReactTypeSpec(typeSpecs, values, location, componentName, element,
 
 module.exports = checkReactTypeSpec;
 }).call(this,require('_process'))
-},{"./ReactComponentTreeHook":189,"./ReactPropTypeLocationNames":196,"./ReactPropTypesSecret":198,"./reactProdInvariant":207,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24}],202:[function(require,module,exports){
+},{"./ReactComponentTreeHook":199,"./ReactPropTypeLocationNames":206,"./ReactPropTypesSecret":208,"./reactProdInvariant":217,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30}],212:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -22302,16 +22500,14 @@ var ReactNoopUpdateQueue = require('./ReactNoopUpdateQueue');
 var factory = require('create-react-class/factory');
 
 module.exports = factory(Component, isValidElement, ReactNoopUpdateQueue);
-},{"./ReactBaseClasses":187,"./ReactElement":192,"./ReactNoopUpdateQueue":195,"create-react-class/factory":1}],203:[function(require,module,exports){
-arguments[4][143][0].apply(exports,arguments)
-},{"dup":143}],204:[function(require,module,exports){
+},{"./ReactBaseClasses":197,"./ReactElement":202,"./ReactNoopUpdateQueue":205,"create-react-class/factory":7}],213:[function(require,module,exports){
+arguments[4][160][0].apply(exports,arguments)
+},{"dup":160}],214:[function(require,module,exports){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -22325,15 +22521,13 @@ function getNextDebugID() {
 }
 
 module.exports = getNextDebugID;
-},{}],205:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2014-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -22392,15 +22586,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = lowPriorityWarning;
 }).call(this,require('_process'))
-},{"_process":27}],206:[function(require,module,exports){
+},{"_process":44}],216:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 'use strict';
@@ -22432,17 +22624,15 @@ function onlyChild(children) {
 
 module.exports = onlyChild;
 }).call(this,require('_process'))
-},{"./ReactElement":192,"./reactProdInvariant":207,"_process":27,"fbjs/lib/invariant":17}],207:[function(require,module,exports){
-arguments[4][152][0].apply(exports,arguments)
-},{"dup":152}],208:[function(require,module,exports){
+},{"./ReactElement":202,"./reactProdInvariant":217,"_process":44,"fbjs/lib/invariant":23}],217:[function(require,module,exports){
+arguments[4][169][0].apply(exports,arguments)
+},{"dup":169}],218:[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -22612,7 +22802,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 
 module.exports = traverseAllChildren;
 }).call(this,require('_process'))
-},{"./KeyEscapeUtils":184,"./ReactCurrentOwner":190,"./ReactElementSymbol":193,"./getIteratorFn":203,"./reactProdInvariant":207,"_process":27,"fbjs/lib/invariant":17,"fbjs/lib/warning":24}],209:[function(require,module,exports){
+},{"./KeyEscapeUtils":194,"./ReactCurrentOwner":200,"./ReactElementSymbol":203,"./getIteratorFn":213,"./reactProdInvariant":217,"_process":44,"fbjs/lib/invariant":23,"fbjs/lib/warning":30}],219:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -22671,7 +22861,7 @@ function applyMiddleware() {
     };
   };
 }
-},{"./compose":212}],210:[function(require,module,exports){
+},{"./compose":222}],220:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -22723,7 +22913,7 @@ function bindActionCreators(actionCreators, dispatch) {
   }
   return boundActionCreators;
 }
-},{}],211:[function(require,module,exports){
+},{}],221:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -22869,7 +23059,7 @@ function combineReducers(reducers) {
   };
 }
 }).call(this,require('_process'))
-},{"./createStore":213,"./utils/warning":214,"_process":27,"lodash/isPlainObject":224}],212:[function(require,module,exports){
+},{"./createStore":223,"./utils/warning":224,"_process":44,"lodash/isPlainObject":42}],222:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -22906,7 +23096,7 @@ function compose() {
     };
   });
 }
-},{}],213:[function(require,module,exports){
+},{}],223:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -23168,7 +23358,7 @@ var ActionTypes = exports.ActionTypes = {
     replaceReducer: replaceReducer
   }, _ref2[_symbolObservable2['default']] = observable, _ref2;
 }
-},{"lodash/isPlainObject":224,"symbol-observable":225}],214:[function(require,module,exports){
+},{"lodash/isPlainObject":42,"symbol-observable":225}],224:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -23194,30 +23384,7 @@ function warning(message) {
   } catch (e) {}
   /* eslint-enable no-empty */
 }
-},{}],215:[function(require,module,exports){
-arguments[4][174][0].apply(exports,arguments)
-},{"./_root":222,"dup":174}],216:[function(require,module,exports){
-arguments[4][175][0].apply(exports,arguments)
-},{"./_Symbol":215,"./_getRawTag":219,"./_objectToString":220,"dup":175}],217:[function(require,module,exports){
-arguments[4][176][0].apply(exports,arguments)
-},{"dup":176}],218:[function(require,module,exports){
-arguments[4][177][0].apply(exports,arguments)
-},{"./_overArg":221,"dup":177}],219:[function(require,module,exports){
-arguments[4][178][0].apply(exports,arguments)
-},{"./_Symbol":215,"dup":178}],220:[function(require,module,exports){
-arguments[4][179][0].apply(exports,arguments)
-},{"dup":179}],221:[function(require,module,exports){
-arguments[4][180][0].apply(exports,arguments)
-},{"dup":180}],222:[function(require,module,exports){
-arguments[4][181][0].apply(exports,arguments)
-},{"./_freeGlobal":217,"dup":181}],223:[function(require,module,exports){
-arguments[4][182][0].apply(exports,arguments)
-},{"dup":182}],224:[function(require,module,exports){
-arguments[4][183][0].apply(exports,arguments)
-},{"./_baseGetTag":216,"./_getPrototype":218,"./isObjectLike":223,"dup":183}],225:[function(require,module,exports){
-module.exports = require('./lib/index');
-
-},{"./lib/index":226}],226:[function(require,module,exports){
+},{}],225:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -23225,7 +23392,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ponyfill = require('./ponyfill');
+var _ponyfill = require('./ponyfill.js');
 
 var _ponyfill2 = _interopRequireDefault(_ponyfill);
 
@@ -23249,7 +23416,7 @@ if (typeof self !== 'undefined') {
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill":227}],227:[function(require,module,exports){
+},{"./ponyfill.js":226}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23276,12 +23443,10 @@ function symbolObservablePonyfill(root) {
 },{}],"prop-types":[function(require,module,exports){
 (function (process){
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 if (process.env.NODE_ENV !== 'production') {
@@ -23307,41 +23472,38 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./factoryWithThrowingShims":30,"./factoryWithTypeCheckers":31,"_process":27}],"react-dom":[function(require,module,exports){
+},{"./factoryWithThrowingShims":47,"./factoryWithTypeCheckers":48,"_process":44}],"react-dom":[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/ReactDOM');
 
-},{"./lib/ReactDOM":62}],"react-redux":[function(require,module,exports){
-'use strict';
+},{"./lib/ReactDOM":79}],"react-redux":[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
 
 exports.__esModule = true;
-exports.connect = exports.connectAdvanced = exports.createProvider = exports.Provider = undefined;
 
-var _Provider = require('./components/Provider');
+var _Provider = _interopRequireWildcard(require("./components/Provider"));
 
-var _Provider2 = _interopRequireDefault(_Provider);
-
-var _connectAdvanced = require('./components/connectAdvanced');
-
-var _connectAdvanced2 = _interopRequireDefault(_connectAdvanced);
-
-var _connect = require('./connect/connect');
-
-var _connect2 = _interopRequireDefault(_connect);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.Provider = _Provider2.default;
+exports.Provider = _Provider.default;
 exports.createProvider = _Provider.createProvider;
-exports.connectAdvanced = _connectAdvanced2.default;
-exports.connect = _connect2.default;
-},{"./components/Provider":159,"./components/connectAdvanced":160,"./connect/connect":161}],"react":[function(require,module,exports){
+
+var _connectAdvanced = _interopRequireDefault(require("./components/connectAdvanced"));
+
+exports.connectAdvanced = _connectAdvanced.default;
+
+var _connect = _interopRequireDefault(require("./connect/connect"));
+
+exports.connect = _connect.default;
+},{"./components/Provider":179,"./components/connectAdvanced":180,"./connect/connect":181,"@babel/runtime/helpers/interopRequireDefault":4,"@babel/runtime/helpers/interopRequireWildcard":5}],"react":[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/React');
 
-},{"./lib/React":186}],"redux":[function(require,module,exports){
+},{"./lib/React":196}],"redux":[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -23390,7 +23552,7 @@ exports.bindActionCreators = _bindActionCreators2['default'];
 exports.applyMiddleware = _applyMiddleware2['default'];
 exports.compose = _compose2['default'];
 }).call(this,require('_process'))
-},{"./applyMiddleware":209,"./bindActionCreators":210,"./combineReducers":211,"./compose":212,"./createStore":213,"./utils/warning":214,"_process":27}],"three":[function(require,module,exports){
+},{"./applyMiddleware":219,"./bindActionCreators":220,"./combineReducers":221,"./compose":222,"./createStore":223,"./utils/warning":224,"_process":44}],"three":[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
